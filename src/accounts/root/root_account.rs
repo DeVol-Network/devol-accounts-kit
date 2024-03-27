@@ -2,6 +2,7 @@ use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::errors::AccountTag;
 
 pub const ROOT_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const ROOT_ACCOUNT_ADMIN_ADDRESS_OFFSET: usize = 8;
@@ -15,7 +16,7 @@ pub const ROOT_ACCOUNT_KYC_METHOD_OFFSET: usize = 204;
 pub const ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET: usize = 208;
 pub const ROOT_ACCOUNT_SIZE: usize = 216;
 pub const ROOT_ACCOUNT_TAG: u8 = 0;
-pub const ROOT_ACCOUNT_VERSION: usize = 2;
+pub const ROOT_ACCOUNT_VERSION: u32 = 2;
 
 #[derive(PartialEq, PartialOrd, Clone, Copy)]
 #[repr(u32)]
@@ -57,7 +58,18 @@ impl Default for RootAccount {
 
 impl DevolAccount for RootAccount {
     #[inline(always)]
-    fn expected_size() -> usize {  ROOT_ACCOUNT_SIZE  }
+    fn expected_size() -> usize { ROOT_ACCOUNT_SIZE }
+
+    #[inline(always)]
+    fn expected_tag() -> u8 { ROOT_ACCOUNT_TAG }
+
+    #[inline(always)]
+    fn expected_version() -> u32 { ROOT_ACCOUNT_VERSION }
+
+    #[inline(always)]
+    fn check_root(_: AccountTag, _: &AccountHeader, _: &Pubkey) -> Result<(), u32> {
+        Ok(())
+    }
 }
 
 impl RootAccount {

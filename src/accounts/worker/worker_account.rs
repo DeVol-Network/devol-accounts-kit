@@ -63,7 +63,7 @@ pub const WORKER_ACCOUNT_MAX_PCT_POOL_OFFSET: usize = 4968;
 pub const WORKER_ACCOUNT_RESERVED_OFFSET: usize = 4976;
 pub const WORKER_ACCOUNT_SIZE: usize = 4984;
 pub const WORKER_ACCOUNT_TAG: u8 = 7;
-pub const WORKER_ACCOUNT_VERSION: usize = 14;
+pub const WORKER_ACCOUNT_VERSION: u32 = 14;
 
 #[repr(C)]
 pub struct WorkerAccount {
@@ -165,6 +165,14 @@ impl WorkerAccount {
 impl DevolAccount for WorkerAccount {
     fn expected_size() -> usize {
         WORKER_ACCOUNT_SIZE
+    }
+
+    fn expected_tag() -> u8 {
+        WORKER_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+       WORKER_ACCOUNT_VERSION
     }
 }
 

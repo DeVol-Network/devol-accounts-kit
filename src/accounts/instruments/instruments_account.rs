@@ -9,7 +9,7 @@ pub const INSTR_ACCOUNT_DATA_OFFSET: usize = 44;
 pub const INSTR_ACCOUNT_SIZE: usize = 6316;
 pub const INSTR_DATA_COUNT: usize = 32;
 pub const INSTR_ACCOUNT_TAG: u8 = 2;
-pub const INSTR_ACCOUNT_VERSION: usize = 4;
+pub const INSTR_ACCOUNT_VERSION: u32 = 4;
 
 #[repr(C)]
 pub struct InstrumentsAccount {
@@ -29,6 +29,14 @@ impl From<&[u8]> for InstrumentsAccount {
 
 impl DevolAccount for InstrumentsAccount {
     fn expected_size() -> usize { INSTR_ACCOUNT_SIZE }
+
+    fn expected_tag() -> u8 {
+        INSTR_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        INSTR_ACCOUNT_VERSION
+    }
 }
 
 #[cfg(test)]

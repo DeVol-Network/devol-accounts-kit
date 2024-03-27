@@ -8,7 +8,7 @@ pub const ORACLES_ACCOUNT_RESERVED_OFFSET: usize = 44;
 pub const ORACLES_ACCOUNT_DATA_OFFSET: usize = 48;
 pub const ORACLES_ACCOUNT_SIZE: usize = 1776;
 pub const ORACLES_ACCOUNT_TAG: u8 = 13;
-pub const ORACLES_ACCOUNT_VERSION: usize = 1;
+pub const ORACLES_ACCOUNT_VERSION: u32 = 1;
 
 #[repr(C)]
 pub struct OraclesAccount {
@@ -29,6 +29,14 @@ impl From<&[u8]> for OraclesAccount {
 
 impl DevolAccount for OraclesAccount {
     fn expected_size() -> usize { ORACLES_ACCOUNT_SIZE }
+
+    fn expected_tag() -> u8 {
+        ORACLES_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        ORACLES_ACCOUNT_VERSION
+    }
 }
 
 #[cfg(test)]
