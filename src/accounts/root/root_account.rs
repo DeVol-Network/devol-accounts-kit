@@ -17,13 +17,14 @@ pub const ROOT_ACCOUNT_SIZE: usize = 216;
 pub const ROOT_ACCOUNT_TAG: u8 = 0;
 pub const ROOT_ACCOUNT_VERSION: usize = 2;
 
-#[derive(PartialEq, PartialOrd)]
+#[derive(PartialEq, PartialOrd, Clone, Copy)]
 #[repr(u32)]
 pub enum OpenAccountFeePayer {
     Client = 0,
     Devol = 1,
 }
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct RootAccount {
     pub header: AccountHeader,             // 40 bytes, ROOT_ACCOUNT_VERSION_OFFSET

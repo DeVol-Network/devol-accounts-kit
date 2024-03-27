@@ -1,5 +1,6 @@
 use solana_program::pubkey::Pubkey;
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct AccountHeader {
     pub tag: u32,
