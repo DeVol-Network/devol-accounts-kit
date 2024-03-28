@@ -212,6 +212,10 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x001F => "Incorrect oracle number",
         0x0020 => "Transaction must be executed by platform administrator only",
         0x0021 => "Transaction requires the account to be a signer, but it is not",
+        0x0022 => " Operation on client account attempted by incorrect client (wrong account sequence, missing, or another client's account)",
+        0x0023 => " No record of the targeted pool in client's account",
+        0x0024 => " Significant price variance between oracles exceeds allowable range, preventing trade execution",
+        0x0025 => " Required oracle for price calculation is not provided in the function call",
         _ => "Unknown error",
     };
 
