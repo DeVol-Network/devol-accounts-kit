@@ -79,7 +79,7 @@ pub trait DevolAccount {
             Self: Sized,
     {
         Self::check_all(account_info, root_addr, program_id)?;
-        let account = unsafe { & *(account_info.data.borrow_mut().as_ptr() as *const Self) };
+        let account = unsafe { & *(account_info.data.borrow().as_ptr() as *const Self) };
         Ok(account)
     }
 
@@ -139,27 +139,4 @@ mod tests {
         }
     }
 
-    // #[test]
-    // fn test_transform_account_info_mut() {
-    //     let data_len = RootAccount::expected_size();
-    //     let mut data = vec![0; data_len];
-    //     let mut lamports : u64 = 0;
-    //
-    //     let account_info = AccountInfo {
-    //         key: &Pubkey::new_unique(),
-    //         is_signer: false,
-    //         is_writable: false,
-    //         lamports: Rc::new(RefCell::new(&mut lamports)),
-    //         data: Rc::new(RefCell::new(&mut *data)),
-    //         owner: &Pubkey::new_unique(),
-    //         executable: false,
-    //         rent_epoch: 0,
-    //     };
-    //
-    //     let result = RootAccount::from_account_info_mut(&account_info);
-    //     assert!(result.is_ok());
-    //
-    //     let root_account = result.unwrap();
-    //     assert_eq!(root_account.clients_count, 0);
-    // }
 }
