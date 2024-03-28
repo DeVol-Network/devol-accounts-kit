@@ -1,4 +1,8 @@
 use crate::accounts::root::root_account::ROOT_ACCOUNT_TAG;
+use crate::accounts::worker::worker_account::WORKER_ACCOUNT_TAG;
+use crate::accounts::all_workers::all_workers_account::ALL_WORKERS_ACCOUNT_TAG;
+use crate::accounts::oracles::oracles_account::ORACLES_ACCOUNT_TAG;
+use crate::accounts::instruments::instruments_account::INSTR_ACCOUNT_TAG;
 
 #[repr(u16)]
 #[allow(dead_code)]
@@ -73,19 +77,19 @@ impl AccountTag {
     pub fn from_u8(value: u8) -> Option<AccountTag> {
         match value {
             ROOT_ACCOUNT_TAG => Some(AccountTag::Root),
-            MINTS_ACCOUNT_TAG => Some(AccountTag::Mints),
             INSTR_ACCOUNT_TAG => Some(AccountTag::Instruments),
             ALL_WORKERS_ACCOUNT_TAG => Some(AccountTag::AllWorkers),
+            WORKER_ACCOUNT_TAG => Some(AccountTag::Worker),
+            ORACLES_ACCOUNT_TAG => Some(AccountTag::Oracle),
+            MINTS_ACCOUNT_TAG => Some(AccountTag::Mints),
             POOLS_TRACE_ACCOUNT_TAG => Some(AccountTag::PoolsTrace),
             TASKS_TRACE_ACCOUNT_TAG => Some(AccountTag::TasksTrace),
             POOLS_LOG_ACCOUNT_TAG => Some(AccountTag::PoolsLog),
-            WORKER_ACCOUNT_TAG => Some(AccountTag::Worker),
             CLIENT_ACCOUNT_TAG => Some(AccountTag::Client),
             PAYOFF_LOG_ACCOUNT_TAG => Some(AccountTag::PayoffLog),
             MINT_LOG_ACCOUNT_TAG => Some(AccountTag::MintLog),
             TASKS_LOG_ACCOUNT_TAG => Some(AccountTag::TasksLog),
             TRADE_LOG_ACCOUNT_TAG => Some(AccountTag::TradeLog),
-            ORACLES_ACCOUNT_TAG => Some(AccountTag::Oracle),
             _ => None,
         }
     }
