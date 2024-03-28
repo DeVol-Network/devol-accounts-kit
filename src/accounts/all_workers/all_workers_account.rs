@@ -18,15 +18,6 @@ pub struct AllWorkersAccount {
     pub workers: [Worker; MAX_ALL_WORKERS_COUNT],
 }
 
-impl From<&[u8]> for AllWorkersAccount {
-    fn from(bytes: &[u8]) -> Self {
-        assert_eq!(bytes.len(), ALL_WORKERS_ACCOUNT_SIZE, "Incorrect all workers account size.");
-        unsafe {
-            std::ptr::read_unaligned(bytes.as_ptr() as *const AllWorkersAccount)
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

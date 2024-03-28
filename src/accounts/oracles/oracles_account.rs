@@ -18,15 +18,6 @@ pub struct OraclesAccount {
     pub data: [OracleData; ORACLES_DATA_COUNT],     // ORACLES_ACCOUNT_DATA_OFFSET
 }
 
-impl From<&[u8]> for OraclesAccount {
-    fn from(bytes: &[u8]) -> Self {
-        assert_eq!(bytes.len(), ORACLES_ACCOUNT_SIZE, "Incorrect oracles account size.");
-        unsafe {
-            std::ptr::read_unaligned(bytes.as_ptr() as *const OraclesAccount)
-        }
-    }
-}
-
 impl DevolAccount for OraclesAccount {
     fn expected_size() -> usize { ORACLES_ACCOUNT_SIZE }
 

@@ -176,15 +176,6 @@ impl DevolAccount for WorkerAccount {
     }
 }
 
-impl From<&[u8]> for WorkerAccount {
-    fn from(bytes: &[u8]) -> Self {
-        assert_eq!(bytes.len(), WORKER_ACCOUNT_SIZE, "Incorrect worker account size.");
-        unsafe {
-            std::ptr::read_unaligned(bytes.as_ptr() as *const WorkerAccount)
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -18,15 +18,6 @@ pub struct InstrumentsAccount {
     pub data: [InstrumentsData; INSTR_DATA_COUNT],    // INSTR_ACCOUNT_DATA_OFFSET
 }
 
-impl From<&[u8]> for InstrumentsAccount {
-    fn from(bytes: &[u8]) -> Self {
-        assert_eq!(bytes.len(), INSTR_ACCOUNT_SIZE, "Incorrect instruments account size.");
-        unsafe {
-            std::ptr::read_unaligned(bytes.as_ptr() as *const InstrumentsAccount)
-        }
-    }
-}
-
 impl DevolAccount for InstrumentsAccount {
     fn expected_size() -> usize { INSTR_ACCOUNT_SIZE }
 
