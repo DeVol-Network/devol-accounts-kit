@@ -79,17 +79,7 @@ mod tests {
     #[test]
     fn test_root_account_offsets() {
 
-        let account = RootAccount {
-            header: AccountHeader::default(),
-            wallet_address: Pubkey::default(),
-            kyc_provider: Pubkey::default(),
-            mints_address: Pubkey::default(),
-            instruments_address: Pubkey::default(),
-            workers_address: Pubkey::default(),
-            clients_count: 0,
-            fee_payer: OpenAccountFeePayer::Client,
-            max_light_volume: 0,
-        };
+        let account = RootAccount::default();
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size and offset
