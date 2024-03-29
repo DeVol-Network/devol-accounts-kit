@@ -46,6 +46,7 @@ pub enum ContractError {
     PoolRecordNotFound          = 0x0023,   // No record of the targeted pool in client's account
     PriceDiscrepancyError       = 0x0024,   // Significant price variance between oracles exceeds allowable range, preventing trade execution
     MandatoryOracleMissing      = 0x0025,   // Required oracle for price calculation is not provided in the function call
+    InvalidAccountId            = 0x0026,   // Invalid account ID
 }
 
 #[repr(u8)]
@@ -220,6 +221,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0023 => " No record of the targeted pool in client's account",
         0x0024 => " Significant price variance between oracles exceeds allowable range, preventing trade execution",
         0x0025 => " Required oracle for price calculation is not provided in the function call",
+        0x0026 => "Invalid account ID",
         _ => "Unknown error",
     };
 

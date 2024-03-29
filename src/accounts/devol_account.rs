@@ -16,20 +16,39 @@ pub trait DevolAccount {
     #[inline(always)]
     fn expected_version() -> u32;
 
+    /// Returns the offset where an optional ID field is located within the account data.
+    /// By default, it assumes that if present, the ID starts immediately after the AccountHeader structure,
+    /// i.e., at the 40th byte. This function should be overridden if the ID's position differs.
+    #[inline(always)]
+    fn id_offset_if_available() -> usize { 40 }
+
+
     #[inline(always)]
     fn account_header<'a>(data: Ref<&mut [u8]>) -> &'a AccountHeader {
         unsafe { &*(data.as_ptr() as *const AccountHeader) }
     }
 
+    #[inline(always)]
+    fn check_id(tag: AccountTag, account_info: &AccountInfo, id: u32) -> Result<(), u32> {
+        let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset_if_available()) as *const u32) };
+        if read_id != id {
+            return Err(error_with_account(tag, ContractError::InvalidAccountId));
+        }
+        Ok(())
+    }
+
 
     #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), u32> {
+    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<u32>) -> Result<(), u32> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
         Self::check_size(tag, account_info.data.borrow().len())?;
         let header = Self::account_header(account_info.data.borrow());
         Self::check_tag_and_version(tag, header)?;
         Self::check_root(tag, header, root_addr)?;
         Self::check_program_id(tag, account_info, program_id)?;
+        if let Some(id) = id {
+            Self::check_id(tag, account_info, id)?;
+        }
         Ok(())
     }
 
@@ -43,7 +62,7 @@ pub trait DevolAccount {
     }
 
     #[inline(always)]
-    fn check_tag_and_version (tag: AccountTag, header: &AccountHeader) -> Result<(), u32> {
+    fn check_tag_and_version(tag: AccountTag, header: &AccountHeader) -> Result<(), u32> {
         if header.tag != Self::expected_tag() as u32 {
             Err(error_with_account(tag, ContractError::AccountTag))
         } else if header.version > Self::expected_version() {
@@ -56,7 +75,7 @@ pub trait DevolAccount {
     }
 
     #[inline(always)]
-    fn check_root (tag: AccountTag, header: &AccountHeader, root_addr: &Pubkey) -> Result<(), u32> {
+    fn check_root(tag: AccountTag, header: &AccountHeader, root_addr: &Pubkey) -> Result<(), u32> {
         if header.root != *root_addr {
             Err(error_with_account(tag, ContractError::RootAddress))
         } else {
@@ -65,7 +84,7 @@ pub trait DevolAccount {
     }
 
     #[inline(always)]
-    fn check_program_id (tag: AccountTag, account_info: &AccountInfo, program_id: &Pubkey) -> Result<(), u32> {
+    fn check_program_id(tag: AccountTag, account_info: &AccountInfo, program_id: &Pubkey) -> Result<(), u32> {
         if account_info.owner != program_id {
             Err(error_with_account(tag, ContractError::AccountOwner))
         } else {
@@ -74,22 +93,32 @@ pub trait DevolAccount {
     }
 
     /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
-    fn from_account_info<'a>(account_info: &'a AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<&'a Self, u32>
+    fn from_account_info<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        id: Option<u32>,
+    ) -> Result<&'a Self, u32>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id)?;
-        let account = unsafe { & *(account_info.data.borrow().as_ptr() as *const Self) };
+        Self::check_all(account_info, root_addr, program_id, id)?;
+        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
         Ok(account)
     }
 
     /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
     /// Ensures the account is marked as writable.
-    fn from_account_info_mut<'a>(account_info: &'a AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<&'a mut Self, u32>
+    fn from_account_info_mut<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        id: Option<u32>,
+    ) -> Result<&'a mut Self, u32>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id)?;
+        Self::check_all(account_info, root_addr, program_id, id)?;
         if !account_info.is_writable {
             return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
         }
@@ -98,15 +127,20 @@ pub trait DevolAccount {
     }
 
     /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
-    fn from_account(key: &Pubkey, account: &mut impl Account, root_addr: &Pubkey, program_id: &Pubkey) -> Result<Self, u32>
+    fn from_account(
+        key: &Pubkey,
+        account: &mut impl Account,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        id: Option<u32>,
+    ) -> Result<Self, u32>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)?;
         Ok(*account_ref)
     }
-
 }
 
 #[cfg(test)]
@@ -116,6 +150,7 @@ mod tests {
     use solana_sdk::pubkey::Pubkey;
     use solana_client::rpc_client::RpcClient;
     use crate::accounts::root::root_account::RootAccount;
+
     pub const RPC_URL: &str = "https://devnet.helius-rpc.com/?api-key=a4fd5524-2f2d-4713-9acf-aeb92a7e503a";
     pub const INT_SEED: &str = "1012";
     pub const PROGRAM_ID: &str = "2aJHohZdg4oaSuXGQzSDzZC3BJvEoN5JhpBu9GERiroo";
@@ -131,12 +166,11 @@ mod tests {
 
         assert_eq!(account_data.data.len(), RootAccount::expected_size());
 
-        match RootAccount::from_account(&pubkey, &mut account_data, &root_addr, &program_id) {
+        match RootAccount::from_account(&pubkey, &mut account_data, &root_addr, &program_id, None) {
             Ok(root_account) => {
                 assert!(true, "RootAccount success");
-            },
+            }
             Err(e) => panic!("Error building RootAccount: {:?}", decode_error_code(e)),
         }
     }
-
 }
