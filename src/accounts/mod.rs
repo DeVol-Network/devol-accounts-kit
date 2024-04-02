@@ -5,5 +5,5 @@ pub mod oracles;
 pub mod all_workers;
 mod account_header;
 mod devol_account;
-mod mints;
-mod log_accounts;
+pub mod mints;
+pub mod log_accounts;
