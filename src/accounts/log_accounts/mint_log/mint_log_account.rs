@@ -3,7 +3,7 @@ use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::errors::AccountTag;
-use crate::accounts::mint_log::mint_log::MintLog;
+use crate::accounts::log_accounts::mint_log::mint_log::MintLog;
 
 pub const MINT_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const MINT_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -61,8 +61,8 @@ impl Default for MintLogAccount {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::accounts::mint_log::mint_log::MINT_LOG_SIZE;
-    use crate::accounts::mint_log::mint_log_account::{MINT_LOG_BUFFER_CAPACITY, MintLogAccount};
+    use crate::accounts::log_accounts::mint_log::mint_log::MINT_LOG_SIZE;
+    use crate::accounts::log_accounts::mint_log::mint_log_account::{MINT_LOG_BUFFER_CAPACITY, MintLogAccount};
 
     #[test]
     fn test_root_account_offsets() {
