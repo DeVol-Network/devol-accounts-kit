@@ -1,6 +1,6 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::log_accounts::task_log::task_log::TasksLog;
+use crate::accounts::worker::task_log::task_log::TasksLog;
 
 pub const TASKS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const TASKS_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;

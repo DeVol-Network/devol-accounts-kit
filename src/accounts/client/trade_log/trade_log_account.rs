@@ -1,7 +1,7 @@
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::log_accounts::trade_log::trade_log::TradeLog;
+use crate::accounts::client::trade_log::trade_log::TradeLog;
 
 pub const TRADE_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const TRADE_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
