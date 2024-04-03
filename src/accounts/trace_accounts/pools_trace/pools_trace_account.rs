@@ -1,4 +1,5 @@
 use solana_program::pubkey::Pubkey;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::trace_accounts::pools_trace::pools_trace::PoolsTrace;
 
 pub const POOLS_TRACE_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -7,7 +8,7 @@ pub const POOLS_TRACE_ACCOUNT_WORKER_ID_OFFSET: usize = 40;
 pub const POOLS_TRACE_ACCOUNT_DATA_OFFSET: usize = 44;
 pub const POOLS_TRACE_ACCOUNT_SIZE: usize = 24620;
 pub const POOLS_TRACE_ACCOUNT_TAG: u8 = 4;
-pub const POOLS_TRACE_ACCOUNT_VERSION: usize = 6;
+pub const POOLS_TRACE_ACCOUNT_VERSION: u32 = 6;
 pub const MAX_POOLS_TRACE_COUNT: usize = 256;
 
 #[repr(C)]
@@ -32,6 +33,18 @@ impl PoolsTraceAccount {
     #[inline(always)]
     pub fn set_version(&mut self, value: i64) {
         self.version = value.to_ne_bytes();
+    }
+}
+
+impl DevolAccount for PoolsTraceAccount {
+    fn expected_size() -> usize { POOLS_TRACE_ACCOUNT_SIZE }
+
+    fn expected_tag() -> u8 {
+        POOLS_TRACE_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        POOLS_TRACE_ACCOUNT_VERSION
     }
 }
 

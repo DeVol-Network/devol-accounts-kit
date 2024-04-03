@@ -1,5 +1,6 @@
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::log_accounts::trade_log::trade_log::TradeLog;
 
 pub const TRADE_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -10,7 +11,7 @@ pub const TRADE_LOG_ACCOUNT_COUNT_OFFSET: usize = 76;
 pub const TRADE_LOG_ACCOUNT_DATA_OFFSET: usize = 80;
 pub const TRADE_LOG_ACCOUNT_SIZE: usize = 40816;
 pub const TRADE_LOG_ACCOUNT_TAG: u8 = 12;
-pub const TRADE_LOG_ACCOUNT_VERSION: usize = 14;
+pub const TRADE_LOG_ACCOUNT_VERSION: u32 = 14;
 pub const TRADE_LOG_BUFFER_CAPACITY: usize = 32;
 
 #[repr(C)]
@@ -26,6 +27,18 @@ pub struct TradeLogAccount {
     pub count: u32,
     // 40736 bytes, TRADE_LOG_ACCOUNT_DATA_OFFSET
     pub data: [TradeLog; TRADE_LOG_BUFFER_CAPACITY],
+}
+
+impl DevolAccount for TradeLogAccount {
+    fn expected_size() -> usize { TRADE_LOG_ACCOUNT_SIZE }
+
+    fn expected_tag() -> u8 {
+        TRADE_LOG_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        TRADE_LOG_ACCOUNT_VERSION
+    }
 }
 
 impl Default for TradeLogAccount {

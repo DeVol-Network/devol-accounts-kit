@@ -1,5 +1,8 @@
+use crate::accounts::devol_account::DevolAccount;
+
 pub mod tasks_trace_account {
     use solana_program::pubkey::Pubkey;
+    use crate::accounts::devol_account::DevolAccount;
     use crate::accounts::trace_accounts::tasks_trace::tasks_trace::TasksTrace;
 
     pub const TASKS_TRACE_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -8,7 +11,7 @@ pub mod tasks_trace_account {
     pub const TASKS_TRACE_ACCOUNT_DATA_OFFSET: usize = 44;
     pub const TASKS_TRACE_ACCOUNT_SIZE: usize = 7724;
     pub const TASKS_TRACE_ACCOUNT_TAG: u8 = 5;
-    pub const TASKS_TRACE_ACCOUNT_VERSION: usize = 7;
+    pub const TASKS_TRACE_ACCOUNT_VERSION: u32 = 7;
     pub const MAX_TASKS_TRACE_COUNT: usize = 128;
 
     #[repr(C)]
@@ -33,6 +36,18 @@ pub mod tasks_trace_account {
         #[inline(always)]
         pub fn set_version(&mut self, value: i64) {
             self.version = value.to_ne_bytes();
+        }
+    }
+
+    impl DevolAccount for TasksTraceAccount {
+        fn expected_size() -> usize { TASKS_TRACE_ACCOUNT_SIZE }
+
+        fn expected_tag() -> u8 {
+            TASKS_TRACE_ACCOUNT_TAG
+        }
+
+        fn expected_version() -> u32 {
+            TASKS_TRACE_ACCOUNT_VERSION
         }
     }
 

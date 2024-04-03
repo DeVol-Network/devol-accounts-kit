@@ -1,4 +1,5 @@
 use crate::accounts::account_header::AccountHeader;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::log_accounts::task_log::task_log::TasksLog;
 
 pub const TASKS_LOG_BUFFER_CAPACITY: usize = 256;
@@ -10,7 +11,7 @@ pub const TASKS_LOG_ACCOUNT_COUNT_OFFSET: usize = 48;
 pub const TASKS_LOG_ACCOUNT_DATA_OFFSET: usize = 52;
 pub const TASKS_LOG_ACCOUNT_SIZE: usize = 26676;
 pub const TASKS_LOG_ACCOUNT_TAG: u8 = 11;
-pub const TASKS_LOG_ACCOUNT_VERSION: usize = 13;
+pub const TASKS_LOG_ACCOUNT_VERSION: u32 = 13;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -25,6 +26,18 @@ pub struct TasksLogAccount {
     pub count: u32,
     // 26624 bytes, TASKS_LOG_ACCOUNT_DATA_OFFSET
     pub data: [TasksLog; TASKS_LOG_BUFFER_CAPACITY],
+}
+
+impl DevolAccount for TasksLogAccount {
+    fn expected_size() -> usize { TASKS_LOG_ACCOUNT_SIZE }
+
+    fn expected_tag() -> u8 {
+        TASKS_LOG_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        TASKS_LOG_ACCOUNT_VERSION
+    }
 }
 
 impl Default for TasksLogAccount {

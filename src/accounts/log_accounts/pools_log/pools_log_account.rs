@@ -1,4 +1,5 @@
 use crate::accounts::account_header::AccountHeader;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::log_accounts::pools_log::pool_log::PoolsLog;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
@@ -10,7 +11,7 @@ pub const POOLS_LOG_ACCOUNT_COUNT_OFFSET: usize = 48;
 pub const POOLS_LOG_ACCOUNT_DATA_OFFSET: usize = 52;
 pub const POOLS_LOG_ACCOUNT_SIZE: usize = 334132;
 pub const POOLS_LOG_ACCOUNT_TAG: u8 = 6;
-pub const POOLS_LOG_ACCOUNT_VERSION: usize = 8;
+pub const POOLS_LOG_ACCOUNT_VERSION: u32 = 8;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -25,6 +26,18 @@ pub struct PoolsLogAccount {
     pub count: u32,
     // 334080 bytes, POOLS_LOG_ACCOUNT_DATA_OFFSET
     pub data: [PoolsLog; POOLS_LOG_BUFFER_CAPACITY],
+}
+
+impl DevolAccount for PoolsLogAccount {
+    fn expected_size() -> usize { POOLS_LOG_ACCOUNT_SIZE }
+
+    fn expected_tag() -> u8 {
+        POOLS_LOG_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        POOLS_LOG_ACCOUNT_VERSION
+    }
 }
 
 impl Default for PoolsLogAccount {

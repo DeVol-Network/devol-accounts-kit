@@ -8,3 +8,4 @@ mod devol_account;
 pub mod mints;
 pub mod log_accounts;
 pub mod trace_accounts;
+pub mod client;

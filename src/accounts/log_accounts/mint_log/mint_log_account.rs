@@ -2,7 +2,6 @@ use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::errors::AccountTag;
 use crate::accounts::log_accounts::mint_log::mint_log::MintLog;
 
 pub const MINT_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -20,7 +19,8 @@ pub const MINT_LOG_BUFFER_CAPACITY: usize = 256;
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct MintLogAccount {
-    pub header: AccountHeader, // 40 bytes
+    pub header: AccountHeader,
+    // 40 bytes
     pub mints_address: Pubkey,
     pub mint_id: u32,
     pub last: u32,
@@ -31,17 +31,11 @@ pub struct MintLogAccount {
 impl DevolAccount for MintLogAccount {
     #[inline(always)]
     fn expected_size() -> usize { MINT_LOG_ACCOUNT_SIZE }
-
     #[inline(always)]
     fn expected_tag() -> u8 { MINT_LOG_ACCOUNT_TAG }
 
     #[inline(always)]
     fn expected_version() -> u32 { MINT_LOG_ACCOUNT_VERSION }
-
-    #[inline(always)]
-    fn check_root(_: AccountTag, _: &AccountHeader, _: &Pubkey) -> Result<(), u32> {
-        Ok(())
-    }
 }
 
 impl Default for MintLogAccount {

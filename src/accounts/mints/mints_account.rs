@@ -1,8 +1,6 @@
 use std::error::Error;
-use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::errors::AccountTag;
 use crate::accounts::mints::mint::Mint;
 
 pub const MINTS_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -31,11 +29,6 @@ impl DevolAccount for MintsAccount {
 
     #[inline(always)]
     fn expected_version() -> u32 { MINTS_ACCOUNT_VERSION }
-
-    #[inline(always)]
-    fn check_root(_: AccountTag, _: &AccountHeader, _: &Pubkey) -> Result<(), u32> {
-        Ok(())
-    }
 }
 
 impl Default for MintsAccount {
