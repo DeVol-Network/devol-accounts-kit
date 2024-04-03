@@ -1,6 +1,6 @@
 use solana_program::pubkey::Pubkey;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::trace_accounts::pools_trace::pools_trace::PoolsTrace;
+use crate::accounts::worker::pools_trace::pools_trace::PoolsTrace;
 
 pub const POOLS_TRACE_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const POOLS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;

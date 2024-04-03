@@ -6,9 +6,10 @@ use crate::accounts::instruments::instruments_account::INSTR_ACCOUNT_TAG;
 use crate::accounts::worker::pools_log::pools_log_account::POOLS_LOG_ACCOUNT_TAG;
 use crate::accounts::worker::task_log::task_log_account::TASKS_LOG_ACCOUNT_TAG;
 use crate::accounts::client::trade_log::trade_log_account::TRADE_LOG_ACCOUNT_TAG;
-use crate::accounts::trace_accounts::pools_trace::pools_trace_account::POOLS_TRACE_ACCOUNT_TAG;
-use crate::accounts::trace_accounts::tasks_trace::tasks_trace_account::TASKS_TRACE_ACCOUNT_TAG;
+use crate::accounts::worker::pools_trace::pools_trace_account::POOLS_TRACE_ACCOUNT_TAG;
+use crate::accounts::worker::tasks_trace::tasks_trace_account::TASKS_TRACE_ACCOUNT_TAG;
 use crate::accounts::mints::mints_account::MINTS_ACCOUNT_TAG;
+use crate::accounts::mints::mint_log::mint_log_account::MINT_LOG_ACCOUNT_TAG;
 use crate::accounts::client::payoff_log::payoff_log_account::PAYOFF_LOG_ACCOUNT_TAG;
 use crate::accounts::client::client_account::client_account::CLIENT_ACCOUNT_TAG;
 

@@ -1,6 +1,6 @@
 use solana_program::pubkey::Pubkey;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::trace_accounts::tasks_trace::tasks_trace::TasksTrace;
+use crate::accounts::worker::tasks_trace::tasks_trace::TasksTrace;
 
 pub const TASKS_TRACE_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const TASKS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
