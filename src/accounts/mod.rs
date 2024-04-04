@@ -6,5 +6,4 @@ pub mod all_workers;
 mod account_header;
 mod devol_account;
 pub mod mints;
-pub mod trace_accounts;
 pub mod client;

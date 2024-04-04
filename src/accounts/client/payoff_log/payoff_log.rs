@@ -16,7 +16,7 @@ pub const PAYOFF_LOG_SIZE: usize = 68;
 #[repr(C)]
 pub struct PayoffLog {
     // 8 bytes, PAYOFF_LOG_ID_OFFSET
-    pub id: [u8; 8],
+    pub id: u64,
     // 4 bytes, PAYOFF_LOG_WORKER_ID_OFFSET
     pub worker_id: u32,
     // 4 bytes, PAYOFF_LOG_POOL_ID_OFFSET
@@ -38,10 +38,6 @@ pub struct PayoffLog {
 }
 
 impl PayoffLog {
-    #[inline(always)]
-    pub fn get_id(&self) -> i64 { i64::from_ne_bytes(self.id) }
-    #[inline(always)]
-    pub fn set_id(&mut self, value: i64) { self.id = value.to_ne_bytes(); }
 
     #[inline(always)]
     pub fn get_trade_time(&self) -> i64 { i64::from_ne_bytes(self.trade_time) }
@@ -77,7 +73,7 @@ impl PayoffLog {
 impl Default for PayoffLog {
     fn default() -> Self {
         Self {
-            id: [0; 8],
+            id: 0,
             worker_id: 0,
             pool_id: 0,
             instr_id: 0,
@@ -95,6 +91,7 @@ impl Default for PayoffLog {
 mod tests {
     use super::*;
     use std::mem;
+    use crate::utils::type_size_helper::round_up_to_multiple;
 
     #[test]
     fn test_payoff_log_offsets_and_sizes() {
@@ -115,6 +112,6 @@ mod tests {
         assert_eq!(unsafe { &log.result as *const _ as usize } - base_ptr, PAYOFF_LOG_RESULT_OFFSET);
 
         // checking total size
-        assert_eq!(mem::size_of::<PayoffLog>(), PAYOFF_LOG_SIZE);
+        assert_eq!(mem::size_of::<PayoffLog>(), round_up_to_multiple(PAYOFF_LOG_SIZE, 8));
     }
 }
