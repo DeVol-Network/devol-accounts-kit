@@ -91,7 +91,7 @@ impl Default for PayoffLog {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::utils::type_size_helper::round_up_to_multiple;
+    use crate::utils::type_size_helper::align_size_to;
 
     #[test]
     fn test_payoff_log_offsets_and_sizes() {
@@ -112,6 +112,6 @@ mod tests {
         assert_eq!(unsafe { &log.result as *const _ as usize } - base_ptr, PAYOFF_LOG_RESULT_OFFSET);
 
         // checking total size
-        assert_eq!(mem::size_of::<PayoffLog>(), round_up_to_multiple(PAYOFF_LOG_SIZE, 8));
+        assert_eq!(mem::size_of::<PayoffLog>(), align_size_to(PAYOFF_LOG_SIZE, 8));
     }
 }

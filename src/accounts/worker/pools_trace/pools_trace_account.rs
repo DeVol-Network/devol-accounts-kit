@@ -15,25 +15,13 @@ pub const MAX_POOLS_TRACE_COUNT: usize = 256;
 #[derive(Clone, Copy)]
 pub struct PoolsTraceAccount {
     // 8 bytes, POOLS_TRACE_ACCOUNT_VERSION_OFFSET
-    pub version: [u8; 8],
+    pub version: u64,
     // 32 bytes, POOLS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET
     pub root_address: Pubkey,
     // 4 bytes, POOLS_TRACE_ACCOUNT_WORKER_ID_OFFSET
     pub worker_id: u32,
     // 24576 bytes, POOLS_TRACE_ACCOUNT_DATA_OFFSET
     pub data: [PoolsTrace; MAX_POOLS_TRACE_COUNT],
-}
-
-impl PoolsTraceAccount {
-    #[inline(always)]
-    pub fn get_version(&self) -> i64 {
-        i64::from_ne_bytes(self.version)
-    }
-
-    #[inline(always)]
-    pub fn set_version(&mut self, value: i64) {
-        self.version = value.to_ne_bytes();
-    }
 }
 
 impl DevolAccount for PoolsTraceAccount {
@@ -51,7 +39,7 @@ impl DevolAccount for PoolsTraceAccount {
 impl Default for PoolsTraceAccount {
     fn default() -> Self {
         Self {
-            version: [0; 8],
+            version: 0,
             root_address: Pubkey::default(),
             worker_id: 0,
             data: [PoolsTrace::default(); MAX_POOLS_TRACE_COUNT],
@@ -61,6 +49,7 @@ impl Default for PoolsTraceAccount {
 
 #[cfg(test)]
 mod tests {
+    use crate::utils::type_size_helper::align_size_to;
     use super::*;
 
     #[test]
@@ -87,6 +76,6 @@ mod tests {
         );
 
         // checking total size
-        assert_eq!(std::mem::size_of::<PoolsTraceAccount>(), POOLS_TRACE_ACCOUNT_SIZE);
+        assert_eq!(std::mem::size_of::<PoolsTraceAccount>(), align_size_to(POOLS_TRACE_ACCOUNT_SIZE, 8));
     }
 }

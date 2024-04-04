@@ -15,25 +15,13 @@ pub const MAX_TASKS_TRACE_COUNT: usize = 128;
 #[derive(Clone, Copy)]
 pub struct TasksTraceAccount {
     // 8 bytes, TASKS_TRACE_ACCOUNT_VERSION_OFFSET
-    pub version: [u8; 8],
+    pub version: u64,
     // 32 bytes, TASKS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET
     pub root_address: Pubkey,
     // 4 bytes, TASKS_TRACE_ACCOUNT_WORKER_ID_OFFSET
     pub worker_id: u32,
     // 7680 bytes, TASKS_TRACE_ACCOUNT_DATA_OFFSET
     pub data: [TasksTrace; MAX_TASKS_TRACE_COUNT],
-}
-
-impl TasksTraceAccount {
-    #[inline(always)]
-    pub fn get_version(&self) -> i64 {
-        i64::from_ne_bytes(self.version)
-    }
-
-    #[inline(always)]
-    pub fn set_version(&mut self, value: i64) {
-        self.version = value.to_ne_bytes();
-    }
 }
 
 impl DevolAccount for TasksTraceAccount {
@@ -51,7 +39,7 @@ impl DevolAccount for TasksTraceAccount {
 impl Default for TasksTraceAccount {
     fn default() -> Self {
         Self {
-            version: [0; 8],
+            version: 0,
             root_address: Pubkey::default(),
             worker_id: 0,
             data: [TasksTrace::default(); MAX_TASKS_TRACE_COUNT],
@@ -61,6 +49,7 @@ impl Default for TasksTraceAccount {
 
 #[cfg(test)]
 mod tests {
+    use crate::utils::type_size_helper::align_size_to;
     use super::*;
 
     #[test]
@@ -87,6 +76,6 @@ mod tests {
         );
 
         // checking total size
-        assert_eq!(std::mem::size_of::<TasksTraceAccount>(), TASKS_TRACE_ACCOUNT_SIZE);
+        assert_eq!(std::mem::size_of::<TasksTraceAccount>(), align_size_to(TASKS_TRACE_ACCOUNT_SIZE, 8));
     }
 }
