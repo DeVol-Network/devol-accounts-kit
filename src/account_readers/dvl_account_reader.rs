@@ -2,6 +2,7 @@ use std::error::Error;
 use std::str::FromStr;
 use solana_client::rpc_client::RpcClient;
 use solana_program::pubkey::Pubkey;
+use crate::account_readers::dvl_readable::DvlReadable;
 use crate::generate_pda::{generate_pda, PDA};
 
 pub struct DvlAccountReader {
@@ -17,14 +18,13 @@ pub struct DvlAccountReader {
 }
 
 impl DvlAccountReader {
-    pub fn new(rpc_url: &str, int_seed: usize, admin_public_key_str: &str, program_id_str: &str) -> Result<Self, Box<dyn Error>> {
-        let client = RpcClient::new(String::from(rpc_url));
-        let admin_public_key = Pubkey::from_str(admin_public_key_str)?;
-        let program_id = Pubkey::from_str(program_id_str)?;
+    pub fn new(client: RpcClient, int_seed: usize, admin_public_key_str: &str, program_id_str: &str) -> Self {
+        let admin_public_key = Pubkey::from_str(admin_public_key_str).unwrap();
+        let program_id = Pubkey::from_str(program_id_str).unwrap();
         let root_seed = format!("rt{}", int_seed);
-        let root_pda = generate_pda(&admin_public_key, &root_seed, &program_id)?;
+        let root_pda = generate_pda(&admin_public_key, &root_seed, &program_id);
 
-        Ok(Self {
+        Self {
             client,
             int_seed,
             admin_public_key,
@@ -34,6 +34,10 @@ impl DvlAccountReader {
             root_seed,
             oracle_seed: format!("orcl{}", int_seed),
             root_pda,
-        })
+        }
+    }
+
+    pub fn read<T: DvlReadable>(&self) -> Result<T, Box<dyn Error>> {
+        T::read(self)
     }
 }

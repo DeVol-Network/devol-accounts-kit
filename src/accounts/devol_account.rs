@@ -150,23 +150,18 @@ mod tests {
     use solana_sdk::pubkey::Pubkey;
     use solana_client::rpc_client::RpcClient;
     use crate::accounts::root::root_account::RootAccount;
-
-    pub const RPC_URL: &str = "https://devnet.helius-rpc.com/?api-key=a4fd5524-2f2d-4713-9acf-aeb92a7e503a";
-    pub const INT_SEED: &str = "1012";
-    pub const PROGRAM_ID: &str = "2aJHohZdg4oaSuXGQzSDzZC3BJvEoN5JhpBu9GERiroo";
-    pub const ADMIN_PUBLIC_KEY: &str = "3PvwxG6kyqKGBwYzWSvkuA8e1GqoChnmDR9WkmjJLPBg";
+    use crate::constants::test_constants::{PROGRAM_ID, ROOT_ADDRESS, RPC_URL};
 
     #[test]
     fn test_read_root_account() {
-        let pubkey = Pubkey::from_str("HrWYxhCJgJ6mpBpkF1yvfdMipHBXA7iciVmGaTTz1rqE").unwrap();
+        let root_addr = Pubkey::from_str(ROOT_ADDRESS).unwrap();
         let client = RpcClient::new(String::from(RPC_URL));
-        let mut account_data = client.get_account(&pubkey).unwrap();
-        let root_addr = Pubkey::from_str("HrWYxhCJgJ6mpBpkF1yvfdMipHBXA7iciVmGaTTz1rqE").unwrap();
-        let program_id = Pubkey::from_str("2aJHohZdg4oaSuXGQzSDzZC3BJvEoN5JhpBu9GERiroo").unwrap();
+        let mut account_data = client.get_account(&root_addr).unwrap();
+        let program_id = Pubkey::from_str(PROGRAM_ID).unwrap();
 
         assert_eq!(account_data.data.len(), RootAccount::expected_size());
 
-        match RootAccount::from_account(&pubkey, &mut account_data, &root_addr, &program_id, None) {
+        match RootAccount::from_account(&root_addr, &mut account_data, &root_addr, &program_id, None) {
             Ok(root_account) => {
                 assert!(true, "RootAccount success");
             }
