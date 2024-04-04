@@ -10,6 +10,7 @@ use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
 use crate::constants::HOURS;
 use crate::errors::*;
 
+// Проверить что гет пулс работает (расширение и чтение, запись и чтение, мут/не мут)
 
 pub const CLIENT_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const CLIENT_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -70,20 +71,24 @@ pub struct ClientAccount {
     // 4 bytes, CLIENT_ACCOUNT_LP_COUNT_OFFSET
     pub lp: [ClientLp; MAX_CLIENT_LP_COUNT],
     // 8192 bytes, CLIENT_ACCOUNT_LP_OFFSET
-    pub pools_count: u32,
+    pub pools_count: [u8; 4],
     // 4 bytes, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET
+    /// WARNING!!! Unaligned, wrong address, use getter and setter!
     pools: [ClientPool; 0],                     // extendable size, CLIENT_ACCOUNT_POOLS_OFFSET
 }
 
 impl DevolAccount for ClientAccount {
     #[inline(always)]
-    fn expected_size() -> usize { 1 }
+    fn expected_size() -> usize { 0 }
 
     #[inline(always)]
     fn expected_tag() -> u8 { CLIENT_ACCOUNT_TAG }
 
     #[inline(always)]
     fn expected_version() -> u32 { CLIENT_ACCOUNT_VERSION as u32 }
+
+    #[inline(always)]
+    fn id_offset_if_available() -> usize { CLIENT_ACCOUNT_ID_OFFSET }
 }
 
 impl ClientAccount {
@@ -100,20 +105,28 @@ impl ClientAccount {
     pub fn set_refs(&mut self, value: i64) { self.refs = value.to_ne_bytes() }
 
     #[inline(always)]
+    pub fn get_pools_count(&self) -> u32 { u32::from_ne_bytes(self.pools_count) }
+
+    #[inline(always)]
+    pub fn set_pools_count(&mut self, value: u32) { self.pools_count = value.to_ne_bytes() }
+
+    #[inline(always)]
     pub fn get_pool(&self, index: usize) -> Result<&ClientPool, u32> {
-        if index >= self.pools_count as usize {
+        if index >= self.get_pools_count() as usize {
             return Err(error_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
         }
-        let pools_ptr = self.pools.as_ptr();
+        let pools_count_ptr = self.pools_count.as_ptr();
+        let pools_ptr = unsafe { pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool };
         Ok(unsafe { &*pools_ptr.add(index) })
     }
 
     #[inline(always)]
-    pub fn get_mut_pool(&mut self, index: usize) -> Result<&mut ClientPool, u32> {
-        if index >= self.pools_count as usize {
+    pub fn get_pool_mut(&mut self, index: usize) -> Result<&mut ClientPool, u32> {
+        if index >= self.get_pools_count() as usize {
             return Err(error_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
         }
-        let pools_ptr = self.pools.as_mut_ptr();
+        let pools_count_ptr = self.pools_count.as_mut_ptr();
+        let pools_ptr = unsafe { pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *mut ClientPool};
         Ok(unsafe { &mut *pools_ptr.add(index) })
     }
 }
@@ -138,7 +151,7 @@ impl Default for ClientAccount {
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
             lp_count: 0,
             lp: [ClientLp::default(); MAX_CLIENT_LP_COUNT],
-            pools_count: 0,
+            pools_count: [0; 4],
             pools: [],
         }
     }
@@ -146,6 +159,8 @@ impl Default for ClientAccount {
 
 #[cfg(test)]
 mod tests {
+    use std::mem;
+    use crate::utils::type_size_helper::align_size;
     use super::*;
 
     #[test]
@@ -169,11 +184,11 @@ mod tests {
         assert_eq!(unsafe { &account.refs as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_REFS_OFFSET);
         assert_eq!(unsafe { &account.mints as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_MINTS_OFFSET);
         assert_eq!(unsafe { &account.lp as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_LP_OFFSET);
+        assert_eq!(unsafe { &account.pools_count as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET);
         // WARNING: This test will not pass because of the alignment:
         // assert_eq!(unsafe { &account.pools as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_OFFSET);
 
-        // WARNING: This test will not pass because of the alignment:
-        // assert_eq!(mem::size_of::<ClientAccount>(), CLIENT_ACCOUNT_SIZE);
+        assert_eq!(mem::size_of::<ClientAccount>(), align_size(CLIENT_ACCOUNT_SIZE, 8));
     }
 }
 

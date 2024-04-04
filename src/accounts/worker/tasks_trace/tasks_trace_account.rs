@@ -49,7 +49,7 @@ impl Default for TasksTraceAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::type_size_helper::align_size_to;
+    use crate::utils::type_size_helper::align_size;
     use super::*;
 
     #[test]
@@ -76,6 +76,6 @@ mod tests {
         );
 
         // checking total size
-        assert_eq!(std::mem::size_of::<TasksTraceAccount>(), align_size_to(TASKS_TRACE_ACCOUNT_SIZE, 8));
+        assert_eq!(std::mem::size_of::<TasksTraceAccount>(), align_size(TASKS_TRACE_ACCOUNT_SIZE, 8));
     }
 }
