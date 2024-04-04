@@ -1,2 +1,38 @@
+# You need nightly toolchain to format code
+# To install nightly-> rustup toolchain install nightly
+# To run formatter -> cargo +nightly fmt
+# All rules https://rust-lang.github.io/rustfmt/?version=v1.5.1
+unstable_features = true
+max_width = 80
+wrap_comments = false
+comment_width = 40
+fn_single_line = true
+enum_discrim_align_threshold = 120
+
+# Basic
+use_small_heuristics = "Max"
+
+# Imports
+#imports_granularity = "Crate"
+#reorder_imports = true
+
+# Example of how to ignore files
+#ignore = [
+#    "src/types.rs",
+#    "src/foo/bar.rs",
+#]
+
+# Consistency
+newline_style = "Unix"
+
+# Misc
 binop_separator = "Back"
-max_width = 60
+chain_width = 80
+match_arm_blocks = false
+match_arm_leading_pipes = "Preserve"
+match_block_trailing_comma = true
+reorder_impl_items = false
+spaces_around_ranges = false
+trailing_comma = "Vertical"
+trailing_semicolon = false
+use_field_init_shorthand = true
