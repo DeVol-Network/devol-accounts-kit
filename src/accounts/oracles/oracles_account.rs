@@ -49,10 +49,10 @@ mod tests {
 
         // Check offsets
         // Assuming we have constants for offsets
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, ORACLES_ACCOUNT_HEADER_OFFSET, "Header offset mismatch");
-        assert_eq!(unsafe { &account.count as *const _ as usize } - base_ptr, ORACLES_ACCOUNT_COUNT_OFFSET, "Count offset mismatch");
-        assert_eq!(unsafe { &account.reserved as *const _ as usize } - base_ptr, ORACLES_ACCOUNT_RESERVED_OFFSET, "Reserved offset mismatch");
-        assert_eq!(unsafe { &account.data as *const _ as usize } - base_ptr, ORACLES_ACCOUNT_DATA_OFFSET, "Data array offset mismatch");
+        assert_eq!(&account.header as *const _ as usize - base_ptr, ORACLES_ACCOUNT_HEADER_OFFSET, "Header offset mismatch");
+        assert_eq!(&account.count as *const _ as usize - base_ptr, ORACLES_ACCOUNT_COUNT_OFFSET, "Count offset mismatch");
+        assert_eq!(&account.reserved as *const _ as usize - base_ptr, ORACLES_ACCOUNT_RESERVED_OFFSET, "Reserved offset mismatch");
+        assert_eq!(&account.data as *const _ as usize - base_ptr, ORACLES_ACCOUNT_DATA_OFFSET, "Data array offset mismatch");
 
         // Check total size of the OraclesAccount structure
         assert_eq!(mem::size_of::<OraclesAccount>(), ORACLES_ACCOUNT_SIZE, "Total size of OraclesAccount structure mismatch");

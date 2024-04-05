@@ -1,4 +1,3 @@
-use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
@@ -83,15 +82,15 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size and offset
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, ROOT_ACCOUNT_VERSION_OFFSET);
-        assert_eq!(unsafe { &account.wallet_address as *const _ as usize } - base_ptr, ROOT_ACCOUNT_WALLET_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.kyc_provider as *const _ as usize } - base_ptr, ROOT_ACCOUNT_KYC_PROVIDER_OFFSET);
-        assert_eq!(unsafe { &account.mints_address as *const _ as usize } - base_ptr, ROOT_ACCOUNT_MINTS_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.instruments_address as *const _ as usize } - base_ptr, ROOT_ACCOUNT_INSTRUMENTS_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.workers_address as *const _ as usize } - base_ptr, ROOT_ACCOUNT_WORKERS_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.clients_count as *const _ as usize } - base_ptr, ROOT_ACCOUNT_CLIENTS_COUNT_OFFSET);
-        assert_eq!(unsafe { &account.fee_payer as *const _ as usize } - base_ptr, ROOT_ACCOUNT_KYC_METHOD_OFFSET);
-        assert_eq!(unsafe { &account.max_light_volume as *const _ as usize } - base_ptr, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET);
+        assert_eq!( &account.header as *const _ as usize  - base_ptr, ROOT_ACCOUNT_VERSION_OFFSET);
+        assert_eq!( &account.wallet_address as *const _ as usize  - base_ptr, ROOT_ACCOUNT_WALLET_ADDRESS_OFFSET);
+        assert_eq!( &account.kyc_provider as *const _ as usize  - base_ptr, ROOT_ACCOUNT_KYC_PROVIDER_OFFSET);
+        assert_eq!( &account.mints_address as *const _ as usize  - base_ptr, ROOT_ACCOUNT_MINTS_ADDRESS_OFFSET);
+        assert_eq!( &account.instruments_address as *const _ as usize  - base_ptr, ROOT_ACCOUNT_INSTRUMENTS_ADDRESS_OFFSET);
+        assert_eq!( &account.workers_address as *const _ as usize  - base_ptr, ROOT_ACCOUNT_WORKERS_ADDRESS_OFFSET);
+        assert_eq!( &account.clients_count as *const _ as usize  - base_ptr, ROOT_ACCOUNT_CLIENTS_COUNT_OFFSET);
+        assert_eq!( &account.fee_payer as *const _ as usize  - base_ptr, ROOT_ACCOUNT_KYC_METHOD_OFFSET);
+        assert_eq!( &account.max_light_volume as *const _ as usize  - base_ptr, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<RootAccount>(), ROOT_ACCOUNT_SIZE);

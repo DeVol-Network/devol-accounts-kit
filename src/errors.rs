@@ -1,3 +1,4 @@
+use std::fmt::{Debug, Formatter};
 use crate::accounts::root::root_account::ROOT_ACCOUNT_TAG;
 use crate::accounts::worker::worker_account::WORKER_ACCOUNT_TAG;
 use crate::accounts::all_workers::all_workers_account::ALL_WORKERS_ACCOUNT_TAG;
@@ -237,6 +238,22 @@ pub fn decode_error_code(error_code: u32) -> String {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct ReadAccountError(u32);
+
+impl std::fmt::Display for ReadAccountError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", decode_error_code(self.0))
+    }
+}
+
+impl std::error::Error for ReadAccountError {}
+
+impl From<u32> for ReadAccountError {
+    fn from(code: u32) -> Self {
+        ReadAccountError(code)
+    }
+}
 
 #[cfg(test)]
 mod tests {

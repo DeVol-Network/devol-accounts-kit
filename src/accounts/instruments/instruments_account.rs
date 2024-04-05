@@ -67,9 +67,9 @@ mod tests {
         };
 
         let base_ptr = &account as *const _ as usize;
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, INSTR_ACCOUNT_VERSION_OFFSET);
-        assert_eq!(unsafe { &account.count as *const _ as usize } - base_ptr, INSTR_ACCOUNT_COUNT_OFFSET);
-        assert_eq!(unsafe { &account.data as *const _ as usize } - base_ptr, INSTR_ACCOUNT_DATA_OFFSET);
+        assert_eq!(&account.header as *const _ as usize - base_ptr, INSTR_ACCOUNT_VERSION_OFFSET);
+        assert_eq!(&account.count as *const _ as usize - base_ptr, INSTR_ACCOUNT_COUNT_OFFSET);
+        assert_eq!(&account.data as *const _ as usize - base_ptr, INSTR_ACCOUNT_DATA_OFFSET);
 
         assert_eq!(mem::size_of::<InstrumentsAccount>(), INSTR_ACCOUNT_SIZE);
     }

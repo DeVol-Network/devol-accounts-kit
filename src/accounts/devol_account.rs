@@ -1,5 +1,5 @@
 use std::cell::Ref;
-use std::ops::{Deref, Index};
+use std::error::Error;
 use solana_program::account_info::{Account, IntoAccountInfo};
 use solana_sdk::account_info::AccountInfo;
 use solana_sdk::pubkey::Pubkey;
@@ -7,13 +7,10 @@ use crate::accounts::account_header::AccountHeader;
 use crate::errors::*;
 
 pub trait DevolAccount {
-    #[inline(always)]
     fn expected_size() -> usize;
 
-    #[inline(always)]
     fn expected_tag() -> u8;
 
-    #[inline(always)]
     fn expected_version() -> u32;
 
     /// Returns the offset where an optional ID field is located within the account data.
@@ -133,12 +130,13 @@ pub trait DevolAccount {
         root_addr: &Pubkey,
         program_id: &Pubkey,
         id: Option<u32>,
-    ) -> Result<Self, u32>
+    ) -> Result<Self, Box<dyn Error>>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)
+            .map_err(ReadAccountError::from)?;
         Ok(*account_ref)
     }
 }
@@ -149,7 +147,7 @@ mod tests {
     use super::*;
     use solana_sdk::pubkey::Pubkey;
     use solana_client::rpc_client::RpcClient;
-    use crate::accounts::root::root_account::RootAccount;
+    use crate::accounts::root::root_account::{ROOT_ACCOUNT_TAG, RootAccount};
     use crate::constants::test_constants::{PROGRAM_ID, ROOT_ADDRESS, RPC_URL};
 
     #[test]
@@ -164,8 +162,9 @@ mod tests {
         match RootAccount::from_account(&root_addr, &mut account_data, &root_addr, &program_id, None) {
             Ok(root_account) => {
                 assert!(true, "RootAccount success");
+                assert_eq!(root_account.header.tag, ROOT_ACCOUNT_TAG as u32);
             }
-            Err(e) => panic!("Error building RootAccount: {:?}", decode_error_code(e)),
+            Err(e) => panic!("Error building RootAccount: {:?}", e),
         }
     }
 }

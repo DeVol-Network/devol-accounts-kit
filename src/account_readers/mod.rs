@@ -5,4 +5,3 @@ pub mod read_worker_account;
 pub mod read_instruments_account;
 pub mod dvl_account_reader;
 pub mod dvl_readable;
-mod dvl_reader_error;

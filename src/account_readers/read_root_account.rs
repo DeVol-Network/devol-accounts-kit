@@ -1,7 +1,4 @@
 use std::error::Error;
-use std::str::FromStr;
-use solana_client::rpc_client::RpcClient;
-use solana_sdk::account::{ReadableAccount};
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::DvlReadable;
 use crate::accounts::devol_account::DevolAccount;
@@ -15,7 +12,7 @@ impl DvlReadable for RootAccount {
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            None).unwrap();
+            None)?;
         Ok(root)
     }
 }
