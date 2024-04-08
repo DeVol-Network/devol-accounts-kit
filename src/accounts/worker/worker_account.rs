@@ -239,7 +239,7 @@ mod tests {
             pool_strikes: strikes_array,
             pool_bounds: bounds_array,
             pool_distrib: band_array,
-            svm_params: SvmParams { psi: 0, p: 0, c: 0, vt: 0, v: 0 },
+            svm_params: SvmParams { psi: 0.0, p: 0.0, c: 0.0, vt: 0.0, v: 0.0 },
             margin_vega: 0,
             margin_vanna: 0,
             margin_volga: 0,
