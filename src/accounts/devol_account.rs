@@ -61,7 +61,7 @@ pub trait DevolAccount {
     #[inline(always)]
     fn check_tag_and_version(tag: AccountTag, header: &AccountHeader) -> Result<(), u32> {
         if header.tag != Self::expected_tag() as u32 {
-            Err(error_with_account(tag, ContractError::AccountTag))
+            Err(error_with_account(tag, ContractError::WrongAccountTag))
         } else if header.version > Self::expected_version() {
             Err(error_with_account(tag, ContractError::AccountVersionTooHigh))
         } else if header.version < Self::expected_version() {

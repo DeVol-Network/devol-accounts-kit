@@ -22,7 +22,7 @@ pub enum ContractError {
     AccountSize                 = 0x0001,   // Account size is smaller than expected; this may be a problem with Solana
     AccountOwner                = 0x0002,   // The smart contract is not the owner of this account
     AccountWritableAttribute    = 0x0003,   // The `isWritable` attribute does not match the expected one passed in the transaction
-    AccountTag                  = 0x0004,   // Account type is different from expected (determined by tag)
+    WrongAccountTag             = 0x0004,   // Account type is different from expected (determined by tag)
     AccountVersionTooHigh       = 0x0005,   // The account version is higher than expected by the smart contract
     AccountVersionTooLow        = 0x0006,   // The administrator must upgrade this account
     RootAddress                 = 0x0007,   // The account is not part of the tree of accounts descended from the root account
@@ -57,6 +57,8 @@ pub enum ContractError {
     PriceDiscrepancyError       = 0x0024,   // Significant price variance between oracles exceeds allowable range, preventing trade execution
     MandatoryOracleMissing      = 0x0025,   // Required oracle for price calculation is not provided in the function call
     InvalidAccountId            = 0x0026,   // Invalid account ID
+    InvalidMintId               = 0x0027,   // Invalid mint ID
+
 }
 
 #[repr(u8)]
@@ -232,6 +234,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0024 => " Significant price variance between oracles exceeds allowable range, preventing trade execution",
         0x0025 => " Required oracle for price calculation is not provided in the function call",
         0x0026 => "Invalid account ID",
+        0x0027 => "Invalid mint ID",
         _ => "Unknown error",
     };
 
@@ -328,7 +331,7 @@ mod tests {
 
     #[test]
     fn account_specific_error_account_tag() {
-        let error_code = error_with_account(AccountTag::Worker, ContractError::AccountTag);
+        let error_code = error_with_account(AccountTag::Worker, ContractError::WrongAccountTag);
         assert_eq!(
             decode_error_code(error_code),
             "Error with account Worker: Account type is different from expected (determined by tag)",
