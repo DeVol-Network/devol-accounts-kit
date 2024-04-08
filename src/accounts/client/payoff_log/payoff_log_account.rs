@@ -1,10 +1,7 @@
 use std::error::Error;
-use solana_program::account_info::AccountInfo;
-use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::payoff_log::payoff_log::PayoffLog;
 use crate::accounts::devol_account::DevolAccount;
-use crate::errors::AccountTag;
 
 pub const PAYOFF_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const PAYOFF_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -85,11 +82,11 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size and offset
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, PAYOFF_LOG_ACCOUNT_VERSION_OFFSET);
-        assert_eq!(unsafe { &account.id as *const _ as usize } - base_ptr, PAYOFF_LOG_ACCOUNT_ID_OFFSET);
-        assert_eq!(unsafe { &account.last as *const _ as usize } - base_ptr, PAYOFF_LOG_ACCOUNT_LAST_OFFSET);
-        assert_eq!(unsafe { &account.count as *const _ as usize } - base_ptr, PAYOFF_LOG_ACCOUNT_COUNT_OFFSET);
-        assert_eq!(unsafe { &account.data as *const _ as usize } - base_ptr, PAYOFF_LOG_ACCOUNT_DATA_OFFSET);
+        assert_eq!(&account.header as *const _ as usize - base_ptr, PAYOFF_LOG_ACCOUNT_VERSION_OFFSET);
+        assert_eq!(&account.id as *const _ as usize - base_ptr, PAYOFF_LOG_ACCOUNT_ID_OFFSET);
+        assert_eq!(&account.last as *const _ as usize - base_ptr, PAYOFF_LOG_ACCOUNT_LAST_OFFSET);
+        assert_eq!(&account.count as *const _ as usize - base_ptr, PAYOFF_LOG_ACCOUNT_COUNT_OFFSET);
+        assert_eq!(&account.data as *const _ as usize - base_ptr, PAYOFF_LOG_ACCOUNT_DATA_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<PayoffLogAccount>(), PAYOFF_LOG_ACCOUNT_SIZE);

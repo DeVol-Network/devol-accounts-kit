@@ -10,11 +10,9 @@ use crate::accounts::client::client_account::kyc_status::KYCStatus;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
 use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
-use crate::constants::{HOURS, test_constants};
+use crate::constants::{HOURS};
 use crate::errors::*;
 use crate::utils::type_size_helper::align_size;
-
-// Проверить что гет пулс работает (расширение и чтение, запись и чтение, мут/не мут)
 
 pub const CLIENT_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const CLIENT_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -126,7 +124,7 @@ impl ClientAccount {
     #[inline(always)]
     fn check_size(tag: AccountTag,
                   account: &ClientAccount, actual_size: usize) -> Result<(), u32> {
-        let pools_count = account.get_pools_count();
+        let _ = account.get_pools_count();
         let expected_size = align_size(CLIENT_ACCOUNT_SIZE, 8); // align_size(CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE, 8)
         if expected_size != actual_size {
             Err(error_with_account(tag, ContractError::AccountSize))
@@ -224,10 +222,6 @@ impl DevolAccount for ClientAccount {
     fn expected_version() -> u32 { CLIENT_ACCOUNT_VERSION as u32 }
 }
 
-// let owner = ;
-// let key = Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
-// let root = Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap();
-// let program_id = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
 #[cfg(test)]
 impl Default for ClientAccount {
     fn default() -> Self {
@@ -235,9 +229,9 @@ impl Default for ClientAccount {
             header: AccountHeader{
                 tag: CLIENT_ACCOUNT_TAG as u32,
                 version: CLIENT_ACCOUNT_VERSION as u32,
-                root: Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap(),
+                root: Pubkey::new_unique(),
             },
-            owner_address: Pubkey::from_str(test_constants::PROGRAM_ID).unwrap(),
+            owner_address: Pubkey::new_unique(),
             signer_address: Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap(),
             payoff_log: Pubkey::default(),
             id: 0,
@@ -266,7 +260,7 @@ mod tests {
     use std::str::FromStr;
     use crate::utils::type_size_helper::align_size;
     use super::*;
-    use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
+    use solana_program::account_info::{AccountInfo};
     use crate::constants::test_constants;
 
     #[test]
