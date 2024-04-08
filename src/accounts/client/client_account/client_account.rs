@@ -1,3 +1,4 @@
+use std::str::FromStr;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
@@ -6,11 +7,12 @@ use crate::accounts::client::client_account::client_mint::ClientMint;
 use crate::accounts::client::client_account::client_pool::ClientPool;
 use crate::accounts::client::client_account::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::kyc_status::KYCStatus;
-use crate::accounts::client::client_account::client_devol_account::ClientDevolAccount;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
 use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
-use crate::constants::HOURS;
+use crate::constants::{HOURS, test_constants};
 use crate::errors::*;
+use crate::utils::type_size_helper::align_size;
 
 // Проверить что гет пулс работает (расширение и чтение, запись и чтение, мут/не мут)
 
@@ -39,6 +41,7 @@ pub const CLIENT_ACCOUNT_VERSION: usize = 10;
 pub const MAX_CLIENT_LP_COUNT: usize = 128;
 pub const MAX_CLIENT_POOLS_COUNT: usize = 256;
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct ClientAccount {
     pub header: AccountHeader,          // 40 bytes, CLIENT_ACCOUNT_VERSION_OFFSET
@@ -108,12 +111,12 @@ impl ClientAccount {
     #[inline(always)]
     fn check_signer(
         account: &ClientAccount,
-        signer: Pubkey,
+        signer: &Pubkey,
         devol_sign: bool,) -> Result<(), u32> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        if devol_sign && account.signer_address != signer {
+        if devol_sign && account.signer_address != *signer {
             Err(error_with_account(tag, ContractError::AccountNotSigner))
-        } else if !devol_sign && account.owner_address != signer {
+        } else if !devol_sign && account.owner_address != *signer {
             Err(error_with_account(tag, ContractError::AccountNotSigner))
         } else {
             Ok(())
@@ -124,7 +127,7 @@ impl ClientAccount {
     fn check_size(tag: AccountTag,
                   account: &ClientAccount, actual_size: usize) -> Result<(), u32> {
         let pools_count = account.get_pools_count();
-        let expected_size = CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE;
+        let expected_size = align_size(CLIENT_ACCOUNT_SIZE, 8); // align_size(CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE, 8)
         if expected_size != actual_size {
             Err(error_with_account(tag, ContractError::AccountSize))
         } else {
@@ -137,14 +140,14 @@ impl ClientAccount {
         account_info: &AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: Pubkey,
+        signer: &Pubkey,
         devol_sign: bool,
     ) -> Result<(), u32> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        let header = ClientDevolAccount::account_header(account_info.data.borrow());
-        ClientDevolAccount::check_tag_and_version(tag, header)?;
-        ClientDevolAccount::check_root(tag, header, root_addr)?;
-        ClientDevolAccount::check_program_id(tag, account_info, program_id)?;
+        let header = Self::account_header(account_info.data.borrow());
+        Self::check_tag_and_version(tag, header)?;
+        Self::check_root(tag, header, root_addr)?;
+        Self::check_program_id(tag, account_info, program_id)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
         Self::check_size(tag, account, account_info.data.borrow().len())?;
         Self::check_signer(account, signer, devol_sign)?;
@@ -156,7 +159,7 @@ impl ClientAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: Pubkey,
+        signer: &Pubkey,
         devol_sign: bool,
     ) -> Result<&'a Self, u32>
         where
@@ -173,7 +176,7 @@ impl ClientAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: Pubkey,
+        signer: &Pubkey,
         devol_sign: bool,
     ) -> Result<&'a mut Self, u32>
         where
@@ -193,7 +196,7 @@ impl ClientAccount {
         account: &mut impl Account,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: Pubkey,
+        signer: &Pubkey,
         devol_sign: bool,
     ) -> Result<Self, u32>
         where
@@ -203,15 +206,39 @@ impl ClientAccount {
         let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)?;
         Ok(*account_ref)
     }
+
+    fn serialize_mut(&mut self) -> &mut [u8] {
+        let size = std::mem::size_of::<ClientAccount>();
+        unsafe { std::slice::from_raw_parts_mut(self as *mut _ as *mut u8, size) }
+    }
 }
 
+impl DevolAccount for ClientAccount {
+    #[inline(always)]
+    fn expected_size() -> usize { 0 }
+
+    #[inline(always)]
+    fn expected_tag() -> u8 { CLIENT_ACCOUNT_TAG }
+
+    #[inline(always)]
+    fn expected_version() -> u32 { CLIENT_ACCOUNT_VERSION as u32 }
+}
+
+// let owner = ;
+// let key = Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
+// let root = Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap();
+// let program_id = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
 #[cfg(test)]
 impl Default for ClientAccount {
     fn default() -> Self {
         Self {
-            header: AccountHeader::default(),
-            owner_address: Pubkey::default(),
-            signer_address: Pubkey::default(),
+            header: AccountHeader{
+                tag: CLIENT_ACCOUNT_TAG as u32,
+                version: CLIENT_ACCOUNT_VERSION as u32,
+                root: Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap(),
+            },
+            owner_address: Pubkey::from_str(test_constants::PROGRAM_ID).unwrap(),
+            signer_address: Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap(),
             payoff_log: Pubkey::default(),
             id: 0,
             ops_counter: [0; 8],
@@ -233,9 +260,14 @@ impl Default for ClientAccount {
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
     use std::mem;
+    use std::rc::Rc;
+    use std::str::FromStr;
     use crate::utils::type_size_helper::align_size;
     use super::*;
+    use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
+    use crate::constants::test_constants;
 
     #[test]
     fn test_client_account_offsets() {
@@ -263,6 +295,174 @@ mod tests {
         // assert_eq!(unsafe { &account.pools as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_OFFSET);
 
         assert_eq!(mem::size_of::<ClientAccount>(), align_size(CLIENT_ACCOUNT_SIZE, 8));
+    }
+    #[test]
+    fn test_client_account_pools() {
+        let program_id = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
+        let owner = program_id;
+        let devol_sign = true;
+        let mut lamports: u64 = 0;
+
+        let mut account = ClientAccount::default();
+        let key = account.owner_address;
+        let signer = account.signer_address;
+        let root = account.header.root;
+        let tag = AccountTag::from_u8(account.header.tag as u8).unwrap();
+
+        let serialized_data = account.serialize_mut();
+
+        let account_info = AccountInfo{
+            key: &key,
+            lamports: Rc::new(RefCell::new(&mut lamports)),
+            data: Rc::new(RefCell::new(serialized_data)),
+            owner: &owner,
+            rent_epoch: 0,
+            is_signer: devol_sign,
+            is_writable: false,
+            executable: false,
+        };
+
+        let new_account = ClientAccount::from_account_info(&account_info, &root,
+                                                           &program_id, &signer, devol_sign).unwrap();
+
+        assert_eq!(ClientAccount::check_size(tag, &new_account, account_info.data.borrow().len()), Ok(()));
+
+        const TEST_POOLS_SIZE: usize = 10;
+        let total_size = CLIENT_ACCOUNT_SIZE + TEST_POOLS_SIZE * POOLS_LOG_SIZE;
+
+        let mut buffer_for_account = vec![0u8; total_size];
+        let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut ClientAccount) };
+        *account = ClientAccount::default();
+        account.set_pools_count(TEST_POOLS_SIZE as u32);
+        let check_1 = (0, 228);
+        let check_2 = (7, 69);
+        account.get_pool_mut(check_1.0).unwrap().fractions = check_1.1;
+        account.get_pool_mut(check_2.0).unwrap().instr_id = check_2.1;
+
+        let key = account.owner_address;
+        let signer = account.signer_address;
+        let root = account.header.root;
+        let tag = AccountTag::from_u8(account.header.tag as u8).unwrap();
+
+        let serialized_data = account.serialize_mut();
+
+        let account_info = AccountInfo{
+            key: &key,
+            lamports: Rc::new(RefCell::new(&mut lamports)),
+            data: Rc::new(RefCell::new(serialized_data)),
+            owner: &owner,
+            rent_epoch: 0,
+            is_signer: devol_sign,
+            is_writable: false,
+            executable: false,
+        };
+
+        let new_account = ClientAccount::from_account_info(&account_info, &root,
+                                                           &program_id, &signer, devol_sign).unwrap();
+
+        assert_eq!(ClientAccount::check_size(tag, &new_account, account_info.data.borrow().len()), Ok(()));
+        assert_eq!(new_account.get_pool(check_1.0).unwrap().fractions, check_1.1);
+        assert_eq!(new_account.get_pool(check_2.0).unwrap().instr_id, check_2.1);
+    }
+    #[test]
+    fn test_client_account_check_no_signer() {
+        let owner = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
+        let key = Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
+        let root = Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap();
+        let program_id = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
+        let signer = &key;
+        let is_signer = false;
+        let mut lamports: u64 = 0;
+
+        let mut account = ClientAccount {
+            header: AccountHeader{
+                tag: CLIENT_ACCOUNT_TAG as u32,
+                version: CLIENT_ACCOUNT_VERSION as u32,
+                root,
+            },
+            owner_address: key,
+            signer_address: *signer,
+            payoff_log: Pubkey::default(),
+            id: 0,
+            ops_counter: [0; 8],
+            sign_method: ClientSignMethod::Wallet,
+            kyc_status: KYCStatus::Light,
+            kyc_time: 0,
+            last_day: 0,
+            last_hour: 0,
+            last_trades: [0; 8 * HOURS],
+            refs: [0; 8],
+            mints: [ClientMint::default(); MAX_MINTS_COUNT],
+            lp_count: 0,
+            lp: [ClientLp::default(); MAX_CLIENT_LP_COUNT],
+            pools_count: [0; 4],
+            pools: [],
+        };
+
+        let mut serialized_data = account.serialize_mut();
+
+        let account_info = AccountInfo{
+            key: &key,
+            lamports: Rc::new(RefCell::new(&mut lamports)),
+            data: Rc::new(RefCell::new(serialized_data)),
+            owner: &owner,
+            rent_epoch: 0,
+            is_signer,
+            is_writable: false,
+            executable: false,
+        };
+        assert_eq!(
+            ClientAccount::check_all(&account_info, &root, &program_id, signer, is_signer), Ok(()));
+    }
+    #[test]
+    fn test_client_account_check_with_signer() {
+        let owner = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
+        let key = Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
+        let root = Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap();
+        let program_id = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
+        let signer = Pubkey::from_str("123KkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
+        let devol_sign = true;
+        let mut lamports: u64 = 0;
+
+        let mut account = ClientAccount {
+            header: AccountHeader{
+                tag: CLIENT_ACCOUNT_TAG as u32,
+                version: CLIENT_ACCOUNT_VERSION as u32,
+                root,
+            },
+            owner_address: key,
+            signer_address: signer,
+            payoff_log: Pubkey::default(),
+            id: 0,
+            ops_counter: [0; 8],
+            sign_method: ClientSignMethod::Wallet,
+            kyc_status: KYCStatus::Light,
+            kyc_time: 0,
+            last_day: 0,
+            last_hour: 0,
+            last_trades: [0; 8 * HOURS],
+            refs: [0; 8],
+            mints: [ClientMint::default(); MAX_MINTS_COUNT],
+            lp_count: 0,
+            lp: [ClientLp::default(); MAX_CLIENT_LP_COUNT],
+            pools_count: [0; 4],
+            pools: [],
+        };
+
+        let mut serialized_data = account.serialize_mut();
+
+        let account_info = AccountInfo{
+            key: &key,
+            lamports: Rc::new(RefCell::new(&mut lamports)),
+            data: Rc::new(RefCell::new(serialized_data)),
+            owner: &owner,
+            rent_epoch: 0,
+            is_signer: devol_sign,
+            is_writable: false,
+            executable: false,
+        };
+        assert_eq!(
+            ClientAccount::check_all(&account_info, &root, &program_id, &signer, devol_sign), Ok(()));
     }
 }
 

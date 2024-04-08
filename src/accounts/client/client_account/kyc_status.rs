@@ -1,4 +1,4 @@
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 #[repr(i64)]
 pub enum KYCStatus {
     Blocked = -1,

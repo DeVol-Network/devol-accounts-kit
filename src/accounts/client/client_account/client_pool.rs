@@ -170,6 +170,8 @@ impl Default for ClientPool {
 
 #[cfg(test)]
 mod tests {
+    use std::mem;
+    use crate::utils::type_size_helper::align_size;
     use super::*;
 
     #[test]
@@ -205,7 +207,6 @@ mod tests {
         assert_eq!(unsafe { &account.strikes as *const _ as usize } - base_ptr, CLIENT_POOL_STRIKES_OFFSET);
         assert_eq!(unsafe { &account.bounds as *const _ as usize } - base_ptr, CLIENT_POOL_BOUNDS_OFFSET);
 
-        // WARNING: This test will not pass because of the alignment:
-        // assert_eq!(mem::size_of::<ClientPool>(), CLIENT_POOL_SIZE);
+        assert_eq!(mem::size_of::<ClientPool>(), align_size(CLIENT_POOL_SIZE, 8));
     }
 }
