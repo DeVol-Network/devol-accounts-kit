@@ -54,16 +54,16 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size and offset
-        assert_eq!(unsafe { &account.spot_address as *const _ as usize } - base_ptr, INSTR_SPOT_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.mint_id as *const _ as usize } - base_ptr, INSTR_MINT_ID_OFFSET);
-        assert_eq!(unsafe { &account.px_decimals as *const _ as usize } - base_ptr, INSTR_PX_DECIMALS_OFFSET);
-        assert_eq!(unsafe { &account.strike_decimals as *const _ as usize } - base_ptr, INSTR_STRIKE_DECIMALS_OFFSET);
-        assert_eq!(unsafe { &account.asset_ticker as *const _ as usize } - base_ptr, INSTR_ASSET_TICKER_OFFSET);
-        assert_eq!(unsafe { &account.assigned_oracle_num as *const _ as usize } - base_ptr, INSTR_ASSIGNED_ORACLE_NUM_OFFSET);
-        assert_eq!(unsafe { &account.reserved as *const _ as usize } - base_ptr, INSTR_RESERVED_OFFSET);
-        assert_eq!(unsafe { &account.oracle_time as *const _ as usize } - base_ptr, INSTR_ORACLE_TIME_OFFSET);
-        assert_eq!(unsafe { &account.workers_count as *const _ as usize } - base_ptr, INSTR_WORKERS_COUNT_OFFSET);
-        assert_eq!(unsafe { &account.workers_data as *const _ as usize } - base_ptr, INSTR_WORKERS_DATA_OFFSET);
+        assert_eq!(&account.spot_address as *const _ as usize - base_ptr, INSTR_SPOT_ADDRESS_OFFSET);
+        assert_eq!(&account.mint_id as *const _ as usize - base_ptr, INSTR_MINT_ID_OFFSET);
+        assert_eq!(&account.px_decimals as *const _ as usize - base_ptr, INSTR_PX_DECIMALS_OFFSET);
+        assert_eq!(&account.strike_decimals as *const _ as usize - base_ptr, INSTR_STRIKE_DECIMALS_OFFSET);
+        assert_eq!(&account.asset_ticker as *const _ as usize - base_ptr, INSTR_ASSET_TICKER_OFFSET);
+        assert_eq!(&account.assigned_oracle_num as *const _ as usize - base_ptr, INSTR_ASSIGNED_ORACLE_NUM_OFFSET);
+        assert_eq!(&account.reserved as *const _ as usize - base_ptr, INSTR_RESERVED_OFFSET);
+        assert_eq!(&account.oracle_time as *const _ as usize - base_ptr, INSTR_ORACLE_TIME_OFFSET);
+        assert_eq!(&account.workers_count as *const _ as usize - base_ptr, INSTR_WORKERS_COUNT_OFFSET);
+        assert_eq!(&account.workers_data as *const _ as usize - base_ptr, INSTR_WORKERS_DATA_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<InstrumentsData>(), INSTR_SIZE);

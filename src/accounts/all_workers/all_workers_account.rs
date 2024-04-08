@@ -44,10 +44,10 @@ mod tests {
         let base_ptr = &account as *const _ as usize;
 
         // Check offsets
-        assert_eq!(unsafe { &account.version as *const _ as usize } - base_ptr, ALL_WORKERS_ACCOUNT_VERSION_OFFSET, "Version offset mismatch");
-        assert_eq!(unsafe { &account.root_address as *const _ as usize } - base_ptr, ALL_WORKERS_ACCOUNT_ROOT_ADDRESS_OFFSET, "Root address offset mismatch");
-        assert_eq!(unsafe { &account.count as *const _ as usize } - base_ptr, ALL_WORKERS_ACCOUNT_COUNT_OFFSET, "Count offset mismatch");
-        assert_eq!(unsafe { &account.workers as *const _ as usize } - base_ptr, ALL_WORKERS_ACCOUNT_DATA_OFFSET, "Data array offset mismatch");
+        assert_eq!(&account.version as *const _ as usize - base_ptr, ALL_WORKERS_ACCOUNT_VERSION_OFFSET, "Version offset mismatch");
+        assert_eq!(&account.root_address as *const _ as usize - base_ptr, ALL_WORKERS_ACCOUNT_ROOT_ADDRESS_OFFSET, "Root address offset mismatch");
+        assert_eq!(&account.count as *const _ as usize - base_ptr, ALL_WORKERS_ACCOUNT_COUNT_OFFSET, "Count offset mismatch");
+        assert_eq!(&account.workers as *const _ as usize - base_ptr, ALL_WORKERS_ACCOUNT_DATA_OFFSET, "Data array offset mismatch");
 
         let expected_size = (ALL_WORKERS_ACCOUNT_SIZE + 7) & !7;
         // Check total size of the AllWorkersAccount structure

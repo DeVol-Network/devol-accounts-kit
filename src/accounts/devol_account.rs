@@ -1,5 +1,5 @@
 use std::cell::Ref;
-use std::ops::{Deref, Index};
+use std::error::Error;
 use solana_program::account_info::{Account, IntoAccountInfo};
 use solana_sdk::account_info::AccountInfo;
 use solana_sdk::pubkey::Pubkey;
@@ -7,13 +7,10 @@ use crate::accounts::account_header::AccountHeader;
 use crate::errors::*;
 
 pub trait DevolAccount {
-    #[inline(always)]
     fn expected_size() -> usize;
 
-    #[inline(always)]
     fn expected_tag() -> u8;
 
-    #[inline(always)]
     fn expected_version() -> u32;
 
     /// Returns the offset where an optional ID field is located within the account data.
@@ -133,12 +130,13 @@ pub trait DevolAccount {
         root_addr: &Pubkey,
         program_id: &Pubkey,
         id: Option<u32>,
-    ) -> Result<Self, u32>
+    ) -> Result<Self, Box<dyn Error>>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)
+            .map_err(ReadAccountError::from)?;
         Ok(*account_ref)
     }
 }
@@ -149,28 +147,24 @@ mod tests {
     use super::*;
     use solana_sdk::pubkey::Pubkey;
     use solana_client::rpc_client::RpcClient;
-    use crate::accounts::root::root_account::RootAccount;
-
-    pub const RPC_URL: &str = "https://devnet.helius-rpc.com/?api-key=a4fd5524-2f2d-4713-9acf-aeb92a7e503a";
-    pub const INT_SEED: &str = "1012";
-    pub const PROGRAM_ID: &str = "2aJHohZdg4oaSuXGQzSDzZC3BJvEoN5JhpBu9GERiroo";
-    pub const ADMIN_PUBLIC_KEY: &str = "3PvwxG6kyqKGBwYzWSvkuA8e1GqoChnmDR9WkmjJLPBg";
+    use crate::accounts::root::root_account::{ROOT_ACCOUNT_TAG, RootAccount};
+    use crate::constants::test_constants::{PROGRAM_ID, ROOT_ADDRESS, RPC_URL};
 
     #[test]
     fn test_read_root_account() {
-        let pubkey = Pubkey::from_str("HrWYxhCJgJ6mpBpkF1yvfdMipHBXA7iciVmGaTTz1rqE").unwrap();
+        let root_addr = Pubkey::from_str(ROOT_ADDRESS).unwrap();
         let client = RpcClient::new(String::from(RPC_URL));
-        let mut account_data = client.get_account(&pubkey).unwrap();
-        let root_addr = Pubkey::from_str("HrWYxhCJgJ6mpBpkF1yvfdMipHBXA7iciVmGaTTz1rqE").unwrap();
-        let program_id = Pubkey::from_str("2aJHohZdg4oaSuXGQzSDzZC3BJvEoN5JhpBu9GERiroo").unwrap();
+        let mut account_data = client.get_account(&root_addr).unwrap();
+        let program_id = Pubkey::from_str(PROGRAM_ID).unwrap();
 
         assert_eq!(account_data.data.len(), RootAccount::expected_size());
 
-        match RootAccount::from_account(&pubkey, &mut account_data, &root_addr, &program_id, None) {
+        match RootAccount::from_account(&root_addr, &mut account_data, &root_addr, &program_id, None) {
             Ok(root_account) => {
                 assert!(true, "RootAccount success");
+                assert_eq!(root_account.header.tag, ROOT_ACCOUNT_TAG as u32);
             }
-            Err(e) => panic!("Error building RootAccount: {:?}", decode_error_code(e)),
+            Err(e) => panic!("Error building RootAccount: {:?}", e),
         }
     }
 }

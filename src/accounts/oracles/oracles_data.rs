@@ -63,7 +63,7 @@ impl OracleData {
                             continue;}
                         OracleProvider::Pyth => {
                             let price_feed = SolanaPriceAccount::account_info_to_feed( &account ).
-                                map_err(|e| {
+                                map_err(|_| {
                                     error_with_account(AccountTag::Oracle, ContractError::AssetPriceUnavailable)
                                 })?;
                             let current_price = price_feed.get_price_no_older_than(current_time, oracle_param.max_timestamp_diff_sec as u64).unwrap();
