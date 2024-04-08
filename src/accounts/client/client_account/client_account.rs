@@ -1,3 +1,4 @@
+use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::client_account::client_lp::ClientLp;
@@ -5,8 +6,9 @@ use crate::accounts::client::client_account::client_mint::ClientMint;
 use crate::accounts::client::client_account::client_pool::ClientPool;
 use crate::accounts::client::client_account::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::kyc_status::KYCStatus;
-use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::client::client_account::client_devol_account::ClientDevolAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
+use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
 use crate::constants::HOURS;
 use crate::errors::*;
 
@@ -39,56 +41,25 @@ pub const MAX_CLIENT_POOLS_COUNT: usize = 256;
 
 #[repr(C)]
 pub struct ClientAccount {
-    pub header: AccountHeader,
-    // 40 bytes, CLIENT_ACCOUNT_VERSION_OFFSET
-    pub owner_address: Pubkey,
-    // 32 bytes, CLIENT_ACCOUNT_OWNER_ADDRESS_OFFSET
-    pub signer_address: Pubkey,
-    // 32 bytes, CLIENT_ACCOUNT_SIGNER_ADDRESS_OFFSET
-    pub payoff_log: Pubkey,
-    // 32 bytes, CLIENT_ACCOUNT_PAYOFF_LOG_OFFSET
-    pub id: u32,
-    // 4 bytes, CLIENT_ACCOUNT_ID_OFFSET
-    ops_counter: [u8; 8],
-    // 8 bytes, CLIENT_ACCOUNT_OPS_COUNTER_OFFSET
-    pub sign_method: ClientSignMethod,
-    // 4 bytes, CLIENT_ACCOUNT_SIGN_METHOD_OFFSET
-    pub kyc_status: KYCStatus,
-    // 8 bytes, CLIENT_ACCOUNT_KYC_OFFSET
-    pub kyc_time: u32,
-    // 4 bytes, CLIENT_ACCOUNT_KYC_TIME_OFFSET
-    pub last_day: u32,
-    // 4 bytes, CLIENT_ACCOUNT_LAST_DAY_OFFSET
-    pub last_hour: u32,
-    // 4 bytes, CLIENT_ACCOUNT_LAST_HOUR_OFFSET
-    pub last_trades: [u8; 8 * HOURS],
-    // 192 bytes, CLIENT_ACCOUNT_LAST_TRADES_OFFSET
-    refs: [u8; 8],
-    // 8 bytes, CLIENT_ACCOUNT_REFS_OFFSET
-    pub mints: [ClientMint; MAX_MINTS_COUNT],
-    // 512 bytes, CLIENT_ACCOUNT_MINTS_OFFSET
-    pub lp_count: u32,
-    // 4 bytes, CLIENT_ACCOUNT_LP_COUNT_OFFSET
-    pub lp: [ClientLp; MAX_CLIENT_LP_COUNT],
-    // 8192 bytes, CLIENT_ACCOUNT_LP_OFFSET
-    pub pools_count: [u8; 4],
-    // 4 bytes, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET
+    pub header: AccountHeader,          // 40 bytes, CLIENT_ACCOUNT_VERSION_OFFSET
+    pub owner_address: Pubkey,          // 32 bytes, CLIENT_ACCOUNT_OWNER_ADDRESS_OFFSET
+    pub signer_address: Pubkey,         // 32 bytes, CLIENT_ACCOUNT_SIGNER_ADDRESS_OFFSET
+    pub payoff_log: Pubkey,             // 32 bytes, CLIENT_ACCOUNT_PAYOFF_LOG_OFFSET
+    pub id: u32,                        // 4 bytes, CLIENT_ACCOUNT_ID_OFFSET
+    ops_counter: [u8; 8],               // 8 bytes, CLIENT_ACCOUNT_OPS_COUNTER_OFFSET
+    pub sign_method: ClientSignMethod,  // 4 bytes, CLIENT_ACCOUNT_SIGN_METHOD_OFFSET
+    pub kyc_status: KYCStatus,          // 8 bytes, CLIENT_ACCOUNT_KYC_OFFSET
+    pub kyc_time: u32,                  // 4 bytes, CLIENT_ACCOUNT_KYC_TIME_OFFSET
+    pub last_day: u32,                  // 4 bytes, CLIENT_ACCOUNT_LAST_DAY_OFFSET
+    pub last_hour: u32,                 // 4 bytes, CLIENT_ACCOUNT_LAST_HOUR_OFFSET
+    pub last_trades: [u8; 8 * HOURS],   // 192 bytes, CLIENT_ACCOUNT_LAST_TRADES_OFFSET
+    refs: [u8; 8],                      // 8 bytes, CLIENT_ACCOUNT_REFS_OFFSET
+    pub mints: [ClientMint; MAX_MINTS_COUNT],   // 512 bytes, CLIENT_ACCOUNT_MINTS_OFFSET
+    pub lp_count: u32,                  // 4 bytes, CLIENT_ACCOUNT_LP_COUNT_OFFSET
+    pub lp: [ClientLp; MAX_CLIENT_LP_COUNT],    // 8192 bytes, CLIENT_ACCOUNT_LP_OFFSET
+    pub pools_count: [u8; 4],           // 4 bytes, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET
     /// WARNING!!! Unaligned, wrong address, use getter and setter!
-    pools: [ClientPool; 0],                     // extendable size, CLIENT_ACCOUNT_POOLS_OFFSET
-}
-
-impl DevolAccount for ClientAccount {
-    #[inline(always)]
-    fn expected_size() -> usize { 0 }
-
-    #[inline(always)]
-    fn expected_tag() -> u8 { CLIENT_ACCOUNT_TAG }
-
-    #[inline(always)]
-    fn expected_version() -> u32 { CLIENT_ACCOUNT_VERSION as u32 }
-
-    #[inline(always)]
-    fn id_offset_if_available() -> usize { CLIENT_ACCOUNT_ID_OFFSET }
+    pools: [ClientPool; 0],             // extendable size, CLIENT_ACCOUNT_POOLS_OFFSET
 }
 
 impl ClientAccount {
@@ -116,7 +87,9 @@ impl ClientAccount {
             return Err(error_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
         }
         let pools_count_ptr = self.pools_count.as_ptr();
-        let pools_ptr = unsafe { pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool };
+        let pools_ptr = unsafe {
+            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool
+        };
         Ok(unsafe { &*pools_ptr.add(index) })
     }
 
@@ -126,8 +99,109 @@ impl ClientAccount {
             return Err(error_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
         }
         let pools_count_ptr = self.pools_count.as_mut_ptr();
-        let pools_ptr = unsafe { pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *mut ClientPool};
+        let pools_ptr = unsafe {
+            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *mut ClientPool
+        };
         Ok(unsafe { &mut *pools_ptr.add(index) })
+    }
+
+    #[inline(always)]
+    fn check_signer(
+        account: &ClientAccount,
+        signer: Pubkey,
+        devol_sign: bool,) -> Result<(), u32> {
+        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+        if devol_sign && account.signer_address != signer {
+            Err(error_with_account(tag, ContractError::AccountNotSigner))
+        } else if !devol_sign && account.owner_address != signer {
+            Err(error_with_account(tag, ContractError::AccountNotSigner))
+        } else {
+            Ok(())
+        }
+    }
+
+    #[inline(always)]
+    fn check_size(tag: AccountTag,
+                  account: &ClientAccount, actual_size: usize) -> Result<(), u32> {
+        let pools_count = account.get_pools_count();
+        let expected_size = CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE;
+        if expected_size != actual_size {
+            Err(error_with_account(tag, ContractError::AccountSize))
+        } else {
+            Ok(())
+        }
+    }
+
+    #[inline(always)]
+    fn check_all(
+        account_info: &AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        signer: Pubkey,
+        devol_sign: bool,
+    ) -> Result<(), u32> {
+        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+        let header = ClientDevolAccount::account_header(account_info.data.borrow());
+        ClientDevolAccount::check_tag_and_version(tag, header)?;
+        ClientDevolAccount::check_root(tag, header, root_addr)?;
+        ClientDevolAccount::check_program_id(tag, account_info, program_id)?;
+        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
+        Self::check_size(tag, account, account_info.data.borrow().len())?;
+        Self::check_signer(account, signer, devol_sign)?;
+        Ok(())
+    }
+
+    /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
+    fn from_account_info<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        signer: Pubkey,
+        devol_sign: bool,
+    ) -> Result<&'a Self, u32>
+        where
+            Self: Sized,
+    {
+        Self::check_all(account_info, root_addr, program_id, signer, devol_sign)?;
+        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
+        Ok(account)
+    }
+
+    /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
+    /// Ensures the account is marked as writable.
+    fn from_account_info_mut<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        signer: Pubkey,
+        devol_sign: bool,
+    ) -> Result<&'a mut Self, u32>
+        where
+            Self: Sized,
+    {
+        Self::check_all(account_info, root_addr, program_id, signer, devol_sign)?;
+        if !account_info.is_writable {
+            return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+        }
+        let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
+        Ok(account)
+    }
+
+    /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
+    fn from_account(
+        key: &Pubkey,
+        account: &mut impl Account,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        signer: Pubkey,
+        devol_sign: bool,
+    ) -> Result<Self, u32>
+        where
+            Self: Sized + Copy
+    {
+        let account_info = (key, account).into_account_info();
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)?;
+        Ok(*account_ref)
     }
 }
 
@@ -185,7 +259,7 @@ mod tests {
         assert_eq!(unsafe { &account.mints as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_MINTS_OFFSET);
         assert_eq!(unsafe { &account.lp as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_LP_OFFSET);
         assert_eq!(unsafe { &account.pools_count as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET);
-        // WARNING: This test will not pass because of the alignment:
+        // WARNING: This test will not pass because of the alignment. Getter and setter use correct address.
         // assert_eq!(unsafe { &account.pools as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_OFFSET);
 
         assert_eq!(mem::size_of::<ClientAccount>(), align_size(CLIENT_ACCOUNT_SIZE, 8));
