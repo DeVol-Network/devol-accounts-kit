@@ -4,4 +4,6 @@ pub mod instruments;
 pub mod oracles;
 pub mod all_workers;
 mod account_header;
+pub mod mints;
+pub mod client;
 pub mod devol_account;

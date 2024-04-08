@@ -1,6 +1,10 @@
 pub const BOUNDS_COUNT: usize = 94;
 pub const BUCKETS_COUNT: usize = 95;
 
+pub const VANILLA_COST_SIZE: usize = 4;
+pub const VANILLA_MEMO_SIZE: usize = 49;
+pub const HOURS: usize = 24;
+
 #[cfg(test)]
 pub mod test_constants {
     pub const RPC_URL: &str = "https://devnet.helius-rpc.com/?api-key=a4fd5524-2f2d-4713-9acf-aeb92a7e503a";
