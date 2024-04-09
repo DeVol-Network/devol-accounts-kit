@@ -1,4 +1,3 @@
-// use std::collections::HashMap;
 use std::error::Error;
 use std::str::FromStr;
 use solana_client::rpc_client::RpcClient;
@@ -17,7 +16,6 @@ pub struct DvlAccountReader {
     pub root_seed: String,
     pub oracle_seed: String,
     pub root_pda: PDA,
-    // cached_accounts: HashMap<Pubkey, Box<dyn DvlReadable>>,
 }
 
 impl DvlAccountReader {
@@ -37,7 +35,6 @@ impl DvlAccountReader {
             root_seed,
             oracle_seed: format!("orcl{}", int_seed),
             root_pda,
-            // cached_accounts: HashMap::new(),
         }
     }
 
@@ -51,21 +48,12 @@ impl DvlAccountReader {
         T::read(self, index, id)
     }
 
-    pub fn read_by_public_key<T: DvlReadablePublicKey + DevolAccount + Copy>(&self, public_key: &Pubkey, id: Option<u32>) -> Result<T, Box<dyn Error>>
+    pub fn read_by_public_key<T: DvlReadablePublicKey>(
+        &self,
+        public_key: &Pubkey,
+        id: Option<u32>,
+    ) -> Result<T, Box<dyn Error>>
     {
-        T::read_by_public_key::<T>(self, public_key, id)
+        T::read_by_public_key(self, public_key, id)
     }
-
-
-    // pub fn read_cached<T: DvlReadable + Clone>(&mut self, public_key: &Pubkey) -> Result<T, Box<dyn Error>> {
-    //     if let Some(cached_value) = self.cached_accounts.get(public_key) {
-    //         if let Some(value) = cached_value.as_any().downcast_ref::<T>() {
-    //             return Ok(value.clone());
-    //         }
-    //     }
-    //
-    //     let value = T::read(self, public_key);
-    //     self.cached_accounts.insert(public_key.to_string(), Box::new(value.clone()));
-    //     Ok(value)
-    // }
 }

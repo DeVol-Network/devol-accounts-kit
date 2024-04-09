@@ -4,7 +4,7 @@ use crate::account_readers::dvl_readable::{DvlReadable, DvlReadablePublicKey};
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::root::root_account::RootAccount;
 
-// impl DvlReadablePublicKey for RootAccount {}
+impl DvlReadablePublicKey for RootAccount {}
 
 impl DvlReadable for RootAccount {
     fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
@@ -29,6 +29,7 @@ mod tests {
     fn test_read_root_account() {
         let reader = setup_account_reader();
         let root = reader.read::<RootAccount>(None).unwrap();
+        let root2 = reader.read_by_public_key::<RootAccount>(&reader.root_pda.key, None).unwrap();
         // let root = reader.read_by_public_key::<RootAccount>(&reader.root_pda.key, None).unwrap();
         // let root = reader.read_indexed::<RootAccount>(0).unwrap();
 

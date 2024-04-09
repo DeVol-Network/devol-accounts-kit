@@ -19,12 +19,6 @@ impl DvlReadableIndexed for WorkerAccount {
             &reader.root_pda.key,
             &reader.program_id,
             id)?;
-        // let worker_account =  WorkerAccount::from_account(
-        //     pubkey,
-        //     &mut rpc_data,
-        //     &reader.root_pda.key,
-        //     &reader.program_id,
-        //     None)?;
         Ok(worker_account)
     }
 }
