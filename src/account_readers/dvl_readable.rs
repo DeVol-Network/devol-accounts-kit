@@ -3,14 +3,14 @@ use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::accounts::devol_account::DevolAccount;
 
-pub trait DvlReadablePublicKey: DevolAccount + Copy {
+pub trait DvlReadablePublicKey {
     fn read_by_public_key(
         reader: &DvlAccountReader,
         public_key: &Pubkey,
         id: Option<u32>,
     ) -> Result<Self, Box<dyn Error>>
         where
-            Self: Sized
+            Self: Sized + DevolAccount + Copy
     {
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(

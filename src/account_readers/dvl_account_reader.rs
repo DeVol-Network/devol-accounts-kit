@@ -53,6 +53,8 @@ impl DvlAccountReader {
         public_key: &Pubkey,
         id: Option<u32>,
     ) -> Result<T, Box<dyn Error>>
+    where
+        T: DevolAccount + Copy
     {
         T::read_by_public_key(self, public_key, id)
     }

@@ -10,7 +10,7 @@ use crate::accounts::client::client_account::kyc_status::KYCStatus;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
 use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
-use crate::constants::{HOURS};
+use crate::constants::HOURS;
 use crate::errors::*;
 use crate::utils::type_size_helper::align_size;
 
