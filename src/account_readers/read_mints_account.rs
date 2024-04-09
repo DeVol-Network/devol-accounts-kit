@@ -10,14 +10,8 @@ impl DvlReadablePublicKey for MintsAccount {}
 impl DvlReadable for MintsAccount {
     fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
         let root = reader.read::<RootAccount>(None).unwrap();
-        let pubkey = &root.mints_address;
-        let mut rpc_data = reader.client.get_account(pubkey)?;
-        let account = MintsAccount::from_account(
-            pubkey,
-            &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
-            id)?;
+        let public_key = &root.mints_address;
+        let account =  Self::read_by_public_key(reader, public_key, id)?;
         Ok(account)
     }
 }

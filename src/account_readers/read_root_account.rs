@@ -8,14 +8,8 @@ impl DvlReadablePublicKey for RootAccount {}
 
 impl DvlReadable for RootAccount {
     fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
-        let mut rpc_data = reader.client.get_account(&reader.root_pda.key)?;
-        let root : RootAccount =  RootAccount::from_account(
-            &reader.root_pda.key,
-            &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
-            id)?;
-        Ok(root)
+        let account =  Self::read_by_public_key(reader, &reader.root_pda.key, id)?;
+        Ok(account)
     }
 }
 
@@ -27,7 +21,6 @@ mod tests {
     use crate::accounts::root::root_account::{ROOT_ACCOUNT_TAG, ROOT_ACCOUNT_VERSION};
     use crate::constants::test_constants::ROOT_ADDRESS;
     use crate::tests::tests::setup_account_reader;
-
     #[test]
     fn test_read_root_account() {
         let reader = setup_account_reader();

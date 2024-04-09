@@ -12,16 +12,9 @@ impl DvlReadable for OraclesAccount {
     fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
         let oracle_seed = format!("{}{}", ORACLE_SEED_PREFIX, INT_SEED);
         let oracle_pda = generate_pda(&reader.admin_public_key, &oracle_seed, &reader.program_id);
-        let pubkey = &oracle_pda.key;
-        let mut rpc_data = reader.client.get_account(pubkey)?;
-        let oracles_account = OraclesAccount::from_account(
-            pubkey,
-            &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
-            id)?;
-
-        Ok(oracles_account)
+        let public_key = &oracle_pda.key;
+        let account =  Self::read_by_public_key(reader, public_key, id)?;
+        Ok(account)
     }
 }
 

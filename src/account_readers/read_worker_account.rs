@@ -12,14 +12,8 @@ impl DvlReadableIndexed for WorkerAccount {
         let workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
         let worker = workers_account.workers[index];
         let public_key = &worker.address;
-        let mut rpc_data = reader.client.get_account(public_key)?;
-        let worker_account =  WorkerAccount::from_account(
-            public_key,
-            &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
-            id)?;
-        Ok(worker_account)
+        let account =  Self::read_by_public_key(reader, public_key, id)?;
+        Ok(account)
     }
 }
 
