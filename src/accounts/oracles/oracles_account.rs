@@ -11,6 +11,7 @@ pub const ORACLES_ACCOUNT_TAG: u8 = 13;
 pub const ORACLES_ACCOUNT_VERSION: u32 = 1;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct OraclesAccount {
     pub header: AccountHeader,                      // ORACLES_ACCOUNT_HEADER_OFFSET
     pub count: u32,                                 // ORACLES_ACCOUNT_COUNT_OFFSET
