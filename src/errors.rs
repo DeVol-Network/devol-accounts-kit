@@ -64,6 +64,9 @@ pub enum ContractError {
     InvalidFeePayerOption       = 0x0031,   // Specified fee payer for account opening does not match any valid options
     PoolActiveCannotFinalize    = 0x0032,   // Cannot finalize pool as it is still active (worker is active)
     PoolFinalizeTimeNotReached  = 0x0033,   // Cannot finalize pool as the designated time for finalization has not yet been reached
+    IncorrectExpectedPDA        = 0x0034,   // Provided PDA does not match expected for account creation
+    LamportsTransferFailed      = 0x0035,   // Failed to transfer lamports to newly created account for rent exemption
+    CreatedAccountSizeMismatch  = 0x0036,   // Created account size does not match the expected size
 }
 
 #[allow(dead_code)]
@@ -123,6 +126,9 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0031 => "Specified fee payer for account opening does not match any valid options",
         0x0032 => "Cannot finalize pool as it is still active (worker is active)",
         0x0033 => "Cannot finalize pool as the designated time for finalization has not yet been reached",
+        0x0034 => "Provided PDA does not match expected for account creation",
+        0x0035 => "Failed to transfer lamports to newly created account for rent exemption",
+        0x0036 => "Created account size does not match the expected size",
         _ => "Unknown error",
     };
 
@@ -161,6 +167,7 @@ pub enum AccountTag {
     SystemProgram       = 0x0F,   // PublicKey(0)
     Target              = 0x10,   // For the case when the target account will be determined at runtime
     ExternalOracle      = 0x11,
+    Wallet              = 0x12,   // Connected wallet account
 }
 
 impl AccountTag {
