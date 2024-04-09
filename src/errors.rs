@@ -60,6 +60,7 @@ pub enum ContractError {
     InvalidMintId               = 0x0027,   // Invalid mint ID
     WorkerInvalidState          = 0x0028,   // Operation with worker account cannot proceed due to incorrect state
     TaskStartBeforeCurrentDate  = 0x0029,   // Task cannot start before the current date; adjust task start time
+    MaxWorkersExceeded          = 0x0030,   // Cannot assign new task as the maximum number of workers for the instrument has been reached
 }
 
 #[allow(dead_code)]
@@ -115,6 +116,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0027 => "Invalid mint ID",
         0x0028 => "Operation with worker account cannot proceed due to incorrect state",
         0x0029 => "Task cannot start before the current date; adjust task start time",
+        0x0030 => "Cannot assign new task as the maximum number of workers for the instrument has been reached",
         _ => "Unknown error",
     };
 
