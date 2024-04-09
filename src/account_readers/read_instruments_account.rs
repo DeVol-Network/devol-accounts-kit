@@ -25,14 +25,24 @@ impl DvlReadable for InstrumentsAccount {
 #[cfg(test)]
 mod tests {
     use crate::accounts::instruments::instruments_account::{INSTR_ACCOUNT_TAG, INSTR_ACCOUNT_VERSION, InstrumentsAccount};
+    use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_account_reader;
 
     #[test]
-    fn test_read_root_account() {
+    fn test_read_instruments_account() {
         let reader = setup_account_reader();
+        // Test auto read
         let instruments_account = reader.read::<InstrumentsAccount>(None).unwrap();
+        check_instruments_account(&instruments_account);
+        // Test read by public key
+        let root_account = reader.read::<RootAccount>(None).unwrap();
+        let pubkey = &root_account.instruments_address;
+        let instruments_account = reader.read_by_public_key::<InstrumentsAccount>(pubkey,None).unwrap();
+        check_instruments_account(&instruments_account);
+    }
 
+    fn check_instruments_account(instruments_account: &InstrumentsAccount){
         assert_eq!(instruments_account.header.tag, INSTR_ACCOUNT_TAG as u32);
-        assert_eq!(instruments_account.header.version, INSTR_ACCOUNT_VERSION as u32);
+        assert_eq!(instruments_account.header.version, INSTR_ACCOUNT_VERSION);
     }
 }

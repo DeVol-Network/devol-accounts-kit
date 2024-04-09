@@ -25,14 +25,24 @@ impl DvlReadable for AllWorkersAccount {
 #[cfg(test)]
 mod tests {
     use crate::accounts::all_workers::all_workers_account::{ALL_WORKERS_ACCOUNT_TAG, ALL_WORKERS_ACCOUNT_VERSION, AllWorkersAccount};
+    use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_account_reader;
 
     #[test]
-    fn test_read_root_account() {
+    fn test_read_all_workers_account() {
         let reader = setup_account_reader();
-        let all_worker_account = reader.read::<AllWorkersAccount>(None).unwrap();
+        // Test auto read
+        let all_workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
+        check_all_workers_account(&all_workers_account);
+        // Test read by public key
+        let root_account = reader.read::<RootAccount>(None).unwrap();
+        let pubkey = &root_account.workers_address;
+        let all_workers_account = reader.read_by_public_key::<AllWorkersAccount>(pubkey,None).unwrap();
+        check_all_workers_account(&all_workers_account);
+    }
 
-        assert_eq!(all_worker_account.header.tag, ALL_WORKERS_ACCOUNT_TAG as u32);
-        assert_eq!(all_worker_account.header.version, ALL_WORKERS_ACCOUNT_VERSION as u32);
+    fn check_all_workers_account(all_workers_account: &AllWorkersAccount){
+        assert_eq!(all_workers_account.header.tag, ALL_WORKERS_ACCOUNT_TAG as u32);
+        assert_eq!(all_workers_account.header.version, ALL_WORKERS_ACCOUNT_VERSION as u32);
     }
 }

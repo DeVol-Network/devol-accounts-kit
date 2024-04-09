@@ -59,8 +59,7 @@ mod tests {
         assert_eq!(&account.count as *const _ as usize - base_ptr, ALL_WORKERS_ACCOUNT_COUNT_OFFSET, "Count offset mismatch");
         assert_eq!(&account.workers as *const _ as usize - base_ptr, ALL_WORKERS_ACCOUNT_DATA_OFFSET, "Data array offset mismatch");
 
-        let expected_size = (ALL_WORKERS_ACCOUNT_SIZE + 7) & !7;
         // Check total size of the AllWorkersAccount structure
-        assert_eq!(mem::size_of::<AllWorkersAccount>(), expected_size, "Total size of AllWorkersAccount structure mismatch");
+        assert_eq!(mem::size_of::<AllWorkersAccount>(), ALL_WORKERS_ACCOUNT_SIZE, "Total size of AllWorkersAccount structure mismatch");
     }
 }

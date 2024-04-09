@@ -5,7 +5,7 @@ use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
-// impl DvlReadablePublicKey for WorkerAccount {}
+impl DvlReadablePublicKey for WorkerAccount {}
 
 impl DvlReadableIndexed for WorkerAccount {
     fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
