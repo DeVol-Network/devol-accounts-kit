@@ -7,3 +7,5 @@ pub mod dvl_account_reader;
 pub mod dvl_readable;
 pub mod read_mints_account;
 pub mod read_mint_log_account;
+pub mod read_tasks_trace_account;
+pub mod read_pools_trace_account;
