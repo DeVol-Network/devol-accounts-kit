@@ -67,6 +67,7 @@ pub enum ContractError {
     IncorrectExpectedPDA        = 0x0034,   // Provided PDA does not match expected for account creation
     LamportsTransferFailed      = 0x0035,   // Failed to transfer lamports to newly created account for rent exemption
     CreatedAccountSizeMismatch  = 0x0036,   // Created account size does not match the expected size
+    ZeroVolumeTradeAttempt      = 0x0037,   // Attempting to execute a trade with zero volume is not allowed
 }
 
 #[allow(dead_code)]
@@ -129,6 +130,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0034 => "Provided PDA does not match expected for account creation",
         0x0035 => "Failed to transfer lamports to newly created account for rent exemption",
         0x0036 => "Created account size does not match the expected size",
+        0x0037 => "Attempting to execute a trade with zero volume is not allowed",
         _ => "Unknown error",
     };
 
