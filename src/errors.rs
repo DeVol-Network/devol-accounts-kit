@@ -163,11 +163,12 @@ pub enum AccountTag {
     TradeLog            = 0x0C,
     Oracle              = 0x0D,
     // Other accounts
-    Admin               = 0x0E,
+    Admin               = 0x0E,   // Connected admin wallet
     SystemProgram       = 0x0F,   // PublicKey(0)
     Target              = 0x10,   // For the case when the target account will be determined at runtime
     ExternalOracle      = 0x11,
     Wallet              = 0x12,   // Connected wallet account
+    KycAdmin            = 0x13,   // Connected KYC admin wallet
 }
 
 impl AccountTag {
