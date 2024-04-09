@@ -68,6 +68,7 @@ pub enum ContractError {
     LamportsTransferFailed      = 0x0035,   // Failed to transfer lamports to newly created account for rent exemption
     CreatedAccountSizeMismatch  = 0x0036,   // Created account size does not match the expected size
     ZeroVolumeTradeAttempt      = 0x0037,   // Attempting to execute a trade with zero volume is not allowed
+    TradeOutsideActivePeriod    = 0x0038,   // Trade operation attempted outside allowed activity hours or while pool is inactive
 }
 
 #[allow(dead_code)]
@@ -131,6 +132,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0035 => "Failed to transfer lamports to newly created account for rent exemption",
         0x0036 => "Created account size does not match the expected size",
         0x0037 => "Attempting to execute a trade with zero volume is not allowed",
+        0x0038 => "Trade operation attempted outside allowed activity hours or while pool is inactive",
         _ => "Unknown error",
     };
 
