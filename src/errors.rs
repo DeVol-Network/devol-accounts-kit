@@ -59,7 +59,75 @@ pub enum ContractError {
     InvalidAccountId            = 0x0026,   // Invalid account ID
     InvalidMintId               = 0x0027,   // Invalid mint ID
     WorkerInvalidState          = 0x0028,   // Operation with worker account cannot proceed due to incorrect state
+    TaskStartBeforeCurrentDate  = 0x0029,   // Task cannot start before the current date; adjust task start time
+}
 
+#[allow(dead_code)]
+pub fn decode_error_code(error_code: u32) -> String {
+    let is_new_system = (error_code >> 31) & 1 == 1;
+    if !is_new_system {
+        return format!("Legacy error code: {}", error_code);
+    }
+
+    let account_code = (error_code >> 16) & 0xFF;
+    let contract_error_code = error_code & 0xFFFF;
+
+    let error_description = match contract_error_code {
+        0x0000 => "No errors",
+        0x0001 => "Account size is smaller than expected; this may be a problem with Solana",
+        0x0002 => "The smart contract is not the owner of this account",
+        0x0003 => "The `isWritable` attribute does not match the expected one passed in the transaction",
+        0x0004 => "Account type is different from expected (determined by tag)",
+        0x0005 => "The account version is higher than expected by the smart contract",
+        0x0006 => "The administrator must upgrade this account",
+        0x0007 => "The account is not part of the tree of accounts descended from the root account",
+        0x0008 => "An attempt to resize the account was unsuccessful",
+        0x0009 => "Incorrect instruction data length",
+        0x000A => "For an account with this tag, no actions are provided for this transaction or the tag is invalid",
+        0x000B => "Error sending lamports from the signer's account to the target account",
+        0x000C => "Incorrect size, version, writable attribute, etc., only for legacy checks",
+        0x000D => "Incorrect number of accounts passed to the transaction",
+        0x000E => "A specific account is missing",
+        0x000F => "There is a discrepancy between the order of the accounts passed to the Oracle instruction and the saved settings",
+        0x0010 => "The derived PDA does not match the expected account",
+        0x0011 => "The operation could not be completed due to insufficient funds in the involved account(s)",
+        0x0012 => "Error while creating a new account",
+        0x0013 => "Such an Oracle does not exist",
+        0x0014 => "Such an Instrument does not exist",
+        0x0015 => "Used outdated instruction data format",
+        0x0016 => "Operations halted nearing expiration",
+        0x0017 => "Trade not possible; the option period has ended",
+        0x0018 => "Option order exceeds 0.5% of liquidity pool",
+        0x0019 => "Actual trade cost exceeds set maximum limit",
+        0x001A => "Transaction exceeds daily trading limit",
+        0x001B => "New pool cannot start without initial funding",
+        0x001C => "Cannot determine asset price via oracles",
+        0x001D => "Failed to read current time in smart contract",
+        0x001E => "Error during calculations",
+        0x001F => "Incorrect oracle number",
+        0x0020 => "Transaction must be executed by platform administrator only",
+        0x0021 => "Transaction requires the account to be a signer, but it is not",
+        0x0022 => "Operation on client account attempted by incorrect client (wrong account sequence, missing, or another client's account)",
+        0x0023 => "No record of the targeted pool in client's account",
+        0x0024 => "Significant price variance between oracles exceeds allowable range, preventing trade execution",
+        0x0025 => "Required oracle for price calculation is not provided in the function call",
+        0x0026 => "Invalid account ID",
+        0x0027 => "Invalid mint ID",
+        0x0028 => "Operation with worker account cannot proceed due to incorrect state",
+        0x0029 => "Task cannot start before the current date; adjust task start time",
+        _ => "Unknown error",
+    };
+
+    let account_related = (error_code >> 30) & 1 == 1;
+    if account_related {
+        let account_name = match AccountTag::from_u8(account_code as u8) {
+            Some(account_tag) => format!("{:?}", account_tag),
+            None => "Unknown account".to_string(),
+        };
+        format!("Error with account {}: {}", account_name, error_description)
+    } else {
+        format!("Error: {}", error_description)
+    }
 }
 
 #[repr(u8)]
@@ -183,73 +251,6 @@ pub fn error_with_account(account: AccountTag, error: ContractError) -> u32 {
 #[inline(always)]
 pub fn error_common(error: ContractError) -> u32 {
     make_error(error, None)
-}
-
-#[allow(dead_code)]
-pub fn decode_error_code(error_code: u32) -> String {
-    let is_new_system = (error_code >> 31) & 1 == 1;
-    if !is_new_system {
-        return format!("Legacy error code: {}", error_code);
-    }
-
-    let account_code = (error_code >> 16) & 0xFF;
-    let contract_error_code = error_code & 0xFFFF;
-
-    let error_description = match contract_error_code {
-        0x0000 => "No errors",
-        0x0001 => "Account size is smaller than expected; this may be a problem with Solana",
-        0x0002 => "The smart contract is not the owner of this account",
-        0x0003 => "The `isWritable` attribute does not match the expected one passed in the transaction",
-        0x0004 => "Account type is different from expected (determined by tag)",
-        0x0005 => "The account version is higher than expected by the smart contract",
-        0x0006 => "The administrator must upgrade this account",
-        0x0007 => "The account is not part of the tree of accounts descended from the root account",
-        0x0008 => "An attempt to resize the account was unsuccessful",
-        0x0009 => "Incorrect instruction data length",
-        0x000A => "For an account with this tag, no actions are provided for this transaction or the tag is invalid",
-        0x000B => "Error sending lamports from the signer's account to the target account",
-        0x000C => "Incorrect size, version, writable attribute, etc., only for legacy checks",
-        0x000D => "Incorrect number of accounts passed to the transaction",
-        0x000E => "A specific account is missing",
-        0x000F => "There is a discrepancy between the order of the accounts passed to the Oracle instruction and the saved settings",
-        0x0010 => "The derived PDA does not match the expected account",
-        0x0011 => "The operation could not be completed due to insufficient funds in the involved account(s)",
-        0x0012 => "Error while creating a new account",
-        0x0013 => "Such an Oracle does not exist",
-        0x0014 => "Such an Instrument does not exist",
-        0x0015 => "Used outdated instruction data format",
-        0x0016 => "Operations halted nearing expiration",
-        0x0017 => "Trade not possible; the option period has ended",
-        0x0018 => "Option order exceeds 0.5% of liquidity pool",
-        0x0019 => "Actual trade cost exceeds set maximum limit",
-        0x001A => "Transaction exceeds daily trading limit",
-        0x001B => "New pool cannot start without initial funding",
-        0x001C => "Cannot determine asset price via oracles",
-        0x001D => "Failed to read current time in smart contract",
-        0x001E => "Error during calculations",
-        0x001F => "Incorrect oracle number",
-        0x0020 => "Transaction must be executed by platform administrator only",
-        0x0021 => "Transaction requires the account to be a signer, but it is not",
-        0x0022 => "Operation on client account attempted by incorrect client (wrong account sequence, missing, or another client's account)",
-        0x0023 => "No record of the targeted pool in client's account",
-        0x0024 => "Significant price variance between oracles exceeds allowable range, preventing trade execution",
-        0x0025 => "Required oracle for price calculation is not provided in the function call",
-        0x0026 => "Invalid account ID",
-        0x0027 => "Invalid mint ID",
-        0x0028 => "Operation with worker account cannot proceed due to incorrect state",
-        _ => "Unknown error",
-    };
-
-    let account_related = (error_code >> 30) & 1 == 1;
-    if account_related {
-        let account_name = match AccountTag::from_u8(account_code as u8) {
-            Some(account_tag) => format!("{:?}", account_tag),
-            None => "Unknown account".to_string(),
-        };
-        format!("Error with account {}: {}", account_name, error_description)
-    } else {
-        format!("Error: {}", error_description)
-    }
 }
 
 #[derive(Debug, Clone, Copy)]
