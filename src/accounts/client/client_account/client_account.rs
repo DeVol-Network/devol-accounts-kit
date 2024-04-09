@@ -393,7 +393,7 @@ mod tests {
             pools: [],
         };
 
-        let mut serialized_data = account.serialize_mut();
+        let serialized_data = account.serialize_mut();
 
         let account_info = AccountInfo{
             key: &key,
@@ -443,7 +443,7 @@ mod tests {
             pools: [],
         };
 
-        let mut serialized_data = account.serialize_mut();
+        let serialized_data = account.serialize_mut();
 
         let account_info = AccountInfo{
             key: &key,

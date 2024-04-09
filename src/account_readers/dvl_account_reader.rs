@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use std::error::Error;
 use std::str::FromStr;
 use solana_client::rpc_client::RpcClient;
@@ -17,7 +17,7 @@ pub struct DvlAccountReader {
     pub root_seed: String,
     pub oracle_seed: String,
     pub root_pda: PDA,
-    cached_accounts: HashMap<Pubkey, Box<dyn DvlReadable>>,
+    // cached_accounts: HashMap<Pubkey, Box<dyn DvlReadable>>,
 }
 
 impl DvlAccountReader {
@@ -37,7 +37,7 @@ impl DvlAccountReader {
             root_seed,
             oracle_seed: format!("orcl{}", int_seed),
             root_pda,
-            cached_accounts: HashMap::new(),
+            // cached_accounts: HashMap::new(),
         }
     }
 
