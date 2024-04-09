@@ -269,24 +269,24 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
 
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_VERSION_OFFSET);
-        assert_eq!(unsafe { &account.owner_address as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_OWNER_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.signer_address as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_SIGNER_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.payoff_log as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_PAYOFF_LOG_OFFSET);
-        assert_eq!(unsafe { &account.id as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_ID_OFFSET);
-        assert_eq!(unsafe { &account.ops_counter as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_OPS_COUNTER_OFFSET);
-        assert_eq!(unsafe { &account.sign_method as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_SIGN_METHOD_OFFSET);
-        assert_eq!(unsafe { &account.kyc_status as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_KYC_OFFSET);
-        assert_eq!(unsafe { &account.kyc_time as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_KYC_TIME_OFFSET);
-        assert_eq!(unsafe { &account.last_day as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_LAST_DAY_OFFSET);
-        assert_eq!(unsafe { &account.last_hour as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_LAST_HOUR_OFFSET);
-        assert_eq!(unsafe { &account.last_trades as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_LAST_TRADES_OFFSET);
-        assert_eq!(unsafe { &account.refs as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_REFS_OFFSET);
-        assert_eq!(unsafe { &account.mints as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_MINTS_OFFSET);
-        assert_eq!(unsafe { &account.lp as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_LP_OFFSET);
-        assert_eq!(unsafe { &account.pools_count as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET);
+        assert_eq!(&account.header as *const _ as usize - base_ptr, CLIENT_ACCOUNT_VERSION_OFFSET);
+        assert_eq!(&account.owner_address as *const _ as usize - base_ptr, CLIENT_ACCOUNT_OWNER_ADDRESS_OFFSET);
+        assert_eq!(&account.signer_address as *const _ as usize - base_ptr, CLIENT_ACCOUNT_SIGNER_ADDRESS_OFFSET);
+        assert_eq!(&account.payoff_log as *const _ as usize - base_ptr, CLIENT_ACCOUNT_PAYOFF_LOG_OFFSET);
+        assert_eq!(&account.id as *const _ as usize - base_ptr, CLIENT_ACCOUNT_ID_OFFSET);
+        assert_eq!(&account.ops_counter as *const _ as usize - base_ptr, CLIENT_ACCOUNT_OPS_COUNTER_OFFSET);
+        assert_eq!(&account.sign_method as *const _ as usize - base_ptr, CLIENT_ACCOUNT_SIGN_METHOD_OFFSET);
+        assert_eq!(&account.kyc_status as *const _ as usize - base_ptr, CLIENT_ACCOUNT_KYC_OFFSET);
+        assert_eq!(&account.kyc_time as *const _ as usize - base_ptr, CLIENT_ACCOUNT_KYC_TIME_OFFSET);
+        assert_eq!(&account.last_day as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_DAY_OFFSET);
+        assert_eq!(&account.last_hour as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_HOUR_OFFSET);
+        assert_eq!(&account.last_trades as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_TRADES_OFFSET);
+        assert_eq!(&account.refs as *const _ as usize - base_ptr, CLIENT_ACCOUNT_REFS_OFFSET);
+        assert_eq!(&account.mints as *const _ as usize - base_ptr, CLIENT_ACCOUNT_MINTS_OFFSET);
+        assert_eq!(&account.lp as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LP_OFFSET);
+        assert_eq!(&account.pools_count as *const _ as usize - base_ptr, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET);
         // WARNING: This test will not pass because of the alignment. Getter and setter use correct address.
-        // assert_eq!(unsafe { &account.pools as *const _ as usize } - base_ptr, CLIENT_ACCOUNT_POOLS_OFFSET);
+        // assert_eq!(&account.pools as *const _ as usize - base_ptr, CLIENT_ACCOUNT_POOLS_OFFSET);
 
         assert_eq!(mem::size_of::<ClientAccount>(), align_size(CLIENT_ACCOUNT_SIZE, 8));
     }

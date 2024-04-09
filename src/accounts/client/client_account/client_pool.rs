@@ -180,32 +180,32 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
 
-        assert_eq!(unsafe { &account.id as *const _ as usize } - base_ptr, CLIENT_POOL_ID_OFFSET);
-        assert_eq!(unsafe { &account.worker_id as *const _ as usize } - base_ptr, CLIENT_POOL_WORKER_ID_OFFSET);
-        assert_eq!(unsafe { &account.instr_id as *const _ as usize } - base_ptr, CLIENT_POOL_INSTR_ID_OFFSET);
-        assert_eq!(unsafe { &account.start as *const _ as usize } - base_ptr, CLIENT_POOL_START_OFFSET);
-        assert_eq!(unsafe { &account.expiration as *const _ as usize } - base_ptr, CLIENT_POOL_EXPIRATION_OFFSET);
-        assert_eq!(unsafe { &account.fractions as *const _ as usize } - base_ptr, CLIENT_POOL_FRACTIONS_OFFSET);
-        assert_eq!(unsafe { &account.counter as *const _ as usize } - base_ptr, CLIENT_POOL_COUNTER_OFFSET);
-        assert_eq!(unsafe { &account.orig_counter as *const _ as usize } - base_ptr, CLIENT_POOL_ORIG_COUNTER_OFFSET);
-        assert_eq!(unsafe { &account.time as *const _ as usize } - base_ptr, CLIENT_POOL_TIME_OFFSET);
-        assert_eq!(unsafe { &account.depo as *const _ as usize } - base_ptr, CLIENT_POOL_DEPO_OFFSET);
-        assert_eq!(unsafe { &account.cost as *const _ as usize } - base_ptr, CLIENT_POOL_COST_OFFSET);
-        assert_eq!(unsafe { &account.result as *const _ as usize } - base_ptr, CLIENT_POOL_RESULT_OFFSET);
-        assert_eq!(unsafe { &account.calls as *const _ as usize } - base_ptr, CLIENT_POOL_CALLS_OFFSET);
-        assert_eq!(unsafe { &account.calls_cost as *const _ as usize } - base_ptr, CLIENT_POOL_CALLS_COST_OFFSET);
-        assert_eq!(unsafe { &account.calls_result as *const _ as usize } - base_ptr, CLIENT_POOL_CALLS_RESULT_OFFSET);
-        assert_eq!(unsafe { &account.puts as *const _ as usize } - base_ptr, CLIENT_POOL_PUTS_OFFSET);
-        assert_eq!(unsafe { &account.puts_cost as *const _ as usize } - base_ptr, CLIENT_POOL_PUTS_COST_OFFSET);
-        assert_eq!(unsafe { &account.puts_result as *const _ as usize } - base_ptr, CLIENT_POOL_PUTS_RESULT_OFFSET);
-        assert_eq!(unsafe { &account.last_cost as *const _ as usize } - base_ptr, CLIENT_POOL_LAST_COST_OFFSET);
-        assert_eq!(unsafe { &account.last_fees as *const _ as usize } - base_ptr, CLIENT_POOL_LAST_FEES_OFFSET);
-        assert_eq!(unsafe { &account.last_trade as *const _ as usize } - base_ptr, CLIENT_POOL_LAST_TRADE_OFFSET);
-        assert_eq!(unsafe { &account.vanilla_memo as *const _ as usize } - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET);
-        assert_eq!(unsafe { &account.vanilla_cost as *const _ as usize } - base_ptr, CLIENT_POOL_VANILLA_COST_OFFSET);
-        assert_eq!(unsafe { &account.last_px as *const _ as usize } - base_ptr, CLIENT_POOL_LAST_PX_OFFSET);
-        assert_eq!(unsafe { &account.strikes as *const _ as usize } - base_ptr, CLIENT_POOL_STRIKES_OFFSET);
-        assert_eq!(unsafe { &account.bounds as *const _ as usize } - base_ptr, CLIENT_POOL_BOUNDS_OFFSET);
+        assert_eq!(&account.id as *const _ as usize - base_ptr, CLIENT_POOL_ID_OFFSET);
+        assert_eq!(&account.worker_id as *const _ as usize - base_ptr, CLIENT_POOL_WORKER_ID_OFFSET);
+        assert_eq!(&account.instr_id as *const _ as usize - base_ptr, CLIENT_POOL_INSTR_ID_OFFSET);
+        assert_eq!(&account.start as *const _ as usize - base_ptr, CLIENT_POOL_START_OFFSET);
+        assert_eq!(&account.expiration as *const _ as usize - base_ptr, CLIENT_POOL_EXPIRATION_OFFSET);
+        assert_eq!(&account.fractions as *const _ as usize - base_ptr, CLIENT_POOL_FRACTIONS_OFFSET);
+        assert_eq!(&account.counter as *const _ as usize - base_ptr, CLIENT_POOL_COUNTER_OFFSET);
+        assert_eq!(&account.orig_counter as *const _ as usize - base_ptr, CLIENT_POOL_ORIG_COUNTER_OFFSET);
+        assert_eq!(&account.time as *const _ as usize - base_ptr, CLIENT_POOL_TIME_OFFSET);
+        assert_eq!(&account.depo as *const _ as usize - base_ptr, CLIENT_POOL_DEPO_OFFSET);
+        assert_eq!(&account.cost as *const _ as usize - base_ptr, CLIENT_POOL_COST_OFFSET);
+        assert_eq!(&account.result as *const _ as usize - base_ptr, CLIENT_POOL_RESULT_OFFSET);
+        assert_eq!(&account.calls as *const _ as usize - base_ptr, CLIENT_POOL_CALLS_OFFSET);
+        assert_eq!(&account.calls_cost as *const _ as usize - base_ptr, CLIENT_POOL_CALLS_COST_OFFSET);
+        assert_eq!(&account.calls_result as *const _ as usize - base_ptr, CLIENT_POOL_CALLS_RESULT_OFFSET);
+        assert_eq!(&account.puts as *const _ as usize - base_ptr, CLIENT_POOL_PUTS_OFFSET);
+        assert_eq!(&account.puts_cost as *const _ as usize - base_ptr, CLIENT_POOL_PUTS_COST_OFFSET);
+        assert_eq!(&account.puts_result as *const _ as usize - base_ptr, CLIENT_POOL_PUTS_RESULT_OFFSET);
+        assert_eq!(&account.last_cost as *const _ as usize - base_ptr, CLIENT_POOL_LAST_COST_OFFSET);
+        assert_eq!(&account.last_fees as *const _ as usize - base_ptr, CLIENT_POOL_LAST_FEES_OFFSET);
+        assert_eq!(&account.last_trade as *const _ as usize - base_ptr, CLIENT_POOL_LAST_TRADE_OFFSET);
+        assert_eq!(&account.vanilla_memo as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET);
+        assert_eq!(&account.vanilla_cost as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_COST_OFFSET);
+        assert_eq!(&account.last_px as *const _ as usize - base_ptr, CLIENT_POOL_LAST_PX_OFFSET);
+        assert_eq!(&account.strikes as *const _ as usize - base_ptr, CLIENT_POOL_STRIKES_OFFSET);
+        assert_eq!(&account.bounds as *const _ as usize - base_ptr, CLIENT_POOL_BOUNDS_OFFSET);
 
         assert_eq!(mem::size_of::<ClientPool>(), align_size(CLIENT_POOL_SIZE, 8));
     }

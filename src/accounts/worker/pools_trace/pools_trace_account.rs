@@ -59,19 +59,19 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            unsafe { &account.version as *const _ as usize } - base_ptr,
+            &account.version as *const _ as usize - base_ptr,
             POOLS_TRACE_ACCOUNT_VERSION_OFFSET
         );
         assert_eq!(
-            unsafe { &account.root_address as *const _ as usize } - base_ptr,
+            &account.root_address as *const _ as usize - base_ptr,
             POOLS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET
         );
         assert_eq!(
-            unsafe { &account.worker_id as *const _ as usize } - base_ptr,
+            &account.worker_id as *const _ as usize - base_ptr,
             POOLS_TRACE_ACCOUNT_WORKER_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &account.data as *const _ as usize } - base_ptr,
+            &account.data as *const _ as usize - base_ptr,
             POOLS_TRACE_ACCOUNT_DATA_OFFSET
         );
 

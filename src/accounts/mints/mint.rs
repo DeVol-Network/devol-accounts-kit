@@ -73,13 +73,13 @@ mod tests {
         let base_ptr = &account as *const _ as usize;
 
         // checking fields size and offset
-        assert_eq!(unsafe { &account.address as *const _ as usize } - base_ptr, MINT_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.program_address as *const _ as usize } - base_ptr, MINT_PROGRAM_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.log_address as *const _ as usize } - base_ptr, MINT_LOG_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.ops_counter as *const _ as usize } - base_ptr, MINT_OPS_COUNTER_OFFSET);
-        assert_eq!(unsafe { &account.ticker as *const _ as usize } - base_ptr, MINT_TICKER_OFFSET);
-        assert_eq!(unsafe { &account.own as *const _ as usize } - base_ptr, MINT_OWN_OFFSET);
-        assert_eq!(unsafe { &account.client as *const _ as usize } - base_ptr, MINT_CLIENT_OFFSET);
+        assert_eq!(&account.address as *const _ as usize - base_ptr, MINT_ADDRESS_OFFSET);
+        assert_eq!(&account.program_address as *const _ as usize - base_ptr, MINT_PROGRAM_ADDRESS_OFFSET);
+        assert_eq!(&account.log_address as *const _ as usize - base_ptr, MINT_LOG_ADDRESS_OFFSET);
+        assert_eq!(&account.ops_counter as *const _ as usize - base_ptr, MINT_OPS_COUNTER_OFFSET);
+        assert_eq!(&account.ticker as *const _ as usize - base_ptr, MINT_TICKER_OFFSET);
+        assert_eq!(&account.own as *const _ as usize - base_ptr, MINT_OWN_OFFSET);
+        assert_eq!(&account.client as *const _ as usize - base_ptr, MINT_CLIENT_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<Mint>(), MINT_SIZE);

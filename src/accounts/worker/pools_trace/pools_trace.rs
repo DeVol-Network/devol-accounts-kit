@@ -187,55 +187,55 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            unsafe { &trace.task_id as *const _ as usize } - base_ptr,
+            &trace.task_id as *const _ as usize - base_ptr,
             POOLS_TRACE_TASK_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.expiration as *const _ as usize } - base_ptr,
+            &trace.expiration as *const _ as usize - base_ptr,
             POOLS_TRACE_EXPIRATION_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.update_time as *const _ as usize } - base_ptr,
+            &trace.update_time as *const _ as usize - base_ptr,
             POOLS_TRACE_UPDATE_TIME_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.settlement_px as *const _ as usize } - base_ptr,
+            &trace.settlement_px as *const _ as usize - base_ptr,
             POOLS_TRACE_SETTLEMENT_PX_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.cps_px as *const _ as usize } - base_ptr,
+            &trace.cps_px as *const _ as usize - base_ptr,
             POOLS_TRACE_CPS_PX_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.ps as *const _ as usize } - base_ptr,
+            &trace.ps as *const _ as usize - base_ptr,
             POOLS_TRACE_PS_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.ps_px as *const _ as usize } - base_ptr,
+            &trace.ps_px as *const _ as usize - base_ptr,
             POOLS_TRACE_PS_PX_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.task_fees as *const _ as usize } - base_ptr,
+            &trace.task_fees as *const _ as usize - base_ptr,
             POOLS_TRACE_TASK_FEES_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.payoff_long as *const _ as usize } - base_ptr,
+            &trace.payoff_long as *const _ as usize - base_ptr,
             POOLS_TRACE_PAYOFF_LONG_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.payoff_short as *const _ as usize } - base_ptr,
+            &trace.payoff_short as *const _ as usize - base_ptr,
             POOLS_TRACE_PAYOFF_SHORT_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.rest_of_payoff_long as *const _ as usize } - base_ptr,
+            &trace.rest_of_payoff_long as *const _ as usize - base_ptr,
             POOLS_TRACE_REST_OF_PAYOFF_LONG_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.rest_of_payoff_short as *const _ as usize } - base_ptr,
+            &trace.rest_of_payoff_short as *const _ as usize - base_ptr,
             POOLS_TRACE_REST_OF_PAYOFF_SHORT_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.payoff_time as *const _ as usize } - base_ptr,
+            &trace.payoff_time as *const _ as usize - base_ptr,
             POOLS_TRACE_SETTLEMENT_STRIKE_OFFSET
         );
 

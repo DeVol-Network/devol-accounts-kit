@@ -74,16 +74,16 @@ mod tests {
 
         let base_ptr = &client_lp as *const _ as usize;
 
-        assert_eq!(unsafe { &client_lp.worker_id as *const _ as usize } - base_ptr, CLIENT_LP_WORKER_ID_OFFSET);
-        assert_eq!(unsafe { &client_lp.task_id as *const _ as usize } - base_ptr, CLIENT_LP_TASK_ID_OFFSET);
-        assert_eq!(unsafe { &client_lp.counter as *const _ as usize } - base_ptr, CLIENT_LP_COUNTER_OFFSET);
-        assert_eq!(unsafe { &client_lp.orig_counter as *const _ as usize } - base_ptr, CLIENT_LP_ORIG_COUNTER_OFFSET);
-        assert_eq!(unsafe { &client_lp.time as *const _ as usize } - base_ptr, CLIENT_LP_TIME_OFFSET);
-        assert_eq!(unsafe { &client_lp.ps as *const _ as usize } - base_ptr, CLIENT_LP_PS_OFFSET);
-        assert_eq!(unsafe { &client_lp.ps_cost as *const _ as usize } - base_ptr, CLIENT_LP_PS_COST_OFFSET);
-        assert_eq!(unsafe { &client_lp.ps_result as *const _ as usize } - base_ptr, CLIENT_LP_PS_RESULT_OFFSET);
-        assert_eq!(unsafe { &client_lp.ps_trade_qty as *const _ as usize } - base_ptr, CLIENT_LP_PS_TRADE_QTY_OFFSET);
-        assert_eq!(unsafe { &client_lp.ps_trade_cost as *const _ as usize } - base_ptr, CLIENT_LP_PS_TRADE_COST_OFFSET);
+        assert_eq!(&client_lp.worker_id as *const _ as usize - base_ptr, CLIENT_LP_WORKER_ID_OFFSET);
+        assert_eq!(&client_lp.task_id as *const _ as usize - base_ptr, CLIENT_LP_TASK_ID_OFFSET);
+        assert_eq!(&client_lp.counter as *const _ as usize - base_ptr, CLIENT_LP_COUNTER_OFFSET);
+        assert_eq!(&client_lp.orig_counter as *const _ as usize - base_ptr, CLIENT_LP_ORIG_COUNTER_OFFSET);
+        assert_eq!(&client_lp.time as *const _ as usize - base_ptr, CLIENT_LP_TIME_OFFSET);
+        assert_eq!(&client_lp.ps as *const _ as usize - base_ptr, CLIENT_LP_PS_OFFSET);
+        assert_eq!(&client_lp.ps_cost as *const _ as usize - base_ptr, CLIENT_LP_PS_COST_OFFSET);
+        assert_eq!(&client_lp.ps_result as *const _ as usize - base_ptr, CLIENT_LP_PS_RESULT_OFFSET);
+        assert_eq!(&client_lp.ps_trade_qty as *const _ as usize - base_ptr, CLIENT_LP_PS_TRADE_QTY_OFFSET);
+        assert_eq!(&client_lp.ps_trade_cost as *const _ as usize - base_ptr, CLIENT_LP_PS_TRADE_COST_OFFSET);
 
         assert_eq!(std::mem::size_of::<ClientLp>(), CLIENT_LP_SIZE);
     }

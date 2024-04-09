@@ -109,35 +109,35 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            unsafe { &log.id as *const _ as usize } - base_ptr,
+            &log.id as *const _ as usize - base_ptr,
             LP_TRADE_LOG_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.time as *const _ as usize } - base_ptr,
+            &log.time as *const _ as usize - base_ptr,
             LP_TRADE_LOG_TIME_OFFSET
         );
         assert_eq!(
-            unsafe { &log.worker_id as *const _ as usize } - base_ptr,
+            &log.worker_id as *const _ as usize - base_ptr,
             LP_TRADE_LOG_WORKER_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.task_id as *const _ as usize } - base_ptr,
+            &log.task_id as *const _ as usize - base_ptr,
             LP_TRADE_LOG_TASK_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.counter as *const _ as usize } - base_ptr,
+            &log.counter as *const _ as usize - base_ptr,
             LP_TRADE_LOG_COUNTER_OFFSET
         );
         assert_eq!(
-            unsafe { &log.cost as *const _ as usize } - base_ptr,
+            &log.cost as *const _ as usize - base_ptr,
             LP_TRADE_LOG_COST_OFFSET
         );
         assert_eq!(
-            unsafe { &log.ps as *const _ as usize } - base_ptr,
+            &log.ps as *const _ as usize - base_ptr,
             LP_TRADE_LOG_PS_OFFSET
         );
         assert_eq!(
-            unsafe { &log.ps_px as *const _ as usize } - base_ptr,
+            &log.ps_px as *const _ as usize - base_ptr,
             LP_TRADE_LOG_PS_PX_OFFSET
         );
 
