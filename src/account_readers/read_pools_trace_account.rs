@@ -2,7 +2,6 @@ use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadableIndexed, DvlReadablePublicKey};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::worker::pools_trace::pools_trace_account::PoolsTraceAccount;
 
 impl DvlReadablePublicKey for PoolsTraceAccount {}
@@ -36,8 +35,8 @@ mod tests {
         check_pools_trace_account(&pool_trace_0);
     }
 
-    fn check_pools_trace_account(mint_log_account: &PoolsTraceAccount){
-        assert_eq!(mint_log_account.header.tag, POOLS_TRACE_ACCOUNT_TAG as u32);
-        assert_eq!(mint_log_account.header.version, POOLS_TRACE_ACCOUNT_VERSION);
+    fn check_pools_trace_account(pools_trace_account: &PoolsTraceAccount){
+        assert_eq!(pools_trace_account.header.tag, POOLS_TRACE_ACCOUNT_TAG as u32);
+        assert_eq!(pools_trace_account.header.version, POOLS_TRACE_ACCOUNT_VERSION);
     }
 }

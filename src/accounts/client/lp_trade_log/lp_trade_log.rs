@@ -1,5 +1,3 @@
-use std::mem;
-
 pub const LP_TRADE_LOG_ID_OFFSET: usize = 0;
 pub const LP_TRADE_LOG_TIME_OFFSET: usize = 8;
 pub const LP_TRADE_LOG_WORKER_ID_OFFSET: usize = 16;
@@ -100,6 +98,7 @@ impl Default for LpTradeLog {
 
 #[cfg(test)]
 mod tests {
+    use std::mem;
     use super::*;
 
     #[test]

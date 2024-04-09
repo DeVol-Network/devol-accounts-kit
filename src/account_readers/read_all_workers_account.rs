@@ -2,7 +2,6 @@ use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, DvlReadablePublicKey};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::root::root_account::RootAccount;
 
 impl DvlReadablePublicKey for AllWorkersAccount {}

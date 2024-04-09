@@ -2,7 +2,6 @@ use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadableIndexed, DvlReadablePublicKey};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::worker::tasks_trace::tasks_trace_account::TasksTraceAccount;
 
 impl DvlReadablePublicKey for TasksTraceAccount {}
@@ -36,8 +35,8 @@ mod tests {
         check_tasks_trace_account(&task_trace_0);
     }
 
-    fn check_tasks_trace_account(mint_log_account: &TasksTraceAccount){
-        assert_eq!(mint_log_account.header.tag, TASKS_TRACE_ACCOUNT_TAG as u32);
-        assert_eq!(mint_log_account.header.version, TASKS_TRACE_ACCOUNT_VERSION);
+    fn check_tasks_trace_account(tasks_trace_account: &TasksTraceAccount){
+        assert_eq!(tasks_trace_account.header.tag, TASKS_TRACE_ACCOUNT_TAG as u32);
+        assert_eq!(tasks_trace_account.header.version, TASKS_TRACE_ACCOUNT_VERSION);
     }
 }

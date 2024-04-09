@@ -1,7 +1,6 @@
 use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadableIndexed, DvlReadablePublicKey};
-use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
 use crate::accounts::mints::mints_account::MintsAccount;
 

@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
@@ -9,7 +8,6 @@ use crate::accounts::client::client_account::client_sign_method::ClientSignMetho
 use crate::accounts::client::client_account::kyc_status::KYCStatus;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
-use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
 use crate::constants::HOURS;
 use crate::errors::*;
 use crate::utils::type_size_helper::align_size;
@@ -232,7 +230,7 @@ impl Default for ClientAccount {
                 root: Pubkey::new_unique(),
             },
             owner_address: Pubkey::new_unique(),
-            signer_address: Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap(),
+            signer_address: Pubkey::new_unique(),
             payoff_log: Pubkey::default(),
             id: 0,
             ops_counter: [0; 8],
@@ -261,6 +259,7 @@ mod tests {
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
+    use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
     use crate::constants::test_constants;
 
     #[test]

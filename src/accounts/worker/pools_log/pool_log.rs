@@ -1,4 +1,3 @@
-use std::mem;
 use solana_program::pubkey::Pubkey;
 use crate::constants::{BUCKETS_COUNT, VANILLA_COST_SIZE, VANILLA_MEMO_SIZE};
 pub const POOLS_LOG_ID_OFFSET: usize = 0;
@@ -195,6 +194,7 @@ impl Default for PoolsLog {
 
 #[cfg(test)]
 mod tests {
+    use std::mem;
     use super::*;
 
     #[test]
