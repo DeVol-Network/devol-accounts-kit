@@ -1,5 +1,3 @@
-use std::error::Error;
-
 pub const PAYOFF_LOG_ID_OFFSET: usize = 0;
 pub const PAYOFF_LOG_WORKER_ID_OFFSET: usize = 8;
 pub const PAYOFF_LOG_POOL_ID_OFFSET: usize = 12;
@@ -103,16 +101,16 @@ mod tests {
         let base_ptr = &log as *const _ as usize;
 
         // checking fields size and offset
-        assert_eq!(unsafe { &log.id as *const _ as usize } - base_ptr, PAYOFF_LOG_ID_OFFSET);
-        assert_eq!(unsafe { &log.worker_id as *const _ as usize } - base_ptr, PAYOFF_LOG_WORKER_ID_OFFSET);
-        assert_eq!(unsafe { &log.pool_id as *const _ as usize } - base_ptr, PAYOFF_LOG_POOL_ID_OFFSET);
-        assert_eq!(unsafe { &log.instr_id as *const _ as usize } - base_ptr, PAYOFF_LOG_INSTR_ID_OFFSET);
-        assert_eq!(unsafe { &log.trade_time as *const _ as usize } - base_ptr, PAYOFF_LOG_TRADE_TIME_OFFSET);
-        assert_eq!(unsafe { &log.update_time as *const _ as usize } - base_ptr, PAYOFF_LOG_UPDATE_TIME_OFFSET);
-        assert_eq!(unsafe { &log.settlement_px as *const _ as usize } - base_ptr, PAYOFF_LOG_SETTLEMENT_PX_OFFSET);
-        assert_eq!(unsafe { &log.payoff as *const _ as usize } - base_ptr, PAYOFF_LOG_PAYOFF_OFFSET);
-        assert_eq!(unsafe { &log.unblocked_collateral as *const _ as usize } - base_ptr, PAYOFF_LOG_UNBLOCKED_COLLATERAL_OFFSET);
-        assert_eq!(unsafe { &log.result as *const _ as usize } - base_ptr, PAYOFF_LOG_RESULT_OFFSET);
+        assert_eq!(&log.id as *const _ as usize - base_ptr, PAYOFF_LOG_ID_OFFSET);
+        assert_eq!(&log.worker_id as *const _ as usize - base_ptr, PAYOFF_LOG_WORKER_ID_OFFSET);
+        assert_eq!(&log.pool_id as *const _ as usize - base_ptr, PAYOFF_LOG_POOL_ID_OFFSET);
+        assert_eq!(&log.instr_id as *const _ as usize - base_ptr, PAYOFF_LOG_INSTR_ID_OFFSET);
+        assert_eq!(&log.trade_time as *const _ as usize - base_ptr, PAYOFF_LOG_TRADE_TIME_OFFSET);
+        assert_eq!(&log.update_time as *const _ as usize - base_ptr, PAYOFF_LOG_UPDATE_TIME_OFFSET);
+        assert_eq!(&log.settlement_px as *const _ as usize - base_ptr, PAYOFF_LOG_SETTLEMENT_PX_OFFSET);
+        assert_eq!(&log.payoff as *const _ as usize - base_ptr, PAYOFF_LOG_PAYOFF_OFFSET);
+        assert_eq!(&log.unblocked_collateral as *const _ as usize - base_ptr, PAYOFF_LOG_UNBLOCKED_COLLATERAL_OFFSET);
+        assert_eq!(&log.result as *const _ as usize - base_ptr, PAYOFF_LOG_RESULT_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<PayoffLog>(), align_size(PAYOFF_LOG_SIZE, 4));

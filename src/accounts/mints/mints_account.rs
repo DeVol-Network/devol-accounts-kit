@@ -1,4 +1,3 @@
-use std::error::Error;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::mints::mint::Mint;
@@ -60,9 +59,9 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size and offset
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, MINTS_ACCOUNT_VERSION_OFFSET);
-        assert_eq!(unsafe { &account.count as *const _ as usize } - base_ptr, MINTS_ACCOUNT_COUNT_OFFSET);
-        assert_eq!(unsafe { &account.data as *const _ as usize } - base_ptr, MINTS_ACCOUNT_DATA_OFFSET);
+        assert_eq!(&account.header as *const _ as usize - base_ptr, MINTS_ACCOUNT_VERSION_OFFSET);
+        assert_eq!(&account.count as *const _ as usize - base_ptr, MINTS_ACCOUNT_COUNT_OFFSET);
+        assert_eq!(&account.data as *const _ as usize - base_ptr, MINTS_ACCOUNT_DATA_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<MintsAccount>(), MINTS_ACCOUNT_SIZE);

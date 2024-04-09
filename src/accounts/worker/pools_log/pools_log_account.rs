@@ -63,23 +63,23 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            unsafe { &account.header as *const _ as usize } - base_ptr,
+            &account.header as *const _ as usize - base_ptr,
             0
         );
         assert_eq!(
-            unsafe { &account.worker_id as *const _ as usize } - base_ptr,
+            &account.worker_id as *const _ as usize - base_ptr,
             POOLS_LOG_ACCOUNT_WORKER_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &account.last as *const _ as usize } - base_ptr,
+            &account.last as *const _ as usize - base_ptr,
             POOLS_LOG_ACCOUNT_LAST_OFFSET
         );
         assert_eq!(
-            unsafe { &account.count as *const _ as usize } - base_ptr,
+            &account.count as *const _ as usize - base_ptr,
             POOLS_LOG_ACCOUNT_COUNT_OFFSET
         );
         assert_eq!(
-            unsafe { &account.data as *const _ as usize } - base_ptr,
+            &account.data as *const _ as usize - base_ptr,
             POOLS_LOG_ACCOUNT_DATA_OFFSET
         );
 

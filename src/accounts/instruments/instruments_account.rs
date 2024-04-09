@@ -12,6 +12,7 @@ pub const INSTR_ACCOUNT_TAG: u8 = 2;
 pub const INSTR_ACCOUNT_VERSION: u32 = 4;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct InstrumentsAccount {
     pub header: AccountHeader,                        // INSTR_ACCOUNT_VERSION_OFFSET
     pub count: u32,                                   // INSTR_ACCOUNT_COUNT_OFFSET

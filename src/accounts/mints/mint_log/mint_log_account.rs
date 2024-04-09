@@ -1,4 +1,3 @@
-use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
@@ -70,12 +69,12 @@ mod tests {
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size and offset
-        assert_eq!(unsafe { &account.header as *const _ as usize } - base_ptr, MINT_LOG_ACCOUNT_VERSION_OFFSET);
-        assert_eq!(unsafe { &account.mints_address as *const _ as usize } - base_ptr, MINT_LOG_ACCOUNT_MINTS_ADDRESS_OFFSET);
-        assert_eq!(unsafe { &account.mint_id as *const _ as usize } - base_ptr, MINT_LOG_ACCOUNT_MINT_ID_OFFSET);
-        assert_eq!(unsafe { &account.last as *const _ as usize } - base_ptr, MINT_LOG_ACCOUNT_LAST_OFFSET);
-        assert_eq!(unsafe { &account.count as *const _ as usize } - base_ptr, MINT_LOG_ACCOUNT_COUNT_OFFSET);
-        assert_eq!(unsafe { &account.data as *const _ as usize } - base_ptr, MINT_LOG_ACCOUNT_DATA_OFFSET);
+        assert_eq!(&account.header as *const _ as usize - base_ptr, MINT_LOG_ACCOUNT_VERSION_OFFSET);
+        assert_eq!(&account.mints_address as *const _ as usize - base_ptr, MINT_LOG_ACCOUNT_MINTS_ADDRESS_OFFSET);
+        assert_eq!(&account.mint_id as *const _ as usize - base_ptr, MINT_LOG_ACCOUNT_MINT_ID_OFFSET);
+        assert_eq!(&account.last as *const _ as usize - base_ptr, MINT_LOG_ACCOUNT_LAST_OFFSET);
+        assert_eq!(&account.count as *const _ as usize - base_ptr, MINT_LOG_ACCOUNT_COUNT_OFFSET);
+        assert_eq!(&account.data as *const _ as usize - base_ptr, MINT_LOG_ACCOUNT_DATA_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<MintLogAccount>(), MINT_LOG_ACCOUNT_SIZE);

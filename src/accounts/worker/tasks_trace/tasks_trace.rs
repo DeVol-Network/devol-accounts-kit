@@ -121,39 +121,39 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            unsafe { &trace.instr_id as *const _ as usize } - base_ptr,
+            &trace.instr_id as *const _ as usize - base_ptr,
             TASKS_TRACE_INSTR_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.first_time as *const _ as usize } - base_ptr,
+            &trace.first_time as *const _ as usize - base_ptr,
             TASKS_TRACE_FIRST_TIME_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.duration as *const _ as usize } - base_ptr,
+            &trace.duration as *const _ as usize - base_ptr,
             TASKS_TRACE_DURATION_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.init_px as *const _ as usize } - base_ptr,
+            &trace.init_px as *const _ as usize - base_ptr,
             TASKS_TRACE_INIT_PX_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.update_time as *const _ as usize } - base_ptr,
+            &trace.update_time as *const _ as usize - base_ptr,
             TASKS_TRACE_UPDATE_TIME_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.ps as *const _ as usize } - base_ptr,
+            &trace.ps as *const _ as usize - base_ptr,
             TASKS_TRACE_PS_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.ps_px as *const _ as usize } - base_ptr,
+            &trace.ps_px as *const _ as usize - base_ptr,
             TASKS_TRACE_PS_PX_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.cancel_time as *const _ as usize } - base_ptr,
+            &trace.cancel_time as *const _ as usize - base_ptr,
             TASKS_TRACE_CANCEL_TIME_OFFSET
         );
         assert_eq!(
-            unsafe { &trace.payoff_time as *const _ as usize } - base_ptr,
+            &trace.payoff_time as *const _ as usize - base_ptr,
             TASKS_TRACE_PAYOFF_TIME_OFFSET
         );
 

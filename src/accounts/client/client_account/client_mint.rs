@@ -43,8 +43,8 @@ mod tests {
 
         let base_ptr = &client_mint as *const _ as usize;
 
-        assert_eq!(unsafe { &client_mint.available as *const _ as usize } - base_ptr, CLIENT_MINT_AVAILABLE_OFFSET);
-        assert_eq!(unsafe { &client_mint.blocked as *const _ as usize } - base_ptr, CLIENT_MINT_BLOCKED_OFFSET);
+        assert_eq!(&client_mint.available as *const _ as usize - base_ptr, CLIENT_MINT_AVAILABLE_OFFSET);
+        assert_eq!(&client_mint.blocked as *const _ as usize - base_ptr, CLIENT_MINT_BLOCKED_OFFSET);
 
         assert_eq!(std::mem::size_of::<ClientMint>(), CLIENT_MINT_SIZE);
     }

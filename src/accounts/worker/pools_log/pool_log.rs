@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::mem;
 use solana_program::pubkey::Pubkey;
 use crate::constants::{BUCKETS_COUNT, VANILLA_COST_SIZE, VANILLA_MEMO_SIZE};
@@ -205,59 +204,59 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            unsafe { &log.id as *const _ as usize } - base_ptr,
+            &log.id as *const _ as usize - base_ptr,
             POOLS_LOG_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.time as *const _ as usize } - base_ptr,
+            &log.time as *const _ as usize - base_ptr,
             POOLS_LOG_TIME_OFFSET
         );
         assert_eq!(
-            unsafe { &log.event_type as *const _ as usize } - base_ptr,
+            &log.event_type as *const _ as usize - base_ptr,
             POOLS_LOG_EVENT_TYPE_OFFSET
         );
         assert_eq!(
-            unsafe { &log.fractions as *const _ as usize } - base_ptr,
+            &log.fractions as *const _ as usize - base_ptr,
             POOLS_LOG_FRACTIONS_OFFSET
         );
         assert_eq!(
-            unsafe { &log.task_id as *const _ as usize } - base_ptr,
+            &log.task_id as *const _ as usize - base_ptr,
             POOLS_LOG_TASK_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.pool_id as *const _ as usize } - base_ptr,
+            &log.pool_id as *const _ as usize - base_ptr,
             POOLS_LOG_POOL_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.instr_id as *const _ as usize } - base_ptr,
+            &log.instr_id as *const _ as usize - base_ptr,
             POOLS_LOG_INSTR_ID_OFFSET
         );
         assert_eq!(
-            unsafe { &log.counter as *const _ as usize } - base_ptr,
+            &log.counter as *const _ as usize - base_ptr,
             POOLS_LOG_COUNTER_OFFSET
         );
         assert_eq!(
-            unsafe { &log.pubkey as *const _ as usize } - base_ptr,
+            &log.pubkey as *const _ as usize - base_ptr,
             POOLS_LOG_PUBKEY_OFFSET
         );
         assert_eq!(
-            unsafe { &log.cost as *const _ as usize } - base_ptr,
+            &log.cost as *const _ as usize - base_ptr,
             POOLS_LOG_COST_OFFSET
         );
         assert_eq!(
-            unsafe { &log.px as *const _ as usize } - base_ptr,
+            &log.px as *const _ as usize - base_ptr,
             POOLS_LOG_PX_OFFSET
         );
         assert_eq!(
-            unsafe { &log.qty as *const _ as usize } - base_ptr,
+            &log.qty as *const _ as usize - base_ptr,
             POOLS_LOG_QTY_OFFSET
         );
         assert_eq!(
-            unsafe { &log.vanilla_memo as *const _ as usize } - base_ptr,
+            &log.vanilla_memo as *const _ as usize - base_ptr,
             POOLS_LOG_VANILLA_MEMO_OFFSET
         );
         assert_eq!(
-            unsafe { &log.vanilla_cost as *const _ as usize } - base_ptr,
+            &log.vanilla_cost as *const _ as usize - base_ptr,
             POOLS_LOG_VANILLA_COST_OFFSET
         );
 

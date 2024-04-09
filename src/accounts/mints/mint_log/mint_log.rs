@@ -69,13 +69,13 @@ mod tests {
         let base_ptr = &account as *const _ as usize;
 
         // checking fields size and offset
-        assert_eq!(unsafe { &account.id as *const _ as usize } - base_ptr, MINT_LOG_ID_OFFSET);
-        assert_eq!(unsafe { &account.time as *const _ as usize } - base_ptr, MINT_LOG_TIME_OFFSET);
-        assert_eq!(unsafe { &account.event_type as *const _ as usize } - base_ptr, MINT_LOG_EVENT_TYPE_OFFSET);
-        assert_eq!(unsafe { &account.pubkey as *const _ as usize } - base_ptr, MINT_LOG_PUBKEY_OFFSET);
-        assert_eq!(unsafe { &account.own as *const _ as usize } - base_ptr, MINT_LOG_OWN_OFFSET);
-        assert_eq!(unsafe { &account.client as *const _ as usize } - base_ptr, MINT_LOG_CLIENT_OFFSET);
-        assert_eq!(unsafe { &account.sum as *const _ as usize } - base_ptr, MINT_LOG_SUM_OFFSET);
+        assert_eq!(&account.id as *const _ as usize - base_ptr, MINT_LOG_ID_OFFSET);
+        assert_eq!(&account.time as *const _ as usize - base_ptr, MINT_LOG_TIME_OFFSET);
+        assert_eq!(&account.event_type as *const _ as usize - base_ptr, MINT_LOG_EVENT_TYPE_OFFSET);
+        assert_eq!(&account.pubkey as *const _ as usize - base_ptr, MINT_LOG_PUBKEY_OFFSET);
+        assert_eq!(&account.own as *const _ as usize - base_ptr, MINT_LOG_OWN_OFFSET);
+        assert_eq!(&account.client as *const _ as usize - base_ptr, MINT_LOG_CLIENT_OFFSET);
+        assert_eq!(&account.sum as *const _ as usize - base_ptr, MINT_LOG_SUM_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<MintLog>(), MINT_LOG_SIZE);

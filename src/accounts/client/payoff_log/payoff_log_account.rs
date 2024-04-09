@@ -1,4 +1,3 @@
-use std::error::Error;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::payoff_log::payoff_log::PayoffLog;
 use crate::accounts::devol_account::DevolAccount;
@@ -46,23 +45,6 @@ impl Default for PayoffLogAccount {
         }
     }
 }
-
-// pub fn check_client_results_log_account(
-//     account: &AccountInfo,
-//     root_key: Pubkey,
-//     program_id: &Pubkey,
-//     id: u32,
-// ) -> bool {
-//     if account.owner != program_id
-//         || !account.is_writable
-//         || payoff_log_account_id!(account) != id
-//         || unsafe { *(account.data.borrow().as_ptr() as *const i64) }
-//         != version!(PAYOFF_LOG_ACCOUNT_VERSION, PAYOFF_LOG_ACCOUNT_TAG)
-//     {
-//         return false;
-//     }
-//     return unsafe { *(account.data.borrow()[8..40].as_ptr() as *const Pubkey) } == root_key;
-// }
 
 #[cfg(test)]
 mod tests {
