@@ -7,7 +7,7 @@ use crate::accounts::mints::mints_account::MintsAccount;
 impl DvlReadablePublicKey for MintLogAccount {}
 
 impl DvlReadableIndexed for MintLogAccount {
-    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
+    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let mints_account = reader.read::<MintsAccount>(None).unwrap();
         let public_key = &mints_account.data[index].log_address;
         let account =  Self::read_by_public_key(reader, public_key, id)?;

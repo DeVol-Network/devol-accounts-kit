@@ -38,12 +38,12 @@ impl DvlAccountReader {
         }
     }
 
-    pub fn read<T: DvlReadable>(&self, id: Option<u32>) -> Result<T, Box<dyn Error>>
+    pub fn read<T: DvlReadable>(&self, id: Option<u32>) -> Result<Box<T>, Box<dyn Error>>
     {
         T::read(self, id)
     }
 
-    pub fn read_indexed<T: DvlReadableIndexed>(&self, index: usize, id: Option<u32>) -> Result<T, Box<dyn Error>>
+    pub fn read_indexed<T: DvlReadableIndexed>(&self, index: usize, id: Option<u32>) -> Result<Box<T>, Box<dyn Error>>
     {
         T::read(self, index, id)
     }
@@ -52,7 +52,7 @@ impl DvlAccountReader {
         &self,
         public_key: &Pubkey,
         id: Option<u32>,
-    ) -> Result<T, Box<dyn Error>>
+    ) -> Result<Box<T>, Box<dyn Error>>
     where
         T: DevolAccount + Copy
     {

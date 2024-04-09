@@ -130,14 +130,14 @@ pub trait DevolAccount {
         root_addr: &Pubkey,
         program_id: &Pubkey,
         id: Option<u32>,
-    ) -> Result<Self, Box<dyn Error>>
+    ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
         let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)
             .map_err(ReadAccountError::from)?;
-        Ok(*account_ref)
+        Ok(Box::new(*account_ref))
     }
 }
 

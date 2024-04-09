@@ -7,7 +7,7 @@ use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
 impl DvlReadablePublicKey for PoolsLogAccount {}
 
 impl DvlReadableIndexed for PoolsLogAccount {
-    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
+    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
         let worker = workers_account.workers[index];
         let public_key = &worker.pools_log_address;

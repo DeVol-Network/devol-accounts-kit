@@ -7,7 +7,7 @@ use crate::accounts::worker::tasks_trace::tasks_trace_account::TasksTraceAccount
 impl DvlReadablePublicKey for TasksTraceAccount {}
 
 impl DvlReadableIndexed for TasksTraceAccount {
-    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
+    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
         let worker = workers_account.workers[index];
         let public_key = &worker.tasks_trace_address;

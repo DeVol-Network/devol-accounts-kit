@@ -8,7 +8,7 @@ pub trait DvlReadablePublicKey {
         reader: &DvlAccountReader,
         public_key: &Pubkey,
         id: Option<u32>,
-    ) -> Result<Self, Box<dyn Error>>
+    ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + DevolAccount + Copy
     {
@@ -24,12 +24,12 @@ pub trait DvlReadablePublicKey {
     }
 }
 pub trait DvlReadableIndexed {
-    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Self, Box<dyn Error>>
+    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
 }
 pub trait DvlReadable {
-    fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>>
+    fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
 }

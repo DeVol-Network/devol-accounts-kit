@@ -6,7 +6,7 @@ use crate::accounts::root::root_account::RootAccount;
 impl DvlReadablePublicKey for RootAccount {}
 
 impl DvlReadable for RootAccount {
-    fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
+    fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let account =  Self::read_by_public_key(reader, &reader.root_pda.key, id)?;
         Ok(account)
     }
