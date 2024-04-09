@@ -1,6 +1,4 @@
-use std::error::Error;
 use solana_program::pubkey::Pubkey;
-use crate::accounts::devol_account::DevolAccount;
 
 pub const MINT_ADDRESS_OFFSET: usize = 0;
 pub const MINT_PROGRAM_ADDRESS_OFFSET: usize = 32;

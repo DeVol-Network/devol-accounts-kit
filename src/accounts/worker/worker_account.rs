@@ -66,6 +66,7 @@ pub const WORKER_ACCOUNT_TAG: u8 = 7;
 pub const WORKER_ACCOUNT_VERSION: u32 = 14;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct WorkerAccount {
     pub header: AccountHeader,              //  40 bytes
     pub id: u32,                            //  4 bytes, WORKER_ACCOUNT_ID_OFFSET

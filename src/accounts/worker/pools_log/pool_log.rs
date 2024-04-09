@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::mem;
 use solana_program::pubkey::Pubkey;
 use crate::constants::{BUCKETS_COUNT, VANILLA_COST_SIZE, VANILLA_MEMO_SIZE};

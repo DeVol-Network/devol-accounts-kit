@@ -1,4 +1,3 @@
-use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;

@@ -1,8 +1,10 @@
+use std::collections::HashMap;
 use std::error::Error;
 use std::str::FromStr;
 use solana_client::rpc_client::RpcClient;
 use solana_program::pubkey::Pubkey;
-use crate::account_readers::dvl_readable::DvlReadable;
+use crate::account_readers::dvl_readable::{DvlReadable, DvlReadableIndexed, DvlReadablePublicKey};
+use crate::accounts::devol_account::DevolAccount;
 use crate::generate_pda::{generate_pda, PDA};
 
 pub struct DvlAccountReader {
@@ -15,6 +17,7 @@ pub struct DvlAccountReader {
     pub root_seed: String,
     pub oracle_seed: String,
     pub root_pda: PDA,
+    cached_accounts: HashMap<Pubkey, Box<dyn DvlReadable>>,
 }
 
 impl DvlAccountReader {
@@ -34,10 +37,35 @@ impl DvlAccountReader {
             root_seed,
             oracle_seed: format!("orcl{}", int_seed),
             root_pda,
+            cached_accounts: HashMap::new(),
         }
     }
 
-    pub fn read<T: DvlReadable>(&self) -> Result<T, Box<dyn Error>> {
-        T::read(self)
+    pub fn read<T: DvlReadable>(&self, id: Option<u32>) -> Result<T, Box<dyn Error>>
+    {
+        T::read(self, id)
     }
+
+    pub fn read_indexed<T: DvlReadableIndexed>(&self, index: usize, id: Option<u32>) -> Result<T, Box<dyn Error>>
+    {
+        T::read(self, index, id)
+    }
+
+    pub fn read_by_public_key<T: DvlReadablePublicKey + DevolAccount + Copy>(&self, public_key: &Pubkey, id: Option<u32>) -> Result<T, Box<dyn Error>>
+    {
+        T::read_by_public_key::<T>(self, public_key, id)
+    }
+
+
+    // pub fn read_cached<T: DvlReadable + Clone>(&mut self, public_key: &Pubkey) -> Result<T, Box<dyn Error>> {
+    //     if let Some(cached_value) = self.cached_accounts.get(public_key) {
+    //         if let Some(value) = cached_value.as_any().downcast_ref::<T>() {
+    //             return Ok(value.clone());
+    //         }
+    //     }
+    //
+    //     let value = T::read(self, public_key);
+    //     self.cached_accounts.insert(public_key.to_string(), Box::new(value.clone()));
+    //     Ok(value)
+    // }
 }

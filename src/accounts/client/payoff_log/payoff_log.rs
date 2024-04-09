@@ -1,5 +1,3 @@
-use std::error::Error;
-
 pub const PAYOFF_LOG_ID_OFFSET: usize = 0;
 pub const PAYOFF_LOG_WORKER_ID_OFFSET: usize = 8;
 pub const PAYOFF_LOG_POOL_ID_OFFSET: usize = 12;

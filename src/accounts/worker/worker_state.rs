@@ -1,4 +1,4 @@
-#[derive(PartialEq, PartialOrd)]
+#[derive(PartialEq, PartialOrd, Copy, Clone)]
 #[repr(u32)]
 pub enum WorkerState {
     Unassigned = 1,

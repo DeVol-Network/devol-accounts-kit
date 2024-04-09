@@ -1,3 +1,51 @@
+use std::error::Error;
+use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::account_readers::dvl_readable::{DvlReadableIndexed, DvlReadablePublicKey};
+use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
+use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::worker::worker_account::WorkerAccount;
+
+// impl DvlReadablePublicKey for WorkerAccount {}
+
+impl DvlReadableIndexed for WorkerAccount {
+    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
+        let workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
+        let worker = workers_account.workers[index];
+        let public_key = &worker.address;
+        let mut rpc_data = reader.client.get_account(public_key)?;
+        let worker_account =  WorkerAccount::from_account(
+            public_key,
+            &mut rpc_data,
+            &reader.root_pda.key,
+            &reader.program_id,
+            id)?;
+        // let worker_account =  WorkerAccount::from_account(
+        //     pubkey,
+        //     &mut rpc_data,
+        //     &reader.root_pda.key,
+        //     &reader.program_id,
+        //     None)?;
+        Ok(worker_account)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::accounts::worker::worker_account::{WORKER_ACCOUNT_TAG, WORKER_ACCOUNT_VERSION};
+    use crate::tests::tests::setup_account_reader;
+
+    #[test]
+    fn test_read_root_account() {
+        let reader = setup_account_reader();
+        let worker_0 = reader.read_indexed::<WorkerAccount>(0, None).unwrap();
+
+        assert_eq!(worker_0.header.tag, WORKER_ACCOUNT_TAG as u32);
+        assert_eq!(worker_0.header.version, WORKER_ACCOUNT_VERSION);
+    }
+}
+
+
 // use std::error::Error;
 // use solana_client::rpc_client::RpcClient;
 // use solana_sdk::account::ReadableAccount;
