@@ -1,5 +1,4 @@
 use std::error::Error;
-use std::str::FromStr;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, DvlReadablePublicKey};
 use crate::accounts::devol_account::DevolAccount;
@@ -14,8 +13,6 @@ impl DvlReadable for OraclesAccount {
         let oracle_seed = format!("{}{}", ORACLE_SEED_PREFIX, INT_SEED);
         let oracle_pda = generate_pda(&reader.admin_public_key, &oracle_seed, &reader.program_id);
         let pubkey = &oracle_pda.key;
-        println!("oracle seed: {}", oracle_seed);
-        println!("pubkey: {}", pubkey.to_string());
         let mut rpc_data = reader.client.get_account(pubkey)?;
         let oracles_account = OraclesAccount::from_account(
             pubkey,
@@ -31,7 +28,6 @@ impl DvlReadable for OraclesAccount {
 #[cfg(test)]
 mod tests {
     use crate::accounts::oracles::oracles_account::{ORACLES_ACCOUNT_TAG, ORACLES_ACCOUNT_VERSION, OraclesAccount};
-    use crate::accounts::root::root_account::RootAccount;
     use crate::constants::test_constants::{INT_SEED, ORACLE_SEED_PREFIX};
     use crate::generate_pda::generate_pda;
     use crate::tests::tests::setup_account_reader;
@@ -43,7 +39,6 @@ mod tests {
         let oracles_account = reader.read::<OraclesAccount>(None).unwrap();
         check_oracles_account(&oracles_account);
         // Test read by public key
-        let root_account = reader.read::<RootAccount>(None).unwrap();
         let oracle_seed = format!("{}{}", ORACLE_SEED_PREFIX, INT_SEED);
         let oracle_pda = generate_pda(&reader.admin_public_key, &oracle_seed, &reader.program_id);
         let pubkey = &oracle_pda.key;
