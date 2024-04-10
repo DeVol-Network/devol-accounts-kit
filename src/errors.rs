@@ -88,10 +88,9 @@ pub enum ContractError {
     TokenOwnerMismatch          = 0x0049,   // Token account owner does not match expected SPL Token program
     TokenMintMismatch           = 0x004A,   // Token account's mint does not match the specified mint account
     AccountUninitialized        = 0x004B,   // Account is not initialized
-    TokenAccountNotWritable     = 0x004C,   // Token account is not writable as required
-    TokenPkMismatch             = 0x004D,   // Token account's public key does not match the expected
-    ProgramTokenAccMismatch     = 0x004E,   // Program token account does not match the specified program account
-    TransferFailed              = 0x004F,   // Token transfer failed
+    TokenPkMismatch             = 0x004C,   // Token account's public key does not match the expected
+    ProgramTokenAccMismatch     = 0x004D,   // Program token account does not match the specified program account
+    TransferFailed              = 0x004E,   // Token transfer failed
 
 }
 
@@ -176,10 +175,9 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0049 => "Token account owner does not match expected SPL Token program",
         0x004A => "Token account's mint does not match the specified mint account",
         0x004B => "Account is not initialized",
-        0x004C => "Token account is not writable as required",
-        0x004D => "Token account's public key does not match the expected",
-        0x004E => "Program token account does not match the specified program account",
-        0x004F => "Token transfer failed",
+        0x004C => "Token account's public key does not match the expected",
+        0x004D => "Program token account does not match the specified program account",
+        0x004E => "Token transfer failed",
 
         _ => "Unknown error",
     };
