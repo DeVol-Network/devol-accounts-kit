@@ -72,6 +72,11 @@ pub enum ContractError {
     MaxPoolsParticipationReached= 0x0039,   // Cannot participate in more than 128 pools simultaneously as LP
     PoolTokenSaleExceedsHoldings= 0x003A,   // Attempt to sell more pool tokens than owned
     DepositExceedsPoolLimit     = 0x003B,   // Trade exceeds maximum allowed deposit in pool, cannot proceed
+    WorkerAccountMismatch       = 0x003C,   // Worker account in transaction does not match the one specified in instruction
+    PoolIndexOutOfRange         = 0x003D,   // Specified pool index exceeds maximum limit or is not valid
+    SettlementPriceUnavailable  = 0x003E,   // Cannot proceed; settlement price not set or pool yet to be finalized
+    EarlyPayoffAttempt          = 0x003F,   // Attempt to claim payoff before pool expiration is not allowed
+    InvalidPoolAccess           = 0x0040,   // Invalid access to pool data for the client or worker account
 }
 
 #[allow(dead_code)]
@@ -139,6 +144,11 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0039 => "Cannot participate in more than 128 pools simultaneously as LP",
         0x003A => "Attempt to sell more pool tokens than owned",
         0x003B => "Trade exceeds maximum allowed deposit in pool, cannot proceed",
+        0x003C => "Worker account in transaction does not match the one specified in instruction",
+        0x003D => "Specified pool index exceeds maximum limit or is not valid",
+        0x003E => "Cannot proceed; settlement price not set or pool yet to be finalized",
+        0x003F => "Attempt to claim payoff before pool expiration is not allowed",
+        0x0040 => "Invalid access to pool data for the client or worker account",
         _ => "Unknown error",
     };
 
