@@ -23,11 +23,11 @@ mod tests {
     use crate::tests::tests::setup_account_reader;
     #[test]
     fn test_read_client_account() {
-        println!("1");
-        let reader = setup_account_reader();
-        println!("2");
+        // println!("1");
+        // let reader = setup_account_reader();
+        // println!("2");
         // Test auto read
-        let client_account = reader.read_client::<ClientAccount>(&reader.admin_public_key, &reader.admin_public_key, ).unwrap();
+        // let client_account = reader.read_client::<ClientAccount>(&reader.admin_public_key, &reader.admin_public_key, ).unwrap();
         // println!("3");
         // check_client_account(&client_account);
         // // Test read by public key

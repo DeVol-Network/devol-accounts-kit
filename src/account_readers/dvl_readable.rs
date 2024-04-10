@@ -2,15 +2,33 @@ use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 
 pub trait DvlReadablePublicKey {
     fn read_by_public_key(
         reader: &DvlAccountReader,
         public_key: &Pubkey,
-        id: Option<u32>,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
-            Self: Sized + DevolAccount + Copy
+            Self: Sized + DevolRegularAccount + Copy
+    {
+        let mut rpc_data = reader.client.get_account(public_key)?;
+        let account =  Self::from_account(
+            public_key,
+            &mut rpc_data,
+            &reader.root_pda.key,
+            &reader.program_id,
+            )?;
+        Ok(account)
+    }
+    fn read_by_public_key(
+        reader: &DvlAccountReader,
+        public_key: &Pubkey,
+        id: u32,
+    ) -> Result<Box<Self>, Box<dyn Error>>
+        where
+            Self: Sized + DevolIndexedAccount + Copy
     {
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(

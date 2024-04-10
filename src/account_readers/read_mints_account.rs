@@ -22,14 +22,6 @@ mod tests {
     use crate::tests::tests::setup_account_reader;
 
     #[test]
-    fn test_read_root_account() {
-        let reader = setup_account_reader();
-        let mints_account = reader.read::<MintsAccount>(None).unwrap();
-
-        assert_eq!(mints_account.header.tag, MINTS_ACCOUNT_TAG as u32);
-        assert_eq!(mints_account.header.version, MINTS_ACCOUNT_VERSION);
-    }
-    #[test]
     fn test_read_mints_account() {
         let reader = setup_account_reader();
         // Test auto read

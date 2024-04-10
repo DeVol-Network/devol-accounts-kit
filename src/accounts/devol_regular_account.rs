@@ -4,29 +4,10 @@ use solana_program::pubkey::Pubkey;
 use crate::accounts::devol_account::DevolAccount;
 use crate::errors::{AccountTag, ContractError, error_with_account, ReadAccountError};
 
-pub trait DevolIndexedAccount : DevolAccount {
-
-    /// Returns the offset where an optional ID field is located within the account data.
-    /// By default, it assumes that if present, the ID starts immediately after the AccountHeader structure,
-    /// i.e., at the 40th byte. This function should be overridden if the ID's position differs.
+pub trait DevolRegularAccount: DevolAccount {
     #[inline(always)]
-    fn id_offset() -> usize { 40 }
-
-    #[inline(always)]
-    fn check_id(tag: AccountTag, account_info: &AccountInfo, id: u32) -> Result<(), u32> {
-        let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
-        if read_id != id {
-            return Err(error_with_account(tag, ContractError::InvalidAccountId));
-        }
-        Ok(())
-    }
-
-    #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: u32) -> Result<(), u32> {
-        Self::check_basic(account_info, root_addr, program_id)?;
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        Self::check_id(tag, account_info, id)?;
-        Ok(())
+    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), u32> {
+        Self::check_basic(account_info, root_addr, program_id)
     }
 
     /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
@@ -34,12 +15,11 @@ pub trait DevolIndexedAccount : DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
     ) -> Result<&'a Self, u32>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id, id)?;
+        Self::check_all(account_info, root_addr, program_id)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
         Ok(account)
     }
@@ -50,12 +30,11 @@ pub trait DevolIndexedAccount : DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
     ) -> Result<&'a mut Self, u32>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id, id)?;
+        Self::check_all(account_info, root_addr, program_id)?;
         if !account_info.is_writable {
             return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
         }
@@ -69,13 +48,12 @@ pub trait DevolIndexedAccount : DevolAccount {
         account: &mut impl Account,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id)
             .map_err(ReadAccountError::from)?;
         Ok(Box::new(*account_ref))
     }

@@ -1,6 +1,7 @@
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::errors::AccountTag;
 
 pub const ROOT_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -38,6 +39,7 @@ pub struct RootAccount {
     pub max_light_volume: u64,             //  8 bytes, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET
 }
 
+impl DevolRegularAccount for RootAccount {}
 impl DevolAccount for RootAccount {
     #[inline(always)]
     fn expected_size() -> usize { ROOT_ACCOUNT_SIZE }
