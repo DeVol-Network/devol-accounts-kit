@@ -93,6 +93,7 @@ pub enum ContractError {
     TransferFailed              = 0x004E,   // Token transfer failed
     TransferExecutionFailed     = 0x004F,   // Token transfer execution failed
     InsufficientBalance         = 0x0050,   // Insufficient balance for withdrawal
+    InvalidInstruction          = 0x0051,   // Attempted to invoke a non-existent smart contract instruction; check the instruction number
 
 }
 
@@ -182,6 +183,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x004E => "Token transfer failed",
         0x004F => "Token transfer execution failed",
         0x0050 => "Insufficient balance for withdrawal",
+        0x0051 => "Attempted to invoke a non-existent smart contract instruction; check the instruction numbe",
         _ => "Unknown error",
     };
 
