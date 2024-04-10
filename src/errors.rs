@@ -91,6 +91,8 @@ pub enum ContractError {
     TokenPkMismatch             = 0x004C,   // Token account's public key does not match the expected
     ProgramTokenAccMismatch     = 0x004D,   // Program token account does not match the specified program account
     TransferFailed              = 0x004E,   // Token transfer failed
+    TransferExecutionFailed     = 0x004F,   // Token transfer execution failed
+    InsufficientBalance         = 0x0050,   // Insufficient balance for withdrawal
 
 }
 
@@ -178,7 +180,8 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x004C => "Token account's public key does not match the expected",
         0x004D => "Program token account does not match the specified program account",
         0x004E => "Token transfer failed",
-
+        0x004F => "Token transfer execution failed",
+        0x0050 => "Insufficient balance for withdrawal",
         _ => "Unknown error",
     };
 
