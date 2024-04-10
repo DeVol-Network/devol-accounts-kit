@@ -77,6 +77,14 @@ pub enum ContractError {
     SettlementPriceUnavailable  = 0x003E,   // Cannot proceed; settlement price not set or pool yet to be finalized
     EarlyPayoffAttempt          = 0x003F,   // Attempt to claim payoff before pool expiration is not allowed
     InvalidPoolAccess           = 0x0040,   // Invalid access to pool data for the client or worker account
+    WorkerInvalidStateForTask   = 0x0041,   // Worker state is not valid for task assignment; must be in 'Assigned' state
+    WorkerDurationZero          = 0x0042,   // Worker's task duration cannot be zero; set a valid duration
+    WorkerInitPxBelowID         = 0x0043,   // Worker's initial offering price cannot be below ID; ensure correct price setup
+    WorkerWidthFactorExceedsID  = 0x0044,   // Worker's width factor cannot exceed ID; adjust width factor
+    WorkerFeeRateOutOfBounds    = 0x0045,   // Worker's fee rate is out of acceptable bounds; ensure fee rate is within limits
+    WorkerFeeRatioOutOfBounds   = 0x0046,   // Worker's fee ratio is out of acceptable bounds; adjust fee ratio to fit within limits
+    WorkerInvRatioOutOfBounds   = 0x0047,   // Worker's inventories ratio is out of acceptable bounds; ensure inventories ratio is within limits
+
 }
 
 #[allow(dead_code)]
@@ -149,6 +157,13 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x003E => "Cannot proceed; settlement price not set or pool yet to be finalized",
         0x003F => "Attempt to claim payoff before pool expiration is not allowed",
         0x0040 => "Invalid access to pool data for the client or worker account",
+        0x0041 => "Worker state is not valid for task assignment; must be in 'Assigned' state",
+        0x0042 => "Worker's task duration cannot be zero; set a valid duration",
+        0x0043 => "Worker's initial offering price cannot be below ID; ensure correct price setup",
+        0x0044 => "Worker's width factor cannot exceed ID; adjust width factor",
+        0x0045 => "Worker's fee rate is out of acceptable bounds; ensure fee rate is within limits",
+        0x0046 => "Worker's fee ratio is out of acceptable bounds; adjust fee ratio to fit within limits",
+        0x0047 => "Worker's inventories ratio is out of acceptable bounds; ensure inventories ratio is within limits",
         _ => "Unknown error",
     };
 
