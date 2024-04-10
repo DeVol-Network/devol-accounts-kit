@@ -36,22 +36,20 @@ pub trait DevolAccount {
 
 
     #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<u32>) -> Result<(), u32> {
+    fn check_basic(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), u32> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
         Self::check_size(tag, account_info.data.borrow().len())?;
         let header = Self::account_header(account_info.data.borrow());
         Self::check_tag_and_version(tag, header)?;
         Self::check_root(tag, header, root_addr)?;
         Self::check_program_id(tag, account_info, program_id)?;
-        if let Some(id) = id {
-            Self::check_id(tag, account_info, id)?;
-        }
         Ok(())
     }
 
     #[inline(always)]
     fn check_size(tag: AccountTag, actual_size: usize) -> Result<(), u32> {
-        if Self::expected_size() != actual_size {
+        // todo think about extended size accounts
+        if actual_size < Self::expected_size() {
             Err(error_with_account(tag, ContractError::AccountSize))
         } else {
             Ok(())

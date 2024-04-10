@@ -7,3 +7,4 @@ mod account_header;
 pub mod mints;
 pub mod client;
 pub mod devol_account;
+mod devol_indexed_account;
