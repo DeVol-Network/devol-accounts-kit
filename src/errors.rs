@@ -84,6 +84,14 @@ pub enum ContractError {
     WorkerFeeRateOutOfBounds    = 0x0045,   // Worker's fee rate is out of acceptable bounds; ensure fee rate is within limits
     WorkerFeeRatioOutOfBounds   = 0x0046,   // Worker's fee ratio is out of acceptable bounds; adjust fee ratio to fit within limits
     WorkerInvRatioOutOfBounds   = 0x0047,   // Worker's inventories ratio is out of acceptable bounds; ensure inventories ratio is within limits
+    KycAdminOnlyTransaction     = 0x0048,   // Transaction must be executed by KYC administrator only, but current signer is not authorized
+    TokenOwnerMismatch          = 0x0049,   // Token account owner does not match expected SPL Token program
+    TokenMintMismatch           = 0x004A,   // Token account's mint does not match the specified mint account
+    TokenAccountUninitialized   = 0x004B,   // Token account is not initialized
+    TokenAccountNotWritable     = 0x004C,   // Token account is not writable as required
+    TokenPkMismatch             = 0x004D,   // Token account's public key does not match the expected
+    ProgramTokenAccMismatch     = 0x004E,   // Program token account does not match the specified program account
+    TransferFailed              = 0x004F,   // Token transfer failed
 
 }
 
@@ -164,6 +172,15 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0045 => "Worker's fee rate is out of acceptable bounds; ensure fee rate is within limits",
         0x0046 => "Worker's fee ratio is out of acceptable bounds; adjust fee ratio to fit within limits",
         0x0047 => "Worker's inventories ratio is out of acceptable bounds; ensure inventories ratio is within limits",
+        0x0048 => "Transaction must be executed by KYC administrator only, but current signer is not authorized",
+        0x0049 => "Token account owner does not match expected SPL Token program",
+        0x004A => "Token account's mint does not match the specified mint account",
+        0x004B => "Token account is not initialized",
+        0x004C => "Token account is not writable as required",
+        0x004D => "Token account's public key does not match the expected",
+        0x004E => "Program token account does not match the specified program account",
+        0x004F => "Token transfer failed",
+
         _ => "Unknown error",
     };
 
