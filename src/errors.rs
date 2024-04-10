@@ -69,6 +69,9 @@ pub enum ContractError {
     CreatedAccountSizeMismatch  = 0x0036,   // Created account size does not match the expected size
     ZeroVolumeTradeAttempt      = 0x0037,   // Attempting to execute a trade with zero volume is not allowed
     TradeOutsideActivePeriod    = 0x0038,   // Trade operation attempted outside allowed activity hours or while pool is inactive
+    MaxPoolsParticipationReached= 0x0039,   // Cannot participate in more than 128 pools simultaneously as LP
+    PoolTokenSaleExceedsHoldings= 0x003A,   // Attempt to sell more pool tokens than owned
+    DepositExceedsPoolLimit     = 0x003B,   // Trade exceeds maximum allowed deposit in pool, cannot proceed
 }
 
 #[allow(dead_code)]
@@ -133,6 +136,9 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0036 => "Created account size does not match the expected size",
         0x0037 => "Attempting to execute a trade with zero volume is not allowed",
         0x0038 => "Trade operation attempted outside allowed activity hours or while pool is inactive",
+        0x0039 => "Cannot participate in more than 128 pools simultaneously as LP",
+        0x003A => "Attempt to sell more pool tokens than owned",
+        0x003B => "Trade exceeds maximum allowed deposit in pool, cannot proceed",
         _ => "Unknown error",
     };
 
