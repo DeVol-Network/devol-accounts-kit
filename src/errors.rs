@@ -87,7 +87,7 @@ pub enum ContractError {
     KycAdminOnlyTransaction     = 0x0048,   // Transaction must be executed by KYC administrator only, but current signer is not authorized
     TokenOwnerMismatch          = 0x0049,   // Token account owner does not match expected SPL Token program
     TokenMintMismatch           = 0x004A,   // Token account's mint does not match the specified mint account
-    TokenAccountUninitialized   = 0x004B,   // Token account is not initialized
+    AccountUninitialized        = 0x004B,   // Account is not initialized
     TokenAccountNotWritable     = 0x004C,   // Token account is not writable as required
     TokenPkMismatch             = 0x004D,   // Token account's public key does not match the expected
     ProgramTokenAccMismatch     = 0x004E,   // Program token account does not match the specified program account
@@ -175,7 +175,7 @@ pub fn decode_error_code(error_code: u32) -> String {
         0x0048 => "Transaction must be executed by KYC administrator only, but current signer is not authorized",
         0x0049 => "Token account owner does not match expected SPL Token program",
         0x004A => "Token account's mint does not match the specified mint account",
-        0x004B => "Token account is not initialized",
+        0x004B => "Account is not initialized",
         0x004C => "Token account is not writable as required",
         0x004D => "Token account's public key does not match the expected",
         0x004E => "Program token account does not match the specified program account",
@@ -221,6 +221,8 @@ pub enum AccountTag {
     ExternalOracle      = 0x11,
     Wallet              = 0x12,   // Connected wallet account
     KycAdmin            = 0x13,   // Connected KYC admin wallet
+    ClientToken         = 0x14,
+    ProgramToken        = 0x15,
 }
 
 impl AccountTag {
