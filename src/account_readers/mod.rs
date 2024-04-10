@@ -10,3 +10,4 @@ pub mod read_mint_log_account;
 pub mod read_tasks_trace_account;
 pub mod read_pools_trace_account;
 pub mod read_pools_log_account;
+pub mod read_client_account;

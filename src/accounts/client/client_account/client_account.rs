@@ -151,6 +151,7 @@ impl ClientAccount {
     }
 
     /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
+    #[allow(dead_code)]
     fn from_account_info<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
@@ -168,6 +169,7 @@ impl ClientAccount {
 
     /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
     /// Ensures the account is marked as writable.
+    #[allow(dead_code)]
     fn from_account_info_mut<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
@@ -187,6 +189,7 @@ impl ClientAccount {
     }
 
     /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
+    #[allow(dead_code)]
     fn from_account(
         key: &Pubkey,
         account: &mut impl Account,
@@ -202,7 +205,7 @@ impl ClientAccount {
         let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)?;
         Ok(*account_ref)
     }
-
+    #[allow(dead_code)]
     fn serialize_mut(&mut self) -> &mut [u8] {
         let size = std::mem::size_of::<ClientAccount>();
         unsafe { std::slice::from_raw_parts_mut(self as *mut _ as *mut u8, size) }
