@@ -1,6 +1,4 @@
 use solana_program::pubkey::Pubkey;
-use crate::accounts::devol_regular_account::DevolRegularAccount;
-use crate::accounts::oracles::oracles_account::OraclesAccount;
 
 pub const INSTR_SPOT_ADDRESS_OFFSET: usize = 0;
 pub const INSTR_MINT_ID_OFFSET: usize = 32;

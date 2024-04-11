@@ -2,7 +2,6 @@ use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::instruments::instruments_data::InstrumentsData;
-use crate::accounts::oracles::oracles_account::OraclesAccount;
 
 pub const INSTR_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const INSTR_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;

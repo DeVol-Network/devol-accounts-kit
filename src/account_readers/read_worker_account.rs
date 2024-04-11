@@ -1,10 +1,8 @@
 use std::error::Error;
-use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
 impl DvlReadable for WorkerAccount {

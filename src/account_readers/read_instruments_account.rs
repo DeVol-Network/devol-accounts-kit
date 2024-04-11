@@ -1,7 +1,6 @@
 use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable};
-use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::root::root_account::RootAccount;

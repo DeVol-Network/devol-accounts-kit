@@ -2,7 +2,6 @@ use crate::accounts::account_header::AccountHeader;
 use crate::accounts::all_workers::worker::Worker;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
-use crate::accounts::worker::worker_account::WorkerAccount;
 
 pub const ALL_WORKERS_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const ALL_WORKERS_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;

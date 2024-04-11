@@ -2,7 +2,6 @@ use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pools_trace::pools_trace::PoolsTrace;
-use crate::accounts::worker::tasks_trace::tasks_trace_account::TasksTraceAccount;
 
 pub const POOLS_TRACE_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const POOLS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;

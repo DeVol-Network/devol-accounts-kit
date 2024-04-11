@@ -2,7 +2,7 @@ use std::error::Error;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::devol_account::DevolAccount;
-use crate::errors::{AccountTag, ContractError, error_with_account, ReadAccountError};
+use crate::errors::{ReadAccountError};
 
 pub trait DevolRegularAccount: DevolAccount {
     #[inline(always)]

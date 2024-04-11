@@ -3,7 +3,6 @@ use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
 use crate::accounts::worker::pools_trace::pools_trace_account::PoolsTraceAccount;
 
 impl DvlReadable for PoolsTraceAccount {
