@@ -4,6 +4,7 @@ use solana_program::account_info::{Account, IntoAccountInfo};
 use solana_sdk::account_info::AccountInfo;
 use solana_sdk::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
+use crate::dvl_error::DvlError;
 use crate::errors::*;
 
 pub trait DevolAccount {
@@ -19,7 +20,7 @@ pub trait DevolAccount {
     }
 
     #[inline(always)]
-    fn check_basic(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), u32> {
+    fn check_basic(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), DvlError> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
         Self::check_size(tag, account_info.data.borrow())?;
         let header = Self::account_header(account_info.data.borrow());
@@ -30,41 +31,41 @@ pub trait DevolAccount {
     }
 
     #[inline(always)]
-    fn check_size(tag: AccountTag, account_data: Ref<&mut [u8]>) -> Result<(), u32> {
+    fn check_size(tag: AccountTag, account_data: Ref<&mut [u8]>) -> Result<(), DvlError> {
         let actual_size= account_data.len();
         if actual_size < Self::expected_size() {
-            Err(error_with_account(tag, ContractError::AccountSize))
+            Err(DvlError::new_with_account(tag, ContractError::AccountSize))
         } else {
             Ok(())
         }
     }
 
     #[inline(always)]
-    fn check_tag_and_version(tag: AccountTag, header: &AccountHeader) -> Result<(), u32> {
+    fn check_tag_and_version(tag: AccountTag, header: &AccountHeader) -> Result<(), DvlError> {
         if header.tag != Self::expected_tag() as u32 {
-            Err(error_with_account(tag, ContractError::WrongAccountTag))
+            Err(DvlError::new_with_account(tag, ContractError::WrongAccountTag))
         } else if header.version > Self::expected_version() {
-            Err(error_with_account(tag, ContractError::AccountVersionTooHigh))
+            Err(DvlError::new_with_account(tag, ContractError::AccountVersionTooHigh))
         } else if header.version < Self::expected_version() {
-            Err(error_with_account(tag, ContractError::AccountVersionTooLow))
+            Err(DvlError::new_with_account(tag, ContractError::AccountVersionTooLow))
         } else {
             Ok(())
         }
     }
 
     #[inline(always)]
-    fn check_root(tag: AccountTag, header: &AccountHeader, root_addr: &Pubkey) -> Result<(), u32> {
+    fn check_root(tag: AccountTag, header: &AccountHeader, root_addr: &Pubkey) -> Result<(), DvlError> {
         if header.root != *root_addr {
-            Err(error_with_account(tag, ContractError::RootAddress))
+            Err(DvlError::new_with_account(tag, ContractError::RootAddress))
         } else {
             Ok(())
         }
     }
 
     #[inline(always)]
-    fn check_program_id(tag: AccountTag, account_info: &AccountInfo, program_id: &Pubkey) -> Result<(), u32> {
+    fn check_program_id(tag: AccountTag, account_info: &AccountInfo, program_id: &Pubkey) -> Result<(), DvlError> {
         if account_info.owner != program_id {
-            Err(error_with_account(tag, ContractError::AccountOwner))
+            Err(DvlError::new_with_account(tag, ContractError::AccountOwner))
         } else {
             Ok(())
         }
@@ -75,7 +76,7 @@ pub trait DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-    ) -> Result<&'a Self, u32>
+    ) -> Result<&'a Self, DvlError>
         where
             Self: Sized,
     {
@@ -90,13 +91,13 @@ pub trait DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-    ) -> Result<&'a mut Self, u32>
+    ) -> Result<&'a mut Self, DvlError>
         where
             Self: Sized,
     {
         Self::check_basic(account_info, root_addr, program_id)?;
         if !account_info.is_writable {
-            return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
         }
         let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
         Ok(account)
@@ -113,8 +114,7 @@ pub trait DevolAccount {
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info_basic(&account_info, root_addr, program_id)
-            .map_err(ReadAccountError::from)?;
+        let account_ref = Self::from_account_info_basic(&account_info, root_addr, program_id)?;
         Ok(Box::new(*account_ref))
     }
 }

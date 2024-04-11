@@ -13,6 +13,7 @@ use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
 use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
 use crate::constants::HOURS;
+use crate::dvl_error::DvlError;
 use crate::errors::*;
 use crate::utils::type_size_helper::align_size;
 
@@ -107,9 +108,9 @@ impl ClientAccount {
     pub fn set_pools_count(&mut self, value: u32) { self.pools_count = value.to_ne_bytes() }
 
     #[inline(always)]
-    pub fn get_pool(&self, index: usize) -> Result<&ClientPool, u32> {
+    pub fn get_pool(&self, index: usize) -> Result<&ClientPool, DvlError> {
         if index >= self.get_pools_count() as usize {
-            return Err(error_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
+            return Err(DvlError::new_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
         }
         let pools_count_ptr = self.pools_count.as_ptr();
         let pools_ptr = unsafe {
@@ -119,9 +120,9 @@ impl ClientAccount {
     }
 
     #[inline(always)]
-    pub fn get_pool_mut(&mut self, index: usize) -> Result<&mut ClientPool, u32> {
+    pub fn get_pool_mut(&mut self, index: usize) -> Result<&mut ClientPool, DvlError> {
         if index >= self.get_pools_count() as usize {
-            return Err(error_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
+            return Err(DvlError::new_with_account(AccountTag::Client, ContractError::PoolRecordNotFound));
         }
         let pools_count_ptr = self.pools_count.as_mut_ptr();
         let pools_ptr = unsafe {
@@ -134,12 +135,12 @@ impl ClientAccount {
     fn check_signer(
         account: &ClientAccount,
         signer: &Pubkey,
-        devol_sign: bool,) -> Result<(), u32> {
+        devol_sign: bool,) -> Result<(), DvlError> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
         if devol_sign && account.signer_address != *signer {
-            Err(error_with_account(tag, ContractError::AccountNotSigner))
+            Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
         } else if !devol_sign && account.owner_address != *signer {
-            Err(error_with_account(tag, ContractError::AccountNotSigner))
+            Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
         } else {
             Ok(())
         }
@@ -152,7 +153,7 @@ impl ClientAccount {
         program_id: &Pubkey,
         signer: &Pubkey,
         devol_sign: bool,
-    ) -> Result<(), u32> {
+    ) -> Result<(), DvlError> {
         Self::check_basic(account_info,root_addr,program_id)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
         Self::check_signer(account, signer, devol_sign)?;
@@ -169,7 +170,7 @@ impl ClientAccount {
         program_id: &Pubkey,
         signer: &Pubkey,
         devol_sign: bool,
-    ) -> Result<&'a Self, u32>
+    ) -> Result<&'a Self, DvlError>
         where
             Self: Sized,
     {
@@ -187,13 +188,13 @@ impl ClientAccount {
         program_id: &Pubkey,
         signer: &Pubkey,
         devol_sign: bool,
-    ) -> Result<&'a mut Self, u32>
+    ) -> Result<&'a mut Self, DvlError>
         where
             Self: Sized,
     {
         Self::check_all(account_info, root_addr, program_id, signer, devol_sign)?;
         if !account_info.is_writable {
-            return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
         }
         let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
         Ok(account)
@@ -213,8 +214,7 @@ impl ClientAccount {
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)
-            .map_err(ReadAccountError::from)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)?;
         Ok(Box::new(*account_ref))
     }
 
@@ -381,8 +381,8 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        assert_eq!(
-            ClientAccount::check_all(&account_info, &root, &program_id, signer, is_signer), Ok(()));
+        let result = ClientAccount::check_all(&account_info, &root, &program_id, signer, is_signer);
+        assert!(result.is_ok());
     }
     #[test]
     fn test_client_account_check_with_signer() {
@@ -431,8 +431,8 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        assert_eq!(
-            ClientAccount::check_all(&account_info, &root, &program_id, &signer, devol_sign), Ok(()));
+        let result = ClientAccount::check_all(&account_info, &root, &program_id, &signer, devol_sign);
+        assert!(result.is_ok());
     }
 }
 
