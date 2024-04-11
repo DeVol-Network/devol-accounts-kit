@@ -11,7 +11,7 @@ impl DvlReadable for MintLogAccount {
 
     fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let mints_account = reader.read::<MintsAccount>(()).unwrap();
-        let public_key = &mints_account.data[params.id].log_address;
+        let public_key = &mints_account.data[params.id as usize].log_address;
         // let account =  Self::read_by_public_key(reader, public_key, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account = Self::from_account(

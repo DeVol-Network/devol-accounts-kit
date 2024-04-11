@@ -5,7 +5,7 @@ use crate::accounts::client::client_account::client_account::ClientAccount;
 use crate::accounts::devol_account::DevolAccount;
 
 pub struct IndexedAccountParams {
-    pub id: usize,
+    pub id: u32,
 }
 pub struct ClientRelativeAccountParams<'a> {
     pub client_account: &'a ClientAccount,

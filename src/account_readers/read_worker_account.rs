@@ -9,7 +9,7 @@ impl DvlReadable for WorkerAccount {
     type AdditionalCheckParams<'a> = IndexedAccountParams;
     fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
-        let worker = workers_account.workers[params.id];
+        let worker = workers_account.workers[params.id as usize];
         let public_key = &worker.address;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(
