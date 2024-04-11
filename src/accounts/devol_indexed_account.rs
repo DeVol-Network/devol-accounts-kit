@@ -31,6 +31,7 @@ pub trait DevolIndexedAccount : DevolAccount {
     }
 
     /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
+    #[inline(always)]
     fn from_account_info<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
@@ -47,6 +48,7 @@ pub trait DevolIndexedAccount : DevolAccount {
 
     /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
     /// Ensures the account is marked as writable.
+    #[inline(always)]
     fn from_account_info_mut<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
@@ -62,6 +64,7 @@ pub trait DevolIndexedAccount : DevolAccount {
     }
 
     /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
+    #[inline(always)]
     fn from_account(
         key: &Pubkey,
         account: &mut impl Account,

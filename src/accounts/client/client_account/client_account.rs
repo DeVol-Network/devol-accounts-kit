@@ -163,8 +163,8 @@ impl ClientAccount {
     }
 
     /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
-    #[allow(dead_code)]
-    fn from_account_info<'a>(
+    #[inline(always)]
+    pub fn from_account_info<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
@@ -181,8 +181,8 @@ impl ClientAccount {
 
     /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
     /// Ensures the account is marked as writable.
-    #[allow(dead_code)]
-    fn from_account_info_mut<'a>(
+    #[inline(always)]
+    pub fn from_account_info_mut<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
@@ -201,8 +201,8 @@ impl ClientAccount {
     }
 
     /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
-    #[allow(dead_code)]
-    pub(crate) fn from_account(
+    #[inline(always)]
+    pub fn from_account(
         key: &Pubkey,
         account: &mut impl Account,
         root_addr: &Pubkey,
