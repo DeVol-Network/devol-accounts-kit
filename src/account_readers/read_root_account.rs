@@ -35,8 +35,7 @@ mod tests {
         let root_account = match reader.read::<RootAccount>(()) {
             Ok(account) => account,
             Err(e) => {
-                eprintln!("Debug: Failed to read root account automatically, error: {:?}", e);
-                panic!("Failed to read root account automatically: {}", e);
+                panic!("Failed to read root account: {}", e);
             },
         };
         check_root_account(&root_account);

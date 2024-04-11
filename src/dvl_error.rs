@@ -65,8 +65,8 @@ impl DvlError {
 impl std::fmt::Display for DvlError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self.account {
-            Some(account) => write!(f, "Error: {:?}, Account: {:?}", self.error, account),
-            None => write!(f, "Error: {:?}", self.error),
+            Some(account) => write!(f, "Error: {}, Account: {:?}", self.error, account),
+            None => write!(f, "Error: {}", self.error),
         }
     }
 }
