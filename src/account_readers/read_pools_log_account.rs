@@ -19,7 +19,7 @@ impl DvlReadable for PoolsLogAccount {
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            Some(params.id),
+            params.id,
         )?;
         Ok(account)
     }

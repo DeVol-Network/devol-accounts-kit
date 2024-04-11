@@ -15,7 +15,7 @@ impl DvlReadable for PayoffLogAccount {
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            Some(params.client_account.id as usize),
+            params.client_account.id as usize,
         )?;
         Ok(account)
     }
