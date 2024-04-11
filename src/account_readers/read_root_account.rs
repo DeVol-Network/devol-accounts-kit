@@ -8,7 +8,6 @@ impl DvlReadable for RootAccount {
     type AdditionalCheckParams = ();
 
     fn read(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        // let account =  Self::read_by_public_key(reader, &reader.root_pda.key)?;
         let public_key = &reader.root_pda.key;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(

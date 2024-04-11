@@ -14,6 +14,7 @@ pub struct SignableAccountParams {
     pub client_address: Box<Pubkey>,
     pub signer_account: Option<SignerAccountParams>,
 }
+
 pub struct SignerAccountParams {
     pub signer: Box<Pubkey>,
     pub devol_sign: bool,
