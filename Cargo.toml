@@ -11,3 +11,5 @@ solana-sdk = '1.18.8'
 solana-client = '1.18.8'
 pyth-sdk-solana = "0.10.1"
 solana-program = '1.18.8'
+[dependencies.thiserror]
+version = "1.0.56"

@@ -2,11 +2,11 @@ use std::error::Error;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::devol_account::DevolAccount;
-use crate::errors::{ReadAccountError};
+use crate::dvl_error::DvlError;
 
 pub trait DevolRegularAccount: DevolAccount {
     #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), u32> {
+    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), DvlError> {
         Self::check_basic(account_info, root_addr, program_id)
     }
 
@@ -15,7 +15,7 @@ pub trait DevolRegularAccount: DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-    ) -> Result<&'a Self, u32>
+    ) -> Result<&'a Self, DvlError>
         where
             Self: Sized,
     {
@@ -28,7 +28,7 @@ pub trait DevolRegularAccount: DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-    ) -> Result<&'a mut Self, u32>
+    ) -> Result<&'a mut Self, DvlError>
         where
             Self: Sized,
     {
@@ -46,8 +46,7 @@ pub trait DevolRegularAccount: DevolAccount {
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id)
-            .map_err(ReadAccountError::from)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id)?;
         Ok(Box::new(*account_ref))
     }
 }

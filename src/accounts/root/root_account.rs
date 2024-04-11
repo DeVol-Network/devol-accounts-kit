@@ -2,6 +2,7 @@ use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
+use crate::dvl_error::DvlError;
 use crate::errors::AccountTag;
 
 pub const ROOT_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -51,7 +52,7 @@ impl DevolAccount for RootAccount {
     fn expected_version() -> u32 { ROOT_ACCOUNT_VERSION }
 
     #[inline(always)]
-    fn check_root(_: AccountTag, _: &AccountHeader, _: &Pubkey) -> Result<(), u32> {
+    fn check_root(_: AccountTag, _: &AccountHeader, _: &Pubkey) -> Result<(), DvlError> {
         Ok(())
     }
 }

@@ -4,6 +4,7 @@ use solana_program::clock::Clock;
 use solana_program::sysvar::Sysvar;
 use crate::accounts::oracles::oracle_params::{DataLen, Endian, OracleParams};
 use crate::accounts::oracles::oracle_provider::OracleProvider;
+use crate::dvl_error::DvlError;
 use crate::errors::*;
 
 pub const ORACLE_PARAMS_QUANTITY: usize = 3;
@@ -25,10 +26,10 @@ pub struct OracleData {
 
 impl OracleData {
     /// Calculates the asset price based on oracle data
-    /// Returns Result<(f64, u32), ProgramError> where f64 is the average price, and u32 is the error code
-    pub fn get_asset_price(&self, ext_oracles_accounts: &[AccountInfo]) -> Result<f64, u32> {
+    /// Returns Result<(f64, DvlError), ProgramError> where f64 is the average price
+    pub fn get_asset_price(&self, ext_oracles_accounts: &[AccountInfo]) -> Result<f64, DvlError> {
         let current_time = Clock::get().
-            map_err(|_| error_common(ContractError::TimeReadError))?
+            map_err(|_| DvlError::new(ContractError::TimeReadError))?
             .unix_timestamp;
         let mut prices = Vec::<f64>::new();
 
@@ -42,9 +43,9 @@ impl OracleData {
                         OracleProvider::Custom => {
                             let timestamp_offset = oracle_param.timestamp.offset as usize;
                             let ext_oracle_data = account.try_borrow_data().
-                                map_err(|_| error_with_account(AccountTag::ExternalOracle, ContractError::AccountSize))?;
+                                map_err(|_| DvlError::new_with_account(AccountTag::ExternalOracle, ContractError::AccountSize))?;
                             let timestamp = Self::read_value(&ext_oracle_data[timestamp_offset..], oracle_param.timestamp.data_len, oracle_param.timestamp.endian)
-                                .map_err(|_| error_with_account(AccountTag::Oracle, ContractError::TimeReadError))? as i64;
+                                .map_err(|_| DvlError::new_with_account(AccountTag::Oracle, ContractError::TimeReadError))? as i64;
 
                             if (current_time - timestamp).abs() > oracle_param.max_timestamp_diff_sec as i64 {
                                 continue; // Skip this oracle due to time difference
@@ -64,7 +65,7 @@ impl OracleData {
                         OracleProvider::Pyth => {
                             let price_feed = SolanaPriceAccount::account_info_to_feed( &account ).
                                 map_err(|_| {
-                                    error_with_account(AccountTag::Oracle, ContractError::AssetPriceUnavailable)
+                                    DvlError::new_with_account(AccountTag::Oracle, ContractError::AssetPriceUnavailable)
                                 })?;
                             let current_price = price_feed.get_price_no_older_than(current_time, oracle_param.max_timestamp_diff_sec as u64).unwrap();
                             prices.push(current_price.price as f64 * 10f64.powi(current_price.expo));
@@ -75,17 +76,17 @@ impl OracleData {
         }
 
         return match prices.len() {
-            0 => Err(error_common(ContractError::AssetPriceUnavailable)),
+            0 => Err(DvlError::new(ContractError::AssetPriceUnavailable)),
             2 => {
                 if (prices[1] - prices[0]).abs() > self.max_price_deviation as f64 {
-                    return Err(error_common(ContractError::PriceDiscrepancyError))
+                    return Err(DvlError::new(ContractError::PriceDiscrepancyError))
                 }
                 Ok(prices[0])
             }
             3 => {
                 let max_deviation = self.max_price_deviation as f64;
                 if (prices[1] - prices[0]).abs() > max_deviation || (prices[2] - prices[1]).abs() > max_deviation {
-                    return Err(error_common(ContractError::PriceDiscrepancyError))
+                    return Err(DvlError::new(ContractError::PriceDiscrepancyError))
                 }
                 Ok(prices[0])
             }
@@ -94,7 +95,7 @@ impl OracleData {
     }
 
     /// Reads value from data slice according to DataLen and Endian
-    fn read_value(data: &[u8], data_len: DataLen, endian: Endian) -> Result<u128, u32> {
+    fn read_value(data: &[u8], data_len: DataLen, endian: Endian) -> Result<u128, DvlError> {
         let val = match data_len {
             DataLen::U8 => data[0] as u128,
             DataLen::U32 => {
@@ -118,7 +119,7 @@ impl OracleData {
                     u128::from_be_bytes(data[..16].try_into().unwrap())
                 }
             },
-            _ => return Err(error_common(ContractError::ComputationError)), // Unsupported data length
+            _ => return Err(DvlError::new(ContractError::ComputationError)), // Unsupported data length
         };
         Ok(val)
     }

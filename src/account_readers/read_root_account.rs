@@ -32,11 +32,20 @@ mod tests {
     fn test_read_root_account() {
         let reader = setup_account_reader();
         // Test auto read
-        let root_account = reader.read::<RootAccount>(()).unwrap();
+        let root_account = match reader.read::<RootAccount>(()) {
+            Ok(account) => account,
+            Err(e) => {
+                eprintln!("Debug: Failed to read root account automatically, error: {:?}", e);
+                panic!("Failed to read root account automatically: {}", e);
+            },
+        };
         check_root_account(&root_account);
         // Test read by public key
-        let public_key = Pubkey::from_str(ROOT_ADDRESS).unwrap();
-        let root_account = reader.read_by_public_key::<RootAccount>(&public_key).unwrap();
+        let public_key = Pubkey::from_str(ROOT_ADDRESS).expect("Failed to parse public key");
+        let root_account = match reader.read_by_public_key::<RootAccount>(&public_key) {
+            Ok(account) => account,
+            Err(e) => panic!("Failed to read root account by public key: {}", e),
+        };
         check_root_account(&root_account);
     }
 
@@ -45,3 +54,4 @@ mod tests {
         assert_eq!(root_account.header.version, ROOT_ACCOUNT_VERSION);
     }
 }
+

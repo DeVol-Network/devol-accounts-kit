@@ -2,7 +2,8 @@ use std::error::Error;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::devol_account::DevolAccount;
-use crate::errors::{AccountTag, ContractError, error_with_account, ReadAccountError};
+use crate::dvl_error::DvlError;
+use crate::errors::{AccountTag, ContractError};
 
 pub trait DevolIndexedAccount : DevolAccount {
 
@@ -13,19 +14,19 @@ pub trait DevolIndexedAccount : DevolAccount {
     fn id_offset() -> usize { 40 }
 
     #[inline(always)]
-    fn check_id(account_info: &AccountInfo, id: Option<usize>) -> Result<(), u32> {
+    fn check_id(account_info: &AccountInfo, id: Option<usize>) -> Result<(), DvlError> {
         if let Some(id) = id {
             let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
             let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
             if read_id != id as u32 {
-                return Err(error_with_account(tag, ContractError::InvalidAccountId));
+                return Err(DvlError::new_with_account(tag, ContractError::InvalidAccountId));
             }
         }
         Ok(())
     }
 
     #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<usize>) -> Result<(), u32> {
+    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<usize>) -> Result<(), DvlError> {
         Self::check_basic(account_info, root_addr, program_id)?;
         Self::check_id(account_info, id)?;
         Ok(())
@@ -37,7 +38,7 @@ pub trait DevolIndexedAccount : DevolAccount {
         root_addr: &Pubkey,
         program_id: &Pubkey,
         id: Option<usize>,
-    ) -> Result<&'a Self, u32>
+    ) -> Result<&'a Self, DvlError>
         where
             Self: Sized,
     {
@@ -53,7 +54,7 @@ pub trait DevolIndexedAccount : DevolAccount {
         root_addr: &Pubkey,
         program_id: &Pubkey,
         id: Option<usize>,
-    ) -> Result<&'a mut Self, u32>
+    ) -> Result<&'a mut Self, DvlError>
         where
             Self: Sized,
     {
@@ -74,8 +75,7 @@ pub trait DevolIndexedAccount : DevolAccount {
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)
-            .map_err(ReadAccountError::from)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, id)?;
         Ok(Box::new(*account_ref))
     }
 }
