@@ -8,6 +8,11 @@ use crate::accounts::devol_regular_account::DevolRegularAccount;
 pub struct IndexedAccountParams {
     pub id: usize,
 }
+pub struct SignableAccountParams {
+    pub client_address: Box<Pubkey>,
+    pub signer: Box<Pubkey>,
+    pub devol_sign: bool,
+}
 
 pub trait DvlReadable {
     type AdditionalCheckParams;
@@ -18,7 +23,7 @@ pub trait DvlReadable {
 
     fn read_by_public_key(
         reader: &DvlAccountReader,
-        public_key: &Pubkey
+        public_key: &Pubkey,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + DevolAccount + Copy

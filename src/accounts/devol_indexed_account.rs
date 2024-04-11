@@ -13,10 +13,13 @@ pub trait DevolIndexedAccount : DevolAccount {
     fn id_offset() -> usize { 40 }
 
     #[inline(always)]
-    fn check_id(tag: AccountTag, account_info: &AccountInfo, id: u32) -> Result<(), u32> {
-        let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
-        if read_id != id {
-            return Err(error_with_account(tag, ContractError::InvalidAccountId));
+    fn check_id(account_info: &AccountInfo, id: Option<usize>) -> Result<(), u32> {
+        if let Some(id) = id {
+            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
+            if read_id != id as u32 {
+                return Err(error_with_account(tag, ContractError::InvalidAccountId));
+            }
         }
         Ok(())
     }
@@ -24,10 +27,7 @@ pub trait DevolIndexedAccount : DevolAccount {
     #[inline(always)]
     fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<usize>) -> Result<(), u32> {
         Self::check_basic(account_info, root_addr, program_id)?;
-        if let Some(id) = id {
-            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-            Self::check_id(tag, account_info, id as u32)?;
-        }
+        Self::check_id(account_info, id)?;
         Ok(())
     }
 
@@ -42,10 +42,7 @@ pub trait DevolIndexedAccount : DevolAccount {
             Self: Sized,
     {
         let account = Self::from_account_info_basic(account_info,root_addr,program_id)?;
-        if let Some(id) = id {
-            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-            Self::check_id(tag, account_info, id as u32)?;
-        }
+        Self::check_id(account_info, id)?;
         Ok(account)
     }
 
@@ -61,10 +58,7 @@ pub trait DevolIndexedAccount : DevolAccount {
             Self: Sized,
     {
         let account = Self::from_account_info_mut_basic(account_info,root_addr,program_id)?;
-        if let Some(id) = id {
-            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-            Self::check_id(tag, account_info, id as u32)?;
-        }
+        Self::check_id(account_info, id)?;
         Ok(account)
     }
 

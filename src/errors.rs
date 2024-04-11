@@ -2,6 +2,17 @@ use std::fmt::{Debug, Formatter};
 use crate::accounts::root::root_account::ROOT_ACCOUNT_TAG;
 use crate::accounts::worker::worker_account::WORKER_ACCOUNT_TAG;
 use crate::accounts::all_workers::all_workers_account::ALL_WORKERS_ACCOUNT_TAG;
+use crate::accounts::oracles::oracles_account::ORACLES_ACCOUNT_TAG;
+use crate::accounts::instruments::instruments_account::INSTR_ACCOUNT_TAG;
+use crate::accounts::worker::pools_log::pools_log_account::POOLS_LOG_ACCOUNT_TAG;
+use crate::accounts::worker::task_log::task_log_account::TASKS_LOG_ACCOUNT_TAG;
+use crate::accounts::client::trade_log::trade_log_account::TRADE_LOG_ACCOUNT_TAG;
+use crate::accounts::worker::pools_trace::pools_trace_account::POOLS_TRACE_ACCOUNT_TAG;
+use crate::accounts::worker::tasks_trace::tasks_trace_account::TASKS_TRACE_ACCOUNT_TAG;
+use crate::accounts::mints::mints_account::MINTS_ACCOUNT_TAG;
+use crate::accounts::mints::mint_log::mint_log_account::MINT_LOG_ACCOUNT_TAG;
+use crate::accounts::client::payoff_log::payoff_log_account::PAYOFF_LOG_ACCOUNT_TAG;
+use crate::accounts::client::client_account::client_account::CLIENT_ACCOUNT_TAG;
 
 #[repr(u16)]
 #[allow(dead_code)]
@@ -221,8 +232,19 @@ impl AccountTag {
     pub fn from_u8(value: u8) -> Option<AccountTag> {
         match value {
             ROOT_ACCOUNT_TAG => Some(AccountTag::Root),
+            INSTR_ACCOUNT_TAG => Some(AccountTag::Instruments),
             ALL_WORKERS_ACCOUNT_TAG => Some(AccountTag::AllWorkers),
             WORKER_ACCOUNT_TAG => Some(AccountTag::Worker),
+            ORACLES_ACCOUNT_TAG => Some(AccountTag::Oracle),
+            MINTS_ACCOUNT_TAG => Some(AccountTag::Mints),
+            POOLS_TRACE_ACCOUNT_TAG => Some(AccountTag::PoolsTrace),
+            TASKS_TRACE_ACCOUNT_TAG => Some(AccountTag::TasksTrace),
+            POOLS_LOG_ACCOUNT_TAG => Some(AccountTag::PoolsLog),
+            PAYOFF_LOG_ACCOUNT_TAG => Some(AccountTag::PayoffLog),
+            MINT_LOG_ACCOUNT_TAG => Some(AccountTag::MintLog),
+            TASKS_LOG_ACCOUNT_TAG => Some(AccountTag::TasksLog),
+            TRADE_LOG_ACCOUNT_TAG => Some(AccountTag::TradeLog),
+            CLIENT_ACCOUNT_TAG => Some(AccountTag::Client),
             _ => None,
         }
     }
