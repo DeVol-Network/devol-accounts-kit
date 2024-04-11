@@ -7,9 +7,9 @@ use crate::accounts::root::root_account::RootAccount;
 
 
 impl DvlReadable for MintsAccount {
-    type AdditionalCheckParams = ();
+    type AdditionalCheckParams<'a> = ();
 
-    fn read(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let root = reader.read::<RootAccount>(()).unwrap();
         let public_key = &root.mints_address;
         // let account =  Self::read_by_public_key(reader, public_key, Some(_params))?;

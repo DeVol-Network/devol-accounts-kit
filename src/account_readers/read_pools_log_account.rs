@@ -6,9 +6,9 @@ use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
 
 impl DvlReadable for PoolsLogAccount {
-    type AdditionalCheckParams = IndexedAccountParams;
+    type AdditionalCheckParams<'a> = IndexedAccountParams;
 
-    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id];
         let public_key = &worker.pools_log_address;

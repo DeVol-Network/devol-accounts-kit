@@ -5,9 +5,9 @@ use crate::accounts::client::payoff_log::payoff_log_account::PayoffLogAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 
 impl DvlReadable for PayoffLogAccount {
-    type AdditionalCheckParams = ClientRelativeAccountParams ;
+    type AdditionalCheckParams<'a> = ClientRelativeAccountParams <'a>;
 
-    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let public_key = &params.client_account.payoff_log;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account = Self::from_account(
@@ -35,13 +35,13 @@ mod tests {
         let reader = setup_account_reader();
         let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
         // Test auto read
-        let client_account = *reader.read::<ClientAccount>(SignableAccountParams {
-            client_address: Box::new(client_pda.key),
+        let client_account = reader.read::<ClientAccount>(SignableAccountParams {
+            client_address: &client_pda.key,
             signer_account: None,
         }).unwrap();
 
         let payoff =
-            reader.read::<PayoffLogAccount>(ClientRelativeAccountParams {client_account: Box::new(client_account) }).unwrap();
+            reader.read::<PayoffLogAccount>(ClientRelativeAccountParams {client_account: &client_account }).unwrap();
         check_payoff_log_account(&payoff);
 
         // Test read by public key

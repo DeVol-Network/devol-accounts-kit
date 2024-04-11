@@ -7,23 +7,23 @@ use crate::accounts::devol_account::DevolAccount;
 pub struct IndexedAccountParams {
     pub id: usize,
 }
-pub struct ClientRelativeAccountParams {
-    pub client_account: Box<ClientAccount>,
+pub struct ClientRelativeAccountParams<'a> {
+    pub client_account: &'a ClientAccount,
 }
-pub struct SignableAccountParams {
-    pub client_address: Box<Pubkey>,
-    pub signer_account: Option<SignerAccountParams>,
+pub struct SignableAccountParams<'a> {
+    pub client_address: &'a Pubkey,
+    pub signer_account: Option<SignerAccountParams<'a>>,
 }
 
-pub struct SignerAccountParams {
-    pub signer: Box<Pubkey>,
+pub struct SignerAccountParams<'a> {
+    pub signer: &'a Pubkey,
     pub devol_sign: bool,
 }
 
 pub trait DvlReadable {
-    type AdditionalCheckParams;
+    type AdditionalCheckParams<'a>;
 
-    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>>
+    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
 

@@ -38,7 +38,7 @@ impl DvlAccountReader {
         }
     }
 
-    pub fn read<T: DvlReadable>(&self, check: T::AdditionalCheckParams) -> Result<Box<T>, Box<dyn Error>> {
+    pub fn read<'a, T: DvlReadable>(&self, check: T::AdditionalCheckParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
         T::read(self, check)
     }
     pub fn read_by_public_key<T: DvlReadable + DevolAccount + Copy>(

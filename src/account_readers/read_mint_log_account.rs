@@ -7,9 +7,9 @@ use crate::accounts::mints::mints_account::MintsAccount;
 
 
 impl DvlReadable for MintLogAccount {
-    type AdditionalCheckParams = IndexedAccountParams;
+    type AdditionalCheckParams<'a> = IndexedAccountParams;
 
-    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let mints_account = reader.read::<MintsAccount>(()).unwrap();
         let public_key = &mints_account.data[params.id].log_address;
         // let account =  Self::read_by_public_key(reader, public_key, params)?;

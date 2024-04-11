@@ -6,8 +6,8 @@ use crate::accounts::client::client_account::client_account::ClientAccount;
 
 impl DvlReadable for ClientAccount
 {
-    type AdditionalCheckParams = SignableAccountParams;
-    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams,
+    type AdditionalCheckParams<'a> = SignableAccountParams<'a>;
+    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>,
     ) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let public_key = &*params.client_address;
         let mut rpc_data = reader.client.get_account(public_key)?;
@@ -49,7 +49,7 @@ mod tests {
         let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
         // Test auto read
         let client_account = reader.read::<ClientAccount>(SignableAccountParams {
-            client_address: Box::new(client_pda.key),
+            client_address: &client_pda.key,
             signer_account: None,
         }).unwrap();
         check_client_account(&client_account);
