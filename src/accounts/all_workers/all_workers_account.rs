@@ -1,6 +1,7 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::all_workers::worker::Worker;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 
 pub const ALL_WORKERS_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const ALL_WORKERS_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -18,6 +19,8 @@ pub struct AllWorkersAccount {
     pub count: u32,
     pub workers: [Worker; MAX_ALL_WORKERS_COUNT],
 }
+
+impl DevolRegularAccount for AllWorkersAccount {}
 
 impl DevolAccount for AllWorkersAccount {
     fn expected_size() -> usize { ALL_WORKERS_ACCOUNT_SIZE }

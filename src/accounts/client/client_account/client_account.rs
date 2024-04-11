@@ -1,4 +1,5 @@
-use std::str::FromStr;
+use std::cell::Ref;
+use std::error::Error;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
@@ -8,6 +9,7 @@ use crate::accounts::client::client_account::client_pool::ClientPool;
 use crate::accounts::client::client_account::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::kyc_status::KYCStatus;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
 use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
 use crate::constants::HOURS;
@@ -61,6 +63,28 @@ pub struct ClientAccount {
     pub pools_count: [u8; 4],           // 4 bytes, CLIENT_ACCOUNT_POOLS_COUNT_OFFSET
     /// WARNING!!! Unaligned, wrong address, use getter and setter!
     pools: [ClientPool; 0],             // extendable size, CLIENT_ACCOUNT_POOLS_OFFSET
+}
+
+impl DevolExpandableSizeAccount for ClientAccount {
+    fn expected_expanded_size(account_data: Ref<&mut [u8]>) -> usize {
+        let account = unsafe { &*(account_data.as_ptr() as *const Self) };
+        let pools_count = account.get_pools_count();
+        let expected_size = align_size(CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE, 8);
+        expected_size
+    }
+}
+impl DevolAccount for ClientAccount {
+    fn expected_size() -> usize {
+        CLIENT_ACCOUNT_SIZE
+    }
+
+    fn expected_tag() -> u8 {
+        CLIENT_ACCOUNT_TAG
+    }
+
+    fn expected_version() -> u32 {
+        CLIENT_ACCOUNT_VERSION as u32
+    }
 }
 
 impl ClientAccount {
@@ -122,18 +146,6 @@ impl ClientAccount {
     }
 
     #[inline(always)]
-    fn check_size(tag: AccountTag,
-                  account: &ClientAccount, actual_size: usize) -> Result<(), u32> {
-        let _ = account.get_pools_count();
-        let expected_size = align_size(CLIENT_ACCOUNT_SIZE, 8); // align_size(CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE, 8)
-        if expected_size != actual_size {
-            Err(error_with_account(tag, ContractError::AccountSize))
-        } else {
-            Ok(())
-        }
-    }
-
-    #[inline(always)]
     fn check_all(
         account_info: &AccountInfo,
         root_addr: &Pubkey,
@@ -141,18 +153,16 @@ impl ClientAccount {
         signer: &Pubkey,
         devol_sign: bool,
     ) -> Result<(), u32> {
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        let header = Self::account_header(account_info.data.borrow());
-        Self::check_tag_and_version(tag, header)?;
-        Self::check_root(tag, header, root_addr)?;
-        Self::check_program_id(tag, account_info, program_id)?;
+        Self::check_basic(account_info,root_addr,program_id)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
-        Self::check_size(tag, account, account_info.data.borrow().len())?;
         Self::check_signer(account, signer, devol_sign)?;
+        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+        Self::check_expanded_size(tag, account_info.data.borrow())?;
         Ok(())
     }
 
     /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
+    #[allow(dead_code)]
     fn from_account_info<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
@@ -170,6 +180,7 @@ impl ClientAccount {
 
     /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
     /// Ensures the account is marked as writable.
+    #[allow(dead_code)]
     fn from_account_info_mut<'a>(
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
@@ -189,37 +200,29 @@ impl ClientAccount {
     }
 
     /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
-    fn from_account(
+    #[allow(dead_code)]
+    pub(crate) fn from_account(
         key: &Pubkey,
         account: &mut impl Account,
         root_addr: &Pubkey,
         program_id: &Pubkey,
         signer: &Pubkey,
         devol_sign: bool,
-    ) -> Result<Self, u32>
+    ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)?;
-        Ok(*account_ref)
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)
+            .map_err(ReadAccountError::from)?;
+        Ok(Box::new(*account_ref))
     }
 
+    #[allow(dead_code)]
     fn serialize_mut(&mut self) -> &mut [u8] {
         let size = std::mem::size_of::<ClientAccount>();
         unsafe { std::slice::from_raw_parts_mut(self as *mut _ as *mut u8, size) }
     }
-}
-
-impl DevolAccount for ClientAccount {
-    #[inline(always)]
-    fn expected_size() -> usize { 0 }
-
-    #[inline(always)]
-    fn expected_tag() -> u8 { CLIENT_ACCOUNT_TAG }
-
-    #[inline(always)]
-    fn expected_version() -> u32 { CLIENT_ACCOUNT_VERSION as u32 }
 }
 
 #[cfg(test)]
@@ -232,7 +235,7 @@ impl Default for ClientAccount {
                 root: Pubkey::new_unique(),
             },
             owner_address: Pubkey::new_unique(),
-            signer_address: Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap(),
+            signer_address: Pubkey::new_unique(),
             payoff_log: Pubkey::default(),
             id: 0,
             ops_counter: [0; 8],
@@ -261,6 +264,7 @@ mod tests {
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
+    use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
     use crate::constants::test_constants;
 
     #[test]
@@ -297,32 +301,8 @@ mod tests {
         let devol_sign = true;
         let mut lamports: u64 = 0;
 
-        let mut account = ClientAccount::default();
-        let key = account.owner_address;
-        let signer = account.signer_address;
-        let root = account.header.root;
-        let tag = AccountTag::from_u8(account.header.tag as u8).unwrap();
-
-        let serialized_data = account.serialize_mut();
-
-        let account_info = AccountInfo{
-            key: &key,
-            lamports: Rc::new(RefCell::new(&mut lamports)),
-            data: Rc::new(RefCell::new(serialized_data)),
-            owner: &owner,
-            rent_epoch: 0,
-            is_signer: devol_sign,
-            is_writable: false,
-            executable: false,
-        };
-
-        let new_account = ClientAccount::from_account_info(&account_info, &root,
-                                                           &program_id, &signer, devol_sign).unwrap();
-
-        assert_eq!(ClientAccount::check_size(tag, &new_account, account_info.data.borrow().len()), Ok(()));
-
         const TEST_POOLS_SIZE: usize = 10;
-        let total_size = CLIENT_ACCOUNT_SIZE + TEST_POOLS_SIZE * POOLS_LOG_SIZE;
+        let total_size = align_size(CLIENT_ACCOUNT_SIZE + TEST_POOLS_SIZE * POOLS_LOG_SIZE, 4);
 
         let mut buffer_for_account = vec![0u8; total_size];
         let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut ClientAccount) };
@@ -336,14 +316,11 @@ mod tests {
         let key = account.owner_address;
         let signer = account.signer_address;
         let root = account.header.root;
-        let tag = AccountTag::from_u8(account.header.tag as u8).unwrap();
-
-        let serialized_data = account.serialize_mut();
 
         let account_info = AccountInfo{
             key: &key,
             lamports: Rc::new(RefCell::new(&mut lamports)),
-            data: Rc::new(RefCell::new(serialized_data)),
+            data: Rc::new(RefCell::new(buffer_for_account.as_mut_slice())),
             owner: &owner,
             rent_epoch: 0,
             is_signer: devol_sign,
@@ -354,7 +331,6 @@ mod tests {
         let new_account = ClientAccount::from_account_info(&account_info, &root,
                                                            &program_id, &signer, devol_sign).unwrap();
 
-        assert_eq!(ClientAccount::check_size(tag, &new_account, account_info.data.borrow().len()), Ok(()));
         assert_eq!(new_account.get_pool(check_1.0).unwrap().fractions, check_1.1);
         assert_eq!(new_account.get_pool(check_2.0).unwrap().instr_id, check_2.1);
     }

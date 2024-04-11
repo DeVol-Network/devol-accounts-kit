@@ -1,5 +1,6 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::oracles::oracles_data::{OracleData, ORACLES_DATA_COUNT};
 
 pub const ORACLES_ACCOUNT_HEADER_OFFSET: usize = 0;
@@ -11,6 +12,7 @@ pub const ORACLES_ACCOUNT_TAG: u8 = 13;
 pub const ORACLES_ACCOUNT_VERSION: u32 = 1;
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct OraclesAccount {
     pub header: AccountHeader,                      // ORACLES_ACCOUNT_HEADER_OFFSET
     pub count: u32,                                 // ORACLES_ACCOUNT_COUNT_OFFSET
@@ -18,6 +20,7 @@ pub struct OraclesAccount {
     pub data: [OracleData; ORACLES_DATA_COUNT],     // ORACLES_ACCOUNT_DATA_OFFSET
 }
 
+impl DevolRegularAccount for OraclesAccount {}
 impl DevolAccount for OraclesAccount {
     fn expected_size() -> usize { ORACLES_ACCOUNT_SIZE }
 

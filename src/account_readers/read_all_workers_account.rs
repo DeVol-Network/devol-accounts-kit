@@ -1,24 +1,24 @@
 use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
-use crate::account_readers::dvl_readable::{DvlReadable, DvlReadablePublicKey};
+use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::root::root_account::RootAccount;
 
-impl DvlReadablePublicKey for AllWorkersAccount {}
-
 impl DvlReadable for AllWorkersAccount {
-    fn read(reader: &DvlAccountReader, id: Option<u32>) -> Result<Self, Box<dyn Error>> where Self: Sized {
-        let root = reader.read::<RootAccount>(None).unwrap();
-        let pubkey = &root.workers_address;
-        let mut rpc_data = reader.client.get_account(pubkey)?;
-        let workers_account = AllWorkersAccount::from_account(
-            pubkey,
+    type AdditionalCheckParams = ();
+
+    fn read(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let root = reader.read::<RootAccount>(()).unwrap();
+        let public_key = &root.workers_address;
+        let mut rpc_data = reader.client.get_account(public_key)?;
+        let account =  Self::from_account(
+            public_key,
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            id)?;
-        Ok(workers_account)
+        )?;
+        Ok(account)
     }
 }
 
@@ -32,12 +32,12 @@ mod tests {
     fn test_read_all_workers_account() {
         let reader = setup_account_reader();
         // Test auto read
-        let all_workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
+        let all_workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         check_all_workers_account(&all_workers_account);
         // Test read by public key
-        let root_account = reader.read::<RootAccount>(None).unwrap();
+        let root_account = reader.read::<RootAccount>(()).unwrap();
         let pubkey = &root_account.workers_address;
-        let all_workers_account = reader.read_by_public_key::<AllWorkersAccount>(pubkey,None).unwrap();
+        let all_workers_account = reader.read_by_public_key::<AllWorkersAccount>(pubkey).unwrap();
         check_all_workers_account(&all_workers_account);
     }
 

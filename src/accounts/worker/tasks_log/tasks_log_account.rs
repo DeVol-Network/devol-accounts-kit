@@ -1,6 +1,7 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::worker::task_log::task_log::TasksLog;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::accounts::worker::tasks_log::task_log::TasksLog;
 
 pub const TASKS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const TASKS_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -27,6 +28,7 @@ pub struct TasksLogAccount {
     // 26624 bytes, TASKS_LOG_ACCOUNT_DATA_OFFSET
     pub data: [TasksLog; TASKS_LOG_BUFFER_CAPACITY],
 }
+impl DevolIndexedAccount for TasksLogAccount{}
 
 impl DevolAccount for TasksLogAccount {
     fn expected_size() -> usize { TASKS_LOG_ACCOUNT_SIZE }

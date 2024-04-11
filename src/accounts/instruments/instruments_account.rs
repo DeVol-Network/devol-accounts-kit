@@ -1,5 +1,6 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::instruments::instruments_data::InstrumentsData;
 
 pub const INSTR_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -19,6 +20,8 @@ pub struct InstrumentsAccount {
     pub data: [InstrumentsData; INSTR_DATA_COUNT],    // INSTR_ACCOUNT_DATA_OFFSET
 }
 
+
+impl DevolRegularAccount for InstrumentsAccount {}
 impl DevolAccount for InstrumentsAccount {
     fn expected_size() -> usize { INSTR_ACCOUNT_SIZE }
 

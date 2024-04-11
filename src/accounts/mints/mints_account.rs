@@ -1,5 +1,6 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::mints::mint::Mint;
 
 pub const MINTS_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -19,6 +20,7 @@ pub struct MintsAccount {
     pub data: [Mint; MAX_MINTS_COUNT],
 }
 
+impl DevolRegularAccount for MintsAccount {}
 impl DevolAccount for MintsAccount {
     #[inline(always)]
     fn expected_size() -> usize { MINTS_ACCOUNT_SIZE }

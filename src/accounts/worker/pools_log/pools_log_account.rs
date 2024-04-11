@@ -1,5 +1,6 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pools_log::pool_log::PoolsLog;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
@@ -27,6 +28,8 @@ pub struct PoolsLogAccount {
     // 334080 bytes, POOLS_LOG_ACCOUNT_DATA_OFFSET
     pub data: [PoolsLog; POOLS_LOG_BUFFER_CAPACITY],
 }
+
+impl DevolIndexedAccount for PoolsLogAccount {}
 
 impl DevolAccount for PoolsLogAccount {
     fn expected_size() -> usize { POOLS_LOG_ACCOUNT_SIZE }

@@ -1,5 +1,6 @@
-use solana_program::pubkey::Pubkey;
+use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pools_trace::pools_trace::PoolsTrace;
 
 pub const POOLS_TRACE_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -14,15 +15,14 @@ pub const MAX_POOLS_TRACE_COUNT: usize = 256;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct PoolsTraceAccount {
-    // 8 bytes, POOLS_TRACE_ACCOUNT_VERSION_OFFSET
-    pub version: u64,
-    // 32 bytes, POOLS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET
-    pub root_address: Pubkey,
+    // 40 bytes, AccountHeader
+    pub header: AccountHeader,
     // 4 bytes, POOLS_TRACE_ACCOUNT_WORKER_ID_OFFSET
     pub worker_id: u32,
     // 24576 bytes, POOLS_TRACE_ACCOUNT_DATA_OFFSET
     pub data: [PoolsTrace; MAX_POOLS_TRACE_COUNT],
 }
+impl DevolIndexedAccount for PoolsTraceAccount{}
 
 impl DevolAccount for PoolsTraceAccount {
     fn expected_size() -> usize { POOLS_TRACE_ACCOUNT_SIZE }
@@ -39,8 +39,7 @@ impl DevolAccount for PoolsTraceAccount {
 impl Default for PoolsTraceAccount {
     fn default() -> Self {
         Self {
-            version: 0,
-            root_address: Pubkey::default(),
+            header: AccountHeader::default(),
             worker_id: 0,
             data: [PoolsTrace::default(); MAX_POOLS_TRACE_COUNT],
         }
@@ -49,7 +48,6 @@ impl Default for PoolsTraceAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::type_size_helper::align_size;
     use super::*;
 
     #[test]
@@ -59,11 +57,11 @@ mod tests {
 
         // checking fields size and offset
         assert_eq!(
-            &account.version as *const _ as usize - base_ptr,
+            &account.header.tag as *const _ as usize - base_ptr,
             POOLS_TRACE_ACCOUNT_VERSION_OFFSET
         );
         assert_eq!(
-            &account.root_address as *const _ as usize - base_ptr,
+            &account.header.root as *const _ as usize - base_ptr,
             POOLS_TRACE_ACCOUNT_ROOT_ADDRESS_OFFSET
         );
         assert_eq!(
@@ -76,6 +74,6 @@ mod tests {
         );
 
         // checking total size
-        assert_eq!(std::mem::size_of::<PoolsTraceAccount>(), align_size(POOLS_TRACE_ACCOUNT_SIZE, 8));
+        assert_eq!(std::mem::size_of::<PoolsTraceAccount>(), POOLS_TRACE_ACCOUNT_SIZE);
     }
 }

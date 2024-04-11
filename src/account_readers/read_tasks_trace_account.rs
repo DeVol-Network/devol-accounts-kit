@@ -3,22 +3,23 @@ use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::worker::worker_account::WorkerAccount;
+use crate::accounts::worker::tasks_trace::tasks_trace_account::TasksTraceAccount;
 
-impl DvlReadable for WorkerAccount {
+impl DvlReadable for TasksTraceAccount {
     type AdditionalCheckParams = IndexedAccountParams;
+
     fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id];
-        let public_key = &worker.address;
+        let public_key = &worker.tasks_trace_address;
         // let account =  Self::read_by_public_key(reader, public_key, Some(params))?;
         let mut rpc_data = reader.client.get_account(public_key)?;
-        let account =  Self::from_account(
+        let account = Self::from_account(
             public_key,
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            Some(params.id)
+            Some(params.id),
         )?;
         Ok(account)
     }
@@ -26,25 +27,25 @@ impl DvlReadable for WorkerAccount {
 
 #[cfg(test)]
 mod tests {
+    use crate::accounts::worker::tasks_trace::tasks_trace_account::{TASKS_TRACE_ACCOUNT_TAG, TASKS_TRACE_ACCOUNT_VERSION, TasksTraceAccount};
     use super::*;
-    use crate::accounts::worker::worker_account::{WORKER_ACCOUNT_TAG, WORKER_ACCOUNT_VERSION};
     use crate::tests::tests::setup_account_reader;
 
     #[test]
-    fn test_read_worker_account() {
+    fn test_read_tasks_trace_account() {
         let reader = setup_account_reader();
         // Test read by index
-        let worker_0 = reader.read::<WorkerAccount>(IndexedAccountParams{id: 0}).unwrap();
-        check_worker_account(&worker_0);
+        let task_trace_0 = reader.read::<TasksTraceAccount>(IndexedAccountParams {id: 0}).unwrap();
+        check_tasks_trace_account(&task_trace_0);
         // Test read by public key
-        let mints_account = reader.read::<AllWorkersAccount>(()).unwrap();
-        let pubkey = &mints_account.workers[0].address;
-        let worker_0 = reader.read_by_public_key::<WorkerAccount>(pubkey).unwrap();
-        check_worker_account(&worker_0);
+        let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
+        let pubkey = &workers_account.workers[0].tasks_trace_address;
+        let task_trace_0 = reader.read_by_public_key::<TasksTraceAccount>(pubkey).unwrap();
+        check_tasks_trace_account(&task_trace_0);
     }
 
-    fn check_worker_account(mint_log_account: &WorkerAccount){
-        assert_eq!(mint_log_account.header.tag, WORKER_ACCOUNT_TAG as u32);
-        assert_eq!(mint_log_account.header.version, WORKER_ACCOUNT_VERSION);
+    fn check_tasks_trace_account(tasks_trace_account: &TasksTraceAccount){
+        assert_eq!(tasks_trace_account.header.tag, TASKS_TRACE_ACCOUNT_TAG as u32);
+        assert_eq!(tasks_trace_account.header.version, TASKS_TRACE_ACCOUNT_VERSION);
     }
 }

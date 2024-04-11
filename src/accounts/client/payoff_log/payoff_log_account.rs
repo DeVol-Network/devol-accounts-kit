@@ -1,6 +1,7 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::payoff_log::payoff_log::PayoffLog;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 
 pub const PAYOFF_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const PAYOFF_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -22,6 +23,7 @@ pub struct PayoffLogAccount {
     pub count: u32, // 4 bytes
     pub data: [PayoffLog; PAYOFF_LOG_BUFFER_CAPACITY],
 }
+impl DevolIndexedAccount for PayoffLogAccount {}
 
 impl DevolAccount for PayoffLogAccount {
     #[inline(always)]

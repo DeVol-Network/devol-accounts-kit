@@ -1,6 +1,7 @@
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::mints::mint_log::mint_log::MintLog;
 
 pub const MINT_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -27,7 +28,13 @@ pub struct MintLogAccount {
     pub data: [MintLog; MINT_LOG_BUFFER_CAPACITY],
 }
 
+impl DevolIndexedAccount for MintLogAccount {
+    fn id_offset() -> usize {
+        MINT_LOG_ACCOUNT_MINT_ID_OFFSET
+    }
+}
 impl DevolAccount for MintLogAccount {
+
     #[inline(always)]
     fn expected_size() -> usize { MINT_LOG_ACCOUNT_SIZE }
     #[inline(always)]
