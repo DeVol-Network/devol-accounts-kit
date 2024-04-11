@@ -5,4 +5,4 @@ pub mod constants;
 pub mod account_readers;
 pub mod utils;
 pub mod tests;
-mod dvl_error;
+pub mod dvl_error;
