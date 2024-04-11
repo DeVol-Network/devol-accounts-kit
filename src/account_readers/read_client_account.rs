@@ -47,7 +47,6 @@ mod tests {
     fn test_read_client_account() {
         let reader = setup_account_reader();
         let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
-        println!("key: {}", client_pda.key);
         // Test auto read
         let client_account = reader.read::<ClientAccount>(SignableAccountParams {
             client_address: Box::new(client_pda.key),

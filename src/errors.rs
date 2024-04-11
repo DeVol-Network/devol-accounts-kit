@@ -5,7 +5,7 @@ use crate::accounts::all_workers::all_workers_account::ALL_WORKERS_ACCOUNT_TAG;
 use crate::accounts::oracles::oracles_account::ORACLES_ACCOUNT_TAG;
 use crate::accounts::instruments::instruments_account::INSTR_ACCOUNT_TAG;
 use crate::accounts::worker::pools_log::pools_log_account::POOLS_LOG_ACCOUNT_TAG;
-use crate::accounts::worker::task_log::task_log_account::TASKS_LOG_ACCOUNT_TAG;
+use crate::accounts::worker::tasks_log::tasks_log_account::TASKS_LOG_ACCOUNT_TAG;
 use crate::accounts::client::trade_log::trade_log_account::TRADE_LOG_ACCOUNT_TAG;
 use crate::accounts::worker::pools_trace::pools_trace_account::POOLS_TRACE_ACCOUNT_TAG;
 use crate::accounts::worker::tasks_trace::tasks_trace_account::TASKS_TRACE_ACCOUNT_TAG;

@@ -1,10 +1,14 @@
 use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::accounts::client::client_account::client_account::ClientAccount;
 use crate::accounts::devol_account::DevolAccount;
 
 pub struct IndexedAccountParams {
     pub id: usize,
+}
+pub struct ClientRelativeAccountParams {
+    pub client_account: Box<ClientAccount>,
 }
 pub struct SignableAccountParams {
     pub client_address: Box<Pubkey>,
