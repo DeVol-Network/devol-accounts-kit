@@ -1,17 +1,24 @@
 use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
-use crate::account_readers::dvl_readable::{DvlReadableIndexed, DvlReadablePublicKey};
+use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
-impl DvlReadablePublicKey for WorkerAccount {}
-
-impl DvlReadableIndexed for WorkerAccount {
-    fn read(reader: &DvlAccountReader, index: usize, id: Option<u32>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let workers_account = reader.read::<AllWorkersAccount>(None).unwrap();
-        let worker = workers_account.workers[index];
+impl DvlReadable for WorkerAccount {
+    fn read(reader: &DvlAccountReader, params: Self::AccountParam) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
+        let worker = workers_account.workers[params.id];
         let public_key = &worker.address;
-        let account =  Self::read_by_public_key(reader, public_key, id)?;
+        let mut rpc_data = reader.client.get_account(public_key)?;
+        let account =  Self::from_account(
+            public_key,
+            &mut rpc_data,
+            &reader.root_pda.key,
+            &reader.program_id,
+            params.id as u32
+        )?;
         Ok(account)
     }
 }
@@ -26,13 +33,13 @@ mod tests {
     fn test_read_worker_account() {
         let reader = setup_account_reader();
         // Test read by index
-        let worker_0 = reader.read_indexed::<WorkerAccount>(0,None).unwrap();
+        let worker_0 = reader.read::<WorkerAccount>(IndexedAccountParams{id: 0}).unwrap();
         check_worker_account(&worker_0);
         // Test read by public key
-        let mints_account = reader.read::<AllWorkersAccount>(None).unwrap();
-        let pubkey = &mints_account.workers[0].address;
-        let worker_0 = reader.read_by_public_key::<WorkerAccount>(pubkey,None).unwrap();
-        check_worker_account(&worker_0);
+        // let mints_account = reader.read::<AllWorkersAccount>(()).unwrap();
+        // let pubkey = &mints_account.workers[0].address;
+        // let worker_0 = reader.read_by_public_key::<WorkerAccount>(pubkey,None).unwrap();
+        // check_worker_account(&worker_0);
     }
 
     fn check_worker_account(mint_log_account: &WorkerAccount){

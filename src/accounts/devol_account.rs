@@ -7,6 +7,7 @@ use crate::accounts::account_header::AccountHeader;
 use crate::errors::*;
 
 pub trait DevolAccount {
+    type AccountParam;
     fn expected_size() -> usize;
 
     fn expected_tag() -> u8;

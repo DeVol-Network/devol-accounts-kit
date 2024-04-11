@@ -1,5 +1,9 @@
+use crate::account_readers::dvl_readable::IndexedAccountParams;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
+use crate::accounts::root::root_account::RootAccount;
 use crate::accounts::worker::band::Band;
 use crate::accounts::worker::svm_params::SvmParams;
 use crate::accounts::worker::worker_state::WorkerState;
@@ -162,8 +166,12 @@ impl WorkerAccount {
     pub fn set_new_inventories_ratio(&mut self, value: i64) { self.new_inventories_ratio = value.to_ne_bytes() }
 
 }
+impl DevolIndexedAccount for WorkerAccount {
+
+}
 
 impl DevolAccount for WorkerAccount {
+    type AccountParam = IndexedAccountParams;
     fn expected_size() -> usize {
         WORKER_ACCOUNT_SIZE
     }

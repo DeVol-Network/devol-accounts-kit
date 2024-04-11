@@ -2,8 +2,7 @@ use std::error::Error;
 use std::str::FromStr;
 use solana_client::rpc_client::RpcClient;
 use solana_program::pubkey::Pubkey;
-use crate::account_readers::dvl_readable::{DvlReadable, DvlReadableClient, DvlReadableIndexed, DvlReadablePublicKey};
-use crate::accounts::devol_account::DevolAccount;
+use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::generate_pda::{generate_pda, PDA};
 
 pub struct DvlAccountReader {
@@ -38,34 +37,7 @@ impl DvlAccountReader {
         }
     }
 
-    pub fn read<T: DvlReadable>(&self, id: Option<u32>) -> Result<Box<T>, Box<dyn Error>>
-    {
-        T::read(self, id)
-    }
-
-    pub fn read_client<T: DvlReadableClient>(
-        &self,
-        account_address: &Pubkey,
-        signer: &Pubkey,
-        devol_sign: bool,
-    ) -> Result<Box<T>, Box<dyn Error>>
-    {
-        T::read(self, account_address, signer, devol_sign)
-    }
-
-    pub fn read_indexed<T: DvlReadableIndexed>(&self, index: usize, id: Option<u32>) -> Result<Box<T>, Box<dyn Error>>
-    {
-        T::read(self, index, id)
-    }
-
-    pub fn read_by_public_key<T: DvlReadablePublicKey>(
-        &self,
-        public_key: &Pubkey,
-        id: Option<u32>,
-    ) -> Result<Box<T>, Box<dyn Error>>
-    where
-        T: DevolAccount + Copy
-    {
-        T::read_by_public_key(self, public_key, id)
+    pub fn read<T: DvlReadable>(&self, params: T::AccountParam) -> Result<Box<T>, Box<dyn Error>> {
+        T::read(self, params)
     }
 }
