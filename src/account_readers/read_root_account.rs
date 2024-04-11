@@ -5,9 +5,9 @@ use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::root::root_account::RootAccount;
 
 impl DvlReadable for RootAccount {
-    type AccountParam = ();
+    type AdditionalCheckParams = ();
 
-    fn read(reader: &DvlAccountReader, _params: Self::AccountParam) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         // let account =  Self::read_by_public_key(reader, &reader.root_pda.key)?;
         let public_key = &reader.root_pda.key;
         let mut rpc_data = reader.client.get_account(public_key)?;
@@ -36,9 +36,9 @@ mod tests {
         let root_account = reader.read::<RootAccount>(()).unwrap();
         check_root_account(&root_account);
         // Test read by public key
-        // let public_key = Pubkey::from_str(ROOT_ADDRESS).unwrap();
-        // let root_account = reader.read_by_public_key::<RootAccount>(&public_key ,None).unwrap();
-        // check_root_account(&root_account);
+        let public_key = Pubkey::from_str(ROOT_ADDRESS).unwrap();
+        let root_account = reader.read_by_public_key::<RootAccount>(&public_key).unwrap();
+        check_root_account(&root_account);
     }
 
     fn check_root_account(root_account: &RootAccount){

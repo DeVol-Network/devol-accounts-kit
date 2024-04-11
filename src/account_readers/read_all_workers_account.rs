@@ -6,9 +6,9 @@ use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::root::root_account::RootAccount;
 
 impl DvlReadable for AllWorkersAccount {
-    type AccountParam = ();
+    type AdditionalCheckParams = ();
 
-    fn read(reader: &DvlAccountReader, _params: Self::AccountParam) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let root = reader.read::<RootAccount>(()).unwrap();
         let public_key = &root.workers_address;
         let mut rpc_data = reader.client.get_account(public_key)?;
@@ -35,10 +35,10 @@ mod tests {
         let all_workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         check_all_workers_account(&all_workers_account);
         // Test read by public key
-        // let root_account = reader.read::<RootAccount>(()).unwrap();
-        // let pubkey = &root_account.workers_address;
-        // let all_workers_account = reader.read_by_public_key::<AllWorkersAccount>(pubkey,None).unwrap();
-        // check_all_workers_account(&all_workers_account);
+        let root_account = reader.read::<RootAccount>(()).unwrap();
+        let pubkey = &root_account.workers_address;
+        let all_workers_account = reader.read_by_public_key::<AllWorkersAccount>(pubkey).unwrap();
+        check_all_workers_account(&all_workers_account);
     }
 
     fn check_all_workers_account(all_workers_account: &AllWorkersAccount){

@@ -19,9 +19,7 @@ pub trait DevolRegularAccount: DevolAccount {
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id)?;
-        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
-        Ok(account)
+        Self::from_account_info_basic(account_info, root_addr, program_id)
     }
 
     /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
@@ -34,12 +32,7 @@ pub trait DevolRegularAccount: DevolAccount {
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id)?;
-        if !account_info.is_writable {
-            return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
-        }
-        let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
-        Ok(account)
+        Self::from_account_info_mut_basic(account_info, root_addr, program_id)
     }
 
     /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.

@@ -10,9 +10,27 @@ pub struct IndexedAccountParams {
 }
 
 pub trait DvlReadable {
-    type AccountParam;
+    type AdditionalCheckParams;
 
-    fn read(reader: &DvlAccountReader, params: Self::AccountParam) -> Result<Box<Self>, Box<dyn Error>>
+    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
+
+    fn read_by_public_key(
+        reader: &DvlAccountReader,
+        public_key: &Pubkey
+    ) -> Result<Box<Self>, Box<dyn Error>>
+        where
+            Self: Sized + DevolAccount + Copy
+    {
+        let mut rpc_data = reader.client.get_account(public_key)?;
+        let account =  Self::from_account_basic(
+            public_key,
+            &mut rpc_data,
+            &reader.root_pda.key,
+            &reader.program_id,
+        )?;
+
+        Ok(account)
+    }
 }

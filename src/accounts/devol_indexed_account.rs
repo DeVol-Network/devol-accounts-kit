@@ -22,10 +22,12 @@ pub trait DevolIndexedAccount : DevolAccount {
     }
 
     #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: u32) -> Result<(), u32> {
+    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<usize>) -> Result<(), u32> {
         Self::check_basic(account_info, root_addr, program_id)?;
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        Self::check_id(tag, account_info, id)?;
+        if let Some(id) = id {
+            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            Self::check_id(tag, account_info, id as u32)?;
+        }
         Ok(())
     }
 
@@ -34,13 +36,16 @@ pub trait DevolIndexedAccount : DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
+        id: Option<usize>,
     ) -> Result<&'a Self, u32>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id, id)?;
-        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
+        let account = Self::from_account_info_basic(account_info,root_addr,program_id)?;
+        if let Some(id) = id {
+            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            Self::check_id(tag, account_info, id as u32)?;
+        }
         Ok(account)
     }
 
@@ -50,16 +55,16 @@ pub trait DevolIndexedAccount : DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
+        id: Option<usize>,
     ) -> Result<&'a mut Self, u32>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id, id)?;
-        if !account_info.is_writable {
-            return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+        let account = Self::from_account_info_mut_basic(account_info,root_addr,program_id)?;
+        if let Some(id) = id {
+            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            Self::check_id(tag, account_info, id as u32)?;
         }
-        let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
         Ok(account)
     }
 
@@ -69,7 +74,7 @@ pub trait DevolIndexedAccount : DevolAccount {
         account: &mut impl Account,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
+        id: Option<usize>,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + Copy

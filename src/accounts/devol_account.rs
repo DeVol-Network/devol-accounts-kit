@@ -7,7 +7,6 @@ use crate::accounts::account_header::AccountHeader;
 use crate::errors::*;
 
 pub trait DevolAccount {
-    type AccountParam;
     fn expected_size() -> usize;
 
     fn expected_tag() -> u8;
@@ -22,7 +21,7 @@ pub trait DevolAccount {
     #[inline(always)]
     fn check_basic(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), u32> {
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        Self::check_size(tag, account_info.data.borrow().len())?;
+        Self::check_size(tag, account_info.data.borrow())?;
         let header = Self::account_header(account_info.data.borrow());
         Self::check_tag_and_version(tag, header)?;
         Self::check_root(tag, header, root_addr)?;
@@ -31,8 +30,8 @@ pub trait DevolAccount {
     }
 
     #[inline(always)]
-    fn check_size(tag: AccountTag, actual_size: usize) -> Result<(), u32> {
-        // todo think about extended size accounts
+    fn check_size(tag: AccountTag, account_data: Ref<&mut [u8]>) -> Result<(), u32> {
+        let actual_size= account_data.len();
         if actual_size < Self::expected_size() {
             Err(error_with_account(tag, ContractError::AccountSize))
         } else {
@@ -69,6 +68,54 @@ pub trait DevolAccount {
         } else {
             Ok(())
         }
+    }
+
+    /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
+    fn from_account_info_basic<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+    ) -> Result<&'a Self, u32>
+        where
+            Self: Sized,
+    {
+        Self::check_basic(account_info, root_addr, program_id)?;
+        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
+        Ok(account)
+    }
+
+    /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
+    /// Ensures the account is marked as writable.
+    fn from_account_info_mut_basic<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+    ) -> Result<&'a mut Self, u32>
+        where
+            Self: Sized,
+    {
+        Self::check_basic(account_info, root_addr, program_id)?;
+        if !account_info.is_writable {
+            return Err(error_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+        }
+        let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
+        Ok(account)
+    }
+
+    /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
+    fn from_account_basic(
+        key: &Pubkey,
+        account: &mut impl Account,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+    ) -> Result<Box<Self>, Box<dyn Error>>
+        where
+            Self: Sized + Copy
+    {
+        let account_info = (key, account).into_account_info();
+        let account_ref = Self::from_account_info_basic(&account_info, root_addr, program_id)
+            .map_err(ReadAccountError::from)?;
+        Ok(Box::new(*account_ref))
     }
 }
 

@@ -1,4 +1,5 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
@@ -7,7 +8,8 @@ use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
 impl DvlReadable for WorkerAccount {
-    fn read(reader: &DvlAccountReader, params: Self::AccountParam) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    type AdditionalCheckParams = IndexedAccountParams;
+    fn read(reader: &DvlAccountReader, params: Self::AdditionalCheckParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id];
         let public_key = &worker.address;
@@ -17,7 +19,7 @@ impl DvlReadable for WorkerAccount {
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            params.id as u32
+            Some(params.id)
         )?;
         Ok(account)
     }
@@ -36,10 +38,10 @@ mod tests {
         let worker_0 = reader.read::<WorkerAccount>(IndexedAccountParams{id: 0}).unwrap();
         check_worker_account(&worker_0);
         // Test read by public key
-        // let mints_account = reader.read::<AllWorkersAccount>(()).unwrap();
-        // let pubkey = &mints_account.workers[0].address;
-        // let worker_0 = reader.read_by_public_key::<WorkerAccount>(pubkey,None).unwrap();
-        // check_worker_account(&worker_0);
+        let mints_account = reader.read::<AllWorkersAccount>(()).unwrap();
+        let pubkey = &mints_account.workers[0].address;
+        let worker_0 = reader.read_by_public_key::<WorkerAccount>(pubkey).unwrap();
+        check_worker_account(&worker_0);
     }
 
     fn check_worker_account(mint_log_account: &WorkerAccount){

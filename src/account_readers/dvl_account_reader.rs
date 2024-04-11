@@ -3,6 +3,7 @@ use std::str::FromStr;
 use solana_client::rpc_client::RpcClient;
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_readable::{DvlReadable};
+use crate::accounts::devol_account::DevolAccount;
 use crate::generate_pda::{generate_pda, PDA};
 
 pub struct DvlAccountReader {
@@ -37,7 +38,13 @@ impl DvlAccountReader {
         }
     }
 
-    pub fn read<T: DvlReadable>(&self, params: T::AccountParam) -> Result<Box<T>, Box<dyn Error>> {
-        T::read(self, params)
+    pub fn read<T: DvlReadable>(&self, check: T::AdditionalCheckParams) -> Result<Box<T>, Box<dyn Error>> {
+        T::read(self, check)
+    }
+    pub fn read_by_public_key<T: DvlReadable + DevolAccount + Copy>(
+        &self,
+        public_key: &Pubkey,
+    ) -> Result<Box<T>, Box<dyn Error>> {
+        T::read_by_public_key(self, public_key)
     }
 }
