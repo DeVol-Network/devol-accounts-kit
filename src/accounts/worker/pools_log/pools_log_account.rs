@@ -43,6 +43,7 @@ impl DevolAccount for PoolsLogAccount {
     }
 }
 
+#[cfg(test)]
 impl Default for PoolsLogAccount {
     fn default() -> Self {
         Self {

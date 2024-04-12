@@ -94,6 +94,7 @@ impl TasksTrace {
     }
 }
 
+#[cfg(test)]
 impl Default for TasksTrace {
     fn default() -> Self {
         Self {

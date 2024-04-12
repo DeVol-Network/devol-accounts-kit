@@ -47,6 +47,7 @@ impl Mint {
     pub fn set_client(&mut self, value: i64) { self.client = value.to_ne_bytes() }
 }
 
+#[cfg(test)]
 impl Default for Mint {
     fn default() -> Self {
         Self {

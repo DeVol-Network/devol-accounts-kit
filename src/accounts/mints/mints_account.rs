@@ -32,6 +32,7 @@ impl DevolAccount for MintsAccount {
     fn expected_version() -> u32 { MINTS_ACCOUNT_VERSION }
 }
 
+#[cfg(test)]
 impl Default for MintsAccount {
     fn default() -> Self {
         Self {

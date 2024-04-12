@@ -171,6 +171,7 @@ impl PoolsLog {
     }
 }
 
+#[cfg(test)]
 impl Default for PoolsLog {
     fn default() -> Self {
         Self {

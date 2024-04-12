@@ -108,6 +108,7 @@ impl TasksLog {
     }
 }
 
+#[cfg(test)]
 impl Default for TasksLog {
     fn default() -> Self {
         Self {

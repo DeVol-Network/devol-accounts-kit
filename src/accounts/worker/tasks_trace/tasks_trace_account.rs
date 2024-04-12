@@ -37,6 +37,7 @@ impl DevolAccount for TasksTraceAccount {
     }
 }
 
+#[cfg(test)]
 impl Default for TasksTraceAccount {
     fn default() -> Self {
         Self {

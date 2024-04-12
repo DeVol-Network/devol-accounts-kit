@@ -36,6 +36,7 @@ impl DevolAccount for PayoffLogAccount {
     fn expected_version() -> u32 { PAYOFF_LOG_ACCOUNT_VERSION }
 }
 
+#[cfg(test)]
 impl Default for PayoffLogAccount {
     fn default() -> Self {
         Self {

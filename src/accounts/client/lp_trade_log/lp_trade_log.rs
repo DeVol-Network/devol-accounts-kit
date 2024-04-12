@@ -81,6 +81,7 @@ impl LpTradeLog {
     }
 }
 
+#[cfg(test)]
 impl Default for LpTradeLog {
     fn default() -> Self {
         Self {

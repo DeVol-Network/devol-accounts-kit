@@ -71,6 +71,7 @@ impl PayoffLog {
     pub fn set_result(&mut self, value: i64) { self.result = value.to_ne_bytes(); }
 }
 
+#[cfg(test)]
 impl Default for PayoffLog {
     fn default() -> Self {
         Self {

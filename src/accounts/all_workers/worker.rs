@@ -17,6 +17,7 @@ pub struct Worker {
     pub tasks_log_address: Pubkey,
 }
 
+#[cfg(test)]
 impl Default for Worker {
     fn default() -> Self {
         Self {

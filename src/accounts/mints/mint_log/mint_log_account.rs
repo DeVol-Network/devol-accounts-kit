@@ -44,6 +44,7 @@ impl DevolAccount for MintLogAccount {
     fn expected_version() -> u32 { MINT_LOG_ACCOUNT_VERSION }
 }
 
+#[cfg(test)]
 impl Default for MintLogAccount {
     fn default() -> Self {
         Self {

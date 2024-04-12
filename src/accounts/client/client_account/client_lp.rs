@@ -47,6 +47,7 @@ impl ClientLp {
     pub fn set_ps_trade_cost(&mut self, value: i64) { self.ps_trade_cost = value.to_ne_bytes() }
 }
 
+#[cfg(test)]
 impl Default for ClientLp {
     fn default() -> Self {
         Self {

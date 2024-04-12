@@ -126,6 +126,7 @@ impl OracleData {
 
 }
 
+#[cfg(test)]
 impl Default for OracleData {
     fn default() -> Self {
         Self {

@@ -135,6 +135,7 @@ impl ClientPool {
 
 }
 
+#[cfg(test)]
 impl Default for ClientPool {
     fn default() -> Self {
         Self {

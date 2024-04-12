@@ -28,6 +28,7 @@ pub struct OracleDataField{
     pub offset: i32,            // Offset from the start of the data storage
 } // size: 8 byte
 
+#[cfg(test)]
 impl Default for OracleDataField {
     fn default() -> Self {
         Self {
@@ -56,6 +57,7 @@ pub struct OracleParams {
     pub timestamp: OracleDataField,
 } // size: ORACLE_PARAMS_SIZE bytes
 
+#[cfg(test)]
 impl Default for OracleParams {
     fn default() -> Self {
         Self {

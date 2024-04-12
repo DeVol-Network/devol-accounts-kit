@@ -156,6 +156,7 @@ impl PoolsTrace {
     }
 }
 
+#[cfg(test)]
 impl Default for PoolsTrace {
     fn default() -> Self {
         Self {

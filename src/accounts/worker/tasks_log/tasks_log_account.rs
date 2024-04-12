@@ -42,6 +42,7 @@ impl DevolAccount for TasksLogAccount {
     }
 }
 
+#[cfg(test)]
 impl Default for TasksLogAccount {
     fn default() -> Self {
         Self {

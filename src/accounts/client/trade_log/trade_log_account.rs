@@ -43,6 +43,7 @@ impl DevolAccount for TradeLogAccount {
     }
 }
 
+#[cfg(test)]
 impl Default for TradeLogAccount {
     fn default() -> Self {
         Self {

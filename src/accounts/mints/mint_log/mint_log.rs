@@ -43,6 +43,8 @@ impl MintLog {
     #[inline(always)]
     pub fn set_sum(&mut self, value: i64) { self.sum = value.to_ne_bytes() }
 }
+
+#[cfg(test)]
 impl Default for MintLog {
     fn default() -> Self {
         Self {

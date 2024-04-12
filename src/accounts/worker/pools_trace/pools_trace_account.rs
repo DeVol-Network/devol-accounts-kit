@@ -36,6 +36,7 @@ impl DevolAccount for PoolsTraceAccount {
     }
 }
 
+#[cfg(test)]
 impl Default for PoolsTraceAccount {
     fn default() -> Self {
         Self {

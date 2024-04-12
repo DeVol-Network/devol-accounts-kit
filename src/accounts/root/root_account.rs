@@ -57,6 +57,7 @@ impl DevolAccount for RootAccount {
     }
 }
 
+#[cfg(test)]
 impl Default for RootAccount {
     fn default() -> Self {
         Self {
