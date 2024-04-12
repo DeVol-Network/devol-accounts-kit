@@ -2,6 +2,7 @@ use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::accounts::client::client_account::client_account::ClientAccount;
+use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
 use crate::accounts::devol_account::DevolAccount;
 
 pub struct IndexedAccountParams {
@@ -12,12 +13,7 @@ pub struct ClientRelativeAccountParams<'a> {
 }
 pub struct SignableAccountParams<'a> {
     pub client_address: &'a Pubkey,
-    pub signer_account: Option<SignerAccountParams<'a>>,
-}
-
-pub struct SignerAccountParams<'a> {
-    pub signer: &'a Pubkey,
-    pub devol_sign: bool,
+    pub signer_account_params: Option<&'a SignerAccountParams<'a>>,
 }
 
 pub trait DvlReadable {

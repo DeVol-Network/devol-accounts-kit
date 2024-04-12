@@ -8,6 +8,7 @@ use crate::accounts::client::client_account::client_mint::ClientMint;
 use crate::accounts::client::client_account::client_pool::ClientPool;
 use crate::accounts::client::client_account::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::kyc_status::KYCStatus;
+use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
@@ -134,16 +135,17 @@ impl ClientAccount {
     #[inline(always)]
     fn check_signer(
         account: &ClientAccount,
-        signer: &Pubkey,
-        devol_sign: bool,) -> Result<(), DvlError> {
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        if devol_sign && account.signer_address != *signer {
-            Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
-        } else if !devol_sign && account.owner_address != *signer {
-            Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
-        } else {
-            Ok(())
+        signer_params: Option<&SignerAccountParams>,
+    ) -> Result<(), DvlError> {
+        if let Some(signer_params) = signer_params{
+            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            if signer_params.devol_sign && account.signer_address != *signer_params.signer {
+                return Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
+            } else if !signer_params.devol_sign && account.owner_address != *signer_params.signer {
+                return Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
+            }
         }
+        Ok(())
     }
 
     #[inline(always)]
@@ -151,12 +153,11 @@ impl ClientAccount {
         account_info: &AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: &Pubkey,
-        devol_sign: bool,
+        signer_params: Option<&SignerAccountParams>,
     ) -> Result<(), DvlError> {
         Self::check_basic(account_info,root_addr,program_id)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
-        Self::check_signer(account, signer, devol_sign)?;
+        Self::check_signer(account, signer_params)?;
         let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
         Self::check_expanded_size(tag, account_info.data.borrow())?;
         Ok(())
@@ -168,13 +169,12 @@ impl ClientAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: &Pubkey,
-        devol_sign: bool,
+        signer_params: Option<&SignerAccountParams>,
     ) -> Result<&'a Self, DvlError>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id, signer, devol_sign)?;
+        Self::check_all(account_info, root_addr, program_id, signer_params)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
         Ok(account)
     }
@@ -186,13 +186,12 @@ impl ClientAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: &Pubkey,
-        devol_sign: bool,
+        signer_params: Option<&SignerAccountParams>,
     ) -> Result<&'a mut Self, DvlError>
         where
             Self: Sized,
     {
-        Self::check_all(account_info, root_addr, program_id, signer, devol_sign)?;
+        Self::check_all(account_info, root_addr, program_id, signer_params)?;
         if !account_info.is_writable {
             return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
         }
@@ -207,14 +206,13 @@ impl ClientAccount {
         account: &mut impl Account,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        signer: &Pubkey,
-        devol_sign: bool,
+        signer_params: Option<&SignerAccountParams>,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + Copy
     {
         let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer, devol_sign)?;
+        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer_params)?;
         Ok(Box::new(*account_ref))
     }
 
@@ -313,9 +311,9 @@ mod tests {
         account.get_pool_mut(check_1.0).unwrap().fractions = check_1.1;
         account.get_pool_mut(check_2.0).unwrap().instr_id = check_2.1;
 
-        let key = account.owner_address;
-        let signer = account.signer_address;
-        let root = account.header.root;
+        let key = &account.owner_address;
+        let signer = &account.signer_address;
+        let root = &account.header.root;
 
         let account_info = AccountInfo{
             key: &key,
@@ -329,7 +327,7 @@ mod tests {
         };
 
         let new_account = ClientAccount::from_account_info(&account_info, &root,
-                                                           &program_id, &signer, devol_sign).unwrap();
+                                                           &program_id, Some(&SignerAccountParams {signer, devol_sign })).unwrap();
 
         assert_eq!(new_account.get_pool(check_1.0).unwrap().fractions, check_1.1);
         assert_eq!(new_account.get_pool(check_2.0).unwrap().instr_id, check_2.1);
@@ -381,7 +379,7 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        let result = ClientAccount::check_all(&account_info, &root, &program_id, signer, is_signer);
+        let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign: is_signer}));
         assert!(result.is_ok());
     }
     #[test]
@@ -390,7 +388,7 @@ mod tests {
         let key = Pubkey::from_str("CTVKkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
         let root = Pubkey::from_str(test_constants::ROOT_ADDRESS).unwrap();
         let program_id = Pubkey::from_str(test_constants::PROGRAM_ID).unwrap();
-        let signer = Pubkey::from_str("123KkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
+        let signer = &Pubkey::from_str("123KkHWP7AF8KuLzmxcJevpNj9YaocbxkaN5QwnhtSPm").unwrap();
         let devol_sign = true;
         let mut lamports: u64 = 0;
 
@@ -401,7 +399,7 @@ mod tests {
                 root,
             },
             owner_address: key,
-            signer_address: signer,
+            signer_address: signer.clone(),
             payoff_log: Pubkey::default(),
             id: 0,
             ops_counter: [0; 8],
@@ -431,7 +429,7 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        let result = ClientAccount::check_all(&account_info, &root, &program_id, &signer, devol_sign);
+        let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign}));
         assert!(result.is_ok());
     }
 }

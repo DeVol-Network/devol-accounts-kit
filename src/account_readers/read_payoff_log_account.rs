@@ -37,7 +37,7 @@ mod tests {
         // Test auto read
         let client_account = reader.read::<ClientAccount>(SignableAccountParams {
             client_address: &client_pda.key,
-            signer_account: None,
+            signer_account_params: None,
         }).unwrap();
 
         let payoff =
