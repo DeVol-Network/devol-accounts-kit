@@ -1,8 +1,8 @@
 use std::cell::Ref;
 use std::error::Error;
 use solana_program::account_info::{Account, IntoAccountInfo};
-use solana_sdk::account_info::AccountInfo;
-use solana_sdk::pubkey::Pubkey;
+use solana_program::account_info::AccountInfo;
+use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::dvl_error::DvlError;
 use crate::errors::*;

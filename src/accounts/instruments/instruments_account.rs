@@ -38,7 +38,7 @@ impl DevolAccount for InstrumentsAccount {
 mod tests {
     use super::*;
     use std::mem;
-    use solana_sdk::pubkey::Pubkey;
+    use solana_program::pubkey::Pubkey;
     use crate::accounts::instruments::instruments_data::{INSTR_SIZE, InstrumentsData};
 
     #[test]
