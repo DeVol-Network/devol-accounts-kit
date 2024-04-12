@@ -14,17 +14,19 @@ pub trait DevolIndexedAccount : DevolAccount {
     fn id_offset() -> usize { 40 }
 
     #[inline(always)]
-    fn check_id(account_info: &AccountInfo, id: u32) -> Result<(), DvlError> {
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
-        let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
-        if read_id != id {
-            return Err(DvlError::new_with_account(tag, ContractError::InvalidAccountId));
+    fn check_id(account_info: &AccountInfo, id: Option<u32>) -> Result<(), DvlError> {
+        if let Some(id) = id {
+            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
+            if read_id != id as u32 {
+                return Err(DvlError::new_with_account(tag, ContractError::InvalidAccountId));
+            }
         }
         Ok(())
     }
 
     #[inline(always)]
-    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: u32) -> Result<(), DvlError> {
+    fn check_all(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey, id: Option<u32>) -> Result<(), DvlError> {
         Self::check_basic(account_info, root_addr, program_id)?;
         Self::check_id(account_info, id)?;
         Ok(())
@@ -36,7 +38,7 @@ pub trait DevolIndexedAccount : DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
+        id: Option<u32>,
     ) -> Result<&'a Self, DvlError>
         where
             Self: Sized,
@@ -53,7 +55,7 @@ pub trait DevolIndexedAccount : DevolAccount {
         account_info: &'a AccountInfo,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
+        id: Option<u32>,
     ) -> Result<&'a mut Self, DvlError>
         where
             Self: Sized,
@@ -70,7 +72,7 @@ pub trait DevolIndexedAccount : DevolAccount {
         account: &mut impl Account,
         root_addr: &Pubkey,
         program_id: &Pubkey,
-        id: u32,
+        id: Option<u32>,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + Copy

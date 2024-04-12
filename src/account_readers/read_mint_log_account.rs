@@ -19,7 +19,7 @@ impl DvlReadable for MintLogAccount {
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            params.id,
+            Some(params.id),
         )?;
         Ok(account)
     }
