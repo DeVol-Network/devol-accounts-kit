@@ -2,7 +2,7 @@ use std::error::Error;
 use crate::account_readers::dvl_account_reader::DvlAccountReader;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_regular_account::DevolRegularAccount;
+use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
 impl DvlReadable for WorkerAccount {
@@ -11,12 +11,14 @@ impl DvlReadable for WorkerAccount {
         let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id as usize];
         let public_key = &worker.address;
+        // let account =  Self::read_by_public_key(reader, public_key, Some(params))?;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(
             public_key,
             &mut rpc_data,
             &reader.root_pda.key,
-            &reader.program_id
+            &reader.program_id,
+            Some(params.id)
         )?;
         Ok(account)
     }
