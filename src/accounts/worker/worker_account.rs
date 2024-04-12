@@ -61,7 +61,7 @@ pub const WORKER_ACCOUNT_RANGE_LR_OFFSET: usize = 4944;
 pub const WORKER_ACCOUNT_W_LR_OFFSET: usize = 4952;
 pub const WORKER_ACCOUNT_MAX_LR_OFFSET: usize = 4960;
 pub const WORKER_ACCOUNT_MAX_PCT_POOL_OFFSET: usize = 4968;
-pub const WORKER_ACCOUNT_RESERVED_OFFSET: usize = 4976;
+pub const WORKER_PERM_IMPACT_OFFSET: usize = 4976;
 pub const WORKER_ACCOUNT_SIZE: usize = 4984;
 pub const WORKER_ACCOUNT_TAG: u8 = 7;
 pub const WORKER_ACCOUNT_VERSION: u32 = 14;
@@ -122,7 +122,7 @@ pub struct WorkerAccount {
     pub w_lr: i64,                          //  8 bytes, WORKER_ACCOUNT_W_LR_OFFSET
     pub max_lr: i64,                        //  8 bytes, WORKER_ACCOUNT_MAX_LR_OFFSET
     pub max_pct_pool: i64,                  //  8 bytes, WORKER_ACCOUNT_MAX_PCT_POOL_OFFSET
-    pub reserved: u64,                      //  8 bytes, WORKER_ACCOUNT_RESERVED_OFFSET
+    pub perm_impact: f64,                   //  8 bytes, WORKER_PERM_IMPACT_OFFSET
 }
 
 impl WorkerAccount {
@@ -250,7 +250,7 @@ mod tests {
             max_pct_pool: 0,
             range_lr: 0,
             w_lr: 0,
-            reserved: 0,
+            perm_impact: 0.0,
         };
 
         let base_ptr = &account as *const _ as usize;
@@ -310,7 +310,7 @@ mod tests {
         assert_eq!(&account.w_lr as *const _ as usize - base_ptr, WORKER_ACCOUNT_W_LR_OFFSET);
         assert_eq!(&account.max_lr as *const _ as usize - base_ptr, WORKER_ACCOUNT_MAX_LR_OFFSET);
         assert_eq!(&account.max_pct_pool as *const _ as usize - base_ptr, WORKER_ACCOUNT_MAX_PCT_POOL_OFFSET);
-        assert_eq!(&account.reserved as *const _ as usize - base_ptr, WORKER_ACCOUNT_RESERVED_OFFSET);
+        assert_eq!(&account.perm_impact as *const _ as usize - base_ptr, WORKER_PERM_IMPACT_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<WorkerAccount>(), WORKER_ACCOUNT_SIZE);
