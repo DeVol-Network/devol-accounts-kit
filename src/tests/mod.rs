@@ -1,3 +1,4 @@
+#[cfg(feature = "off-chain")]
 #[cfg(test)]
 pub mod tests {
     use solana_client::rpc_client::RpcClient;
