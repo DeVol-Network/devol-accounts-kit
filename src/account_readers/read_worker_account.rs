@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_interact::dvl_interact::DvlInteract;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
@@ -7,7 +7,7 @@ use crate::accounts::worker::worker_account::WorkerAccount;
 
 impl DvlReadable for WorkerAccount {
     type AdditionalCheckParams<'a> = IndexedAccountParams;
-    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlInteract, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id as usize];
         let public_key = &worker.address;

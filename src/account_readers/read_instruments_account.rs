@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_interact::dvl_interact::DvlInteract;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
@@ -8,7 +8,7 @@ use crate::accounts::root::root_account::RootAccount;
 impl DvlReadable for InstrumentsAccount {
     type AdditionalCheckParams<'a> = ();
 
-    fn read<'a>(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlInteract, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let root = reader.read::<RootAccount>(()).unwrap();
         let public_key = &root.instruments_address;
         // let account =  Self::read_by_public_key(reader, public_key, Some(_params))?;

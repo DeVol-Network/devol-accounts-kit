@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_interact::dvl_interact::DvlInteract;
 use crate::account_readers::dvl_readable::{ClientRelativeAccountParams, DvlReadable};
 use crate::accounts::client::payoff_log::payoff_log_account::PayoffLogAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
@@ -7,7 +7,7 @@ use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 impl DvlReadable for PayoffLogAccount {
     type AdditionalCheckParams<'a> = ClientRelativeAccountParams <'a>;
 
-    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlInteract, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let public_key = &params.client_account.payoff_log;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account = Self::from_account(

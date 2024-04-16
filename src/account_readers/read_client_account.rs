@@ -1,12 +1,12 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_interact::dvl_interact::DvlInteract;
 use crate::account_readers::dvl_readable::{DvlReadable, SignableAccountParams};
 use crate::accounts::client::client_account::client_account::ClientAccount;
 
 impl DvlReadable for ClientAccount
 {
     type AdditionalCheckParams<'a> = SignableAccountParams<'a>;
-    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>,
+    fn read<'a>(reader: &DvlInteract, params: Self::AdditionalCheckParams<'a>,
     ) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let public_key = &*params.client_address;
         let mut rpc_data = reader.client.get_account(public_key)?;

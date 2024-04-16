@@ -6,7 +6,7 @@ use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_account::DevolAccount;
 use crate::generate_pda::{generate_pda, PDA};
 
-pub struct DvlAccountReader {
+pub struct DvlInteract {
     pub client: RpcClient,
     pub int_seed: usize,
     pub admin_public_key: Pubkey,
@@ -18,7 +18,7 @@ pub struct DvlAccountReader {
     pub root_pda: PDA,
 }
 
-impl DvlAccountReader {
+impl DvlInteract {
     pub fn new(client: RpcClient, int_seed: usize, admin_public_key_str: &str, program_id_str: &str) -> Self {
         let admin_public_key = Pubkey::from_str(admin_public_key_str).unwrap();
         let program_id = Pubkey::from_str(program_id_str).unwrap();

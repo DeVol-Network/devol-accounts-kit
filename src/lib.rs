@@ -10,3 +10,5 @@ pub mod dvl_error;
 pub mod instructions;
 #[cfg(feature = "off-chain")]
 pub mod dvl_off_chain_error;
+#[cfg(feature = "off-chain")]
+pub mod dvl_interact;

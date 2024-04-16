@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_interact::dvl_interact::DvlInteract;
 use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
@@ -9,7 +9,7 @@ use crate::accounts::mints::mints_account::MintsAccount;
 impl DvlReadable for MintLogAccount {
     type AdditionalCheckParams<'a> = IndexedAccountParams;
 
-    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlInteract, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let mints_account = reader.read::<MintsAccount>(()).unwrap();
         let public_key = &mints_account.data[params.id as usize].log_address;
         // let account =  Self::read_by_public_key(reader, public_key, params)?;
