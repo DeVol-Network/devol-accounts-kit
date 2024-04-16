@@ -7,3 +7,6 @@ pub mod account_readers;
 pub mod utils;
 pub mod tests;
 pub mod dvl_error;
+pub mod instructions;
+#[cfg(feature = "off-chain")]
+pub mod dvl_off_chain_error;
