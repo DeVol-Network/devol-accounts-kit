@@ -6,29 +6,29 @@ use crate::instructions::instructions::Instructions;
 
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug)]
 #[repr(C)]
-struct BasketData {
-    strike: u32,      //  4 bytes, offset: 0
-    pc: u32,          //  4 bytes, offset: 4
-    amount: i32,      //  4 bytes, offset: 8
+pub struct BasketData {
+    strike: u32,
+    pc: u32,
+    amount: i32,
 }
 
 pub const INSTRUCTION_OPTION_TRADE_DATA_SIZE: usize = 440;
 
 #[repr(C)]
 pub struct InstructionOptionTrade {
-    cmd: u8,
-    version: u8,
-    reserved: u8,
-    basket_length: u8,
-    trade_qty: [i32; BUCKETS_COUNT],
-    max_cost: i64,
-    basket: [BasketData; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH],
+    pub cmd: u8,
+    pub version: u8,
+    pub reserved: u8,
+    pub basket_length: u8,
+    pub trade_qty: [i32; BUCKETS_COUNT],
+    pub max_cost: i64,
+    pub basket: [BasketData; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH],
 }
 
 pub struct OptionTradeParams<'a> {
-    trade_qty: [i32; BUCKETS_COUNT],
-    max_cost: Option<i64>,
-    basket: Option<&'a[BasketData]>,
+    pub trade_qty: [i32; BUCKETS_COUNT],
+    pub max_cost: Option<i64>,
+    pub basket: Option<&'a [BasketData]>,
 }
 
 impl<'a> DevolInstructionData<'a> for InstructionOptionTrade {
@@ -64,10 +64,10 @@ const INSTRUCTION_VERSION: u8 = 2;
 const DEFAULT_MAX_COST: i64 = -1_000_000_000;
 
 #[cfg(test)]
-impl Default for InstructionOptionTrade{
+impl Default for InstructionOptionTrade {
     fn default() -> Self {
-        InstructionOptionTrade{
-            cmd: 0,
+        InstructionOptionTrade {
+            cmd: Instructions::OptionTrade as u8,
             basket_length: 0,
             version: INSTRUCTION_VERSION,
             reserved: 0,
@@ -78,13 +78,6 @@ impl Default for InstructionOptionTrade{
     }
 }
 
-pub const INSTR_OPTION_TRADE_CMD_OFFSET: usize = 0;
-pub const INSTR_OPTION_TRADE_VERSION_OFFSET: usize = 1;
-pub const INSTR_OPTION_TRADE_RESERVED_OFFSET: usize = 2;
-pub const INSTR_OPTION_TRADE_BASKET_LENGTH_OFFSET: usize = 3;
-pub const INSTR_OPTION_TRADE_TRADE_QTY_OFFSET: usize = 4;
-pub const INSTR_OPTION_TRADE_MAX_COST_OFFSET: usize = 384;
-pub const INSTR_OPTION_TRADE_BASKET_DATA_OFFSET: usize = 392;
 pub const INSTR_OPTION_TRADE_MAX_BASKET_LENGTH: usize = 4;
 
 #[cfg(test)]
@@ -93,11 +86,19 @@ mod tests {
     use std::mem;
     use crate::instructions::devol_instruction_data::DvlInstruction;
 
+    pub const INSTR_OPTION_TRADE_CMD_OFFSET: usize = 0;
+    pub const INSTR_OPTION_TRADE_VERSION_OFFSET: usize = 1;
+    pub const INSTR_OPTION_TRADE_RESERVED_OFFSET: usize = 2;
+    pub const INSTR_OPTION_TRADE_BASKET_LENGTH_OFFSET: usize = 3;
+    pub const INSTR_OPTION_TRADE_TRADE_QTY_OFFSET: usize = 4;
+    pub const INSTR_OPTION_TRADE_MAX_COST_OFFSET: usize = 384;
+    pub const INSTR_OPTION_TRADE_BASKET_DATA_OFFSET: usize = 392;
+
     #[test]
     fn test_instruction_data_offsets() {
         assert_eq!(mem::size_of::<BasketData>(), 12);
 
-        let trade_params = OptionTradeParams{
+        let trade_params = OptionTradeParams {
             trade_qty: [0; BUCKETS_COUNT],
             basket: None,
             max_cost: None,
