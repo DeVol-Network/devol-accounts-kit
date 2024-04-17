@@ -2,4 +2,5 @@
 pub enum Instructions {
     OptionTrade = 112,
     OptionTradeDebug = 143,
+    TransferToken = 118,
 }
