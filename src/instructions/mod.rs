@@ -7,3 +7,8 @@ pub mod withdraw_token;
 pub mod fin_pool;
 pub mod lp_trade;
 pub mod start_next_pool;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "off-chain")] {
+        pub mod constructors;
+    }
+}
