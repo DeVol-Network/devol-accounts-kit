@@ -12,8 +12,8 @@ pub struct InstructionStartNextPool {
     pub version: u8,
     pub reserved: [u8; 6],
     pub svm_params: SvmParams,
-    pub prices: [i32; BUCKETS_COUNT],
-    pub bounds: [i32; BOUNDS_COUNT],
+    pub prices: [f32; BUCKETS_COUNT],
+    pub bounds: [f32; BOUNDS_COUNT],
     pub reserved2: [u8; 4],
     pub margin_vega: i64,
     pub margin_vanna: i64,
@@ -27,8 +27,8 @@ pub struct InstructionStartNextPool {
 
 pub struct StartNextPoolParams {
     pub svm_params: SvmParams,
-    pub prices: [i32; BUCKETS_COUNT],
-    pub bounds: [i32; BOUNDS_COUNT],
+    pub prices: [f32; BUCKETS_COUNT],
+    pub bounds: [f32; BOUNDS_COUNT],
     pub margin_vega: i64,
     pub margin_vanna: i64,
     pub margin_volga: i64,
@@ -91,12 +91,12 @@ mod tests {
     #[test]
     fn test_instruction_data_offsets() {
         let start_next_pool_params = StartNextPoolParams {
-            prices: [0; BUCKETS_COUNT],
+            prices: [0.0; BUCKETS_COUNT],
             svm_params: SvmParams { c: 0., p: 0., v: 0., vt: 0., psi: 0. },
             margin_vega: 0,
             margin_vanna: 0,
             margin_volga: 0,
-            bounds: [0; BOUNDS_COUNT],
+            bounds: [0.0; BOUNDS_COUNT],
             w_lr: 0,
             range_lr: 0,
             max_pct_pool: 0,
@@ -165,7 +165,7 @@ mod tests {
             &data.perm_impact as *const _ as usize - base_ptr,
             INSTR_START_NEXT_POOL_PERM_IMPACT_OFFSET
         );
-        
+
         assert_eq!(
             mem::size_of::<InstructionStartNextPool>(),
             INSTRUCTION_START_NEXT_POOL_SIZE
