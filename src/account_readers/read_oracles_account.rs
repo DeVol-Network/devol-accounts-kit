@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::oracles::oracles_account::OraclesAccount;
@@ -9,7 +9,7 @@ use crate::generate_pda::generate_pda;
 impl DvlReadable for OraclesAccount {
     type AdditionalCheckParams<'a> = ();
 
-    fn read<'a>(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlClient, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let oracle_seed = format!("{}{}", reader.oracle_seed, reader.int_seed);
         let oracle_pda = generate_pda(&reader.admin_public_key, &oracle_seed, &reader.program_id);
         let public_key = &oracle_pda.key;

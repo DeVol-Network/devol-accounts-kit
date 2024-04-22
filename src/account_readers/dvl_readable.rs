@@ -1,6 +1,6 @@
 use std::error::Error;
 use solana_program::pubkey::Pubkey;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_client::dvl_client::DvlClient;
 use crate::accounts::client::client_account::client_account::ClientAccount;
 use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
 use crate::accounts::devol_account::DevolAccount;
@@ -19,12 +19,12 @@ pub struct SignableAccountParams<'a> {
 pub trait DvlReadable {
     type AdditionalCheckParams<'a>;
 
-    fn read<'a>(reader: &DvlAccountReader, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>>
+    fn read<'a>(reader: &DvlClient, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
 
     fn read_by_public_key(
-        reader: &DvlAccountReader,
+        reader: &DvlClient,
         public_key: &Pubkey,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where

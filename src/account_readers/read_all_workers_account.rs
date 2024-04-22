@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::account_readers::dvl_account_reader::DvlAccountReader;
+use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
@@ -8,7 +8,7 @@ use crate::accounts::root::root_account::RootAccount;
 impl DvlReadable for AllWorkersAccount {
     type AdditionalCheckParams<'a> = ();
 
-    fn read<'a>(reader: &DvlAccountReader, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn read<'a>(reader: &DvlClient, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let root = reader.read::<RootAccount>(()).unwrap();
         let public_key = &root.workers_address;
         let mut rpc_data = reader.client.get_account(public_key)?;
