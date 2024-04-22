@@ -12,12 +12,12 @@ pub struct InstructionFinPool {
     pub reserved: [u8; 6],
     pub price: u64,
     pub reserved2: [u8; 7],
-    pub terminate: u8,
+    pub terminate: bool,
 }
 
 pub struct FinPoolParams {
-    pub terminate: u8,
     pub price: u64,
+    pub terminate: bool,
 }
 
 impl<'a> DevolInstructionData<'a> for InstructionFinPool {
@@ -58,7 +58,7 @@ mod tests {
 
         let fin_pool_params = FinPoolParams {
             price: 1,
-            terminate: 1,
+            terminate: true,
         };
 
         let data = DvlInstruction::new::<InstructionFinPool>(fin_pool_params).unwrap();
@@ -73,6 +73,6 @@ mod tests {
 
         assert_eq!(mem::size_of::<InstructionFinPool>(), INSTRUCTION_FIN_POOL_SIZE);
         assert_eq!(data.price, 1);
-        assert_eq!(data.terminate, 1);
+        assert_eq!(data.terminate, true);
     }
 }
