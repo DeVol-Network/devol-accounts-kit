@@ -1,3 +1,5 @@
+mod platform_test;
+
 #[cfg(feature = "off-chain")]
 #[cfg(test)]
 pub mod tests {

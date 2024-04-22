@@ -167,4 +167,16 @@ mod tests {
         let data = DvlInstruction::new::<InstructionOptionTrade>(trade_params).unwrap();
         assert_eq!(data.max_cost, DEFAULT_MAX_COST);
     }
+
+    #[test]
+    fn test_as_vec_le_instruction_option_trade() {
+        let trade_params = OptionTradeParams {
+            trade_qty: [0; BUCKETS_COUNT],
+            basket: None,
+            max_cost: None,
+        };
+        let data = DvlInstruction::new::<InstructionOptionTrade>(trade_params).unwrap();
+        let buf = data.as_vec_le();
+        assert_eq!(buf.len(), INSTRUCTION_OPTION_TRADE_DATA_SIZE);
+    }
 }
