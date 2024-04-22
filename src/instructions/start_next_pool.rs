@@ -2,6 +2,7 @@ use std::error::Error;
 use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
 use crate::instructions::devol_instruction_data::DevolInstructionData;
+use crate::instructions::instructions::Instructions;
 
 pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 872;
 
@@ -43,7 +44,7 @@ impl<'a> DevolInstructionData<'a> for InstructionStartNextPool {
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionStartNextPool>, Box<dyn Error>> {
         Ok(Box::new(InstructionStartNextPool {
-            cmd: 0,
+            cmd: Instructions::StartNextPool as u8,
             version: INSTRUCTION_VERSION,
             reserved: [0; 6],
             prices: params.prices,
