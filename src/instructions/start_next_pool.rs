@@ -12,21 +12,21 @@ pub struct SvmParams {
 }
 #[repr(C)]
 pub struct InstructionStartNextPool {
-    cmd: u8,
-    version: u8,
-    reserved: [u8; 6],
-    svm_params: SvmParams,
-    prices: [i32; BUCKETS_COUNT],
-    bounds: [i32; BOUNDS_COUNT],
-    reserved2: [u8; 4],
-    margin_vega: i64,
-    margin_vanna: i64,
-    margin_volga: i64,
-    range_lr: i64,
-    w_lr: i64,
-    max_lr: i64,
-    max_pct_pool: i64,
-    perm_impact: f64,
+    pub cmd: u8,
+    pub version: u8,
+    pub reserved: [u8; 6],
+    pub svm_params: SvmParams,
+    pub prices: [i32; BUCKETS_COUNT],
+    pub bounds: [i32; BOUNDS_COUNT],
+    pub reserved2: [u8; 4],
+    pub margin_vega: i64,
+    pub margin_vanna: i64,
+    pub margin_volga: i64,
+    pub range_lr: i64,
+    pub w_lr: i64,
+    pub max_lr: i64,
+    pub max_pct_pool: i64,
+    pub perm_impact: f64,
 }
 
 pub struct StartNextPoolParams {
