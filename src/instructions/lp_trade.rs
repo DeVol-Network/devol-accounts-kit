@@ -10,11 +10,11 @@ pub struct InstructionLpTrade {
     pub cmd: u8,
     pub version: u8,
     pub reserved: [u8; 2],
-    pub trade_qty: u32,
+    pub trade_qty: i32,
 }
 
 pub struct LpTradeParams {
-    pub trade_qty: u32,
+    pub trade_qty: i32,
 }
 
 impl<'a> DevolInstructionData<'a> for InstructionLpTrade {

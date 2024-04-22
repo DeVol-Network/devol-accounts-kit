@@ -10,13 +10,13 @@ pub struct InstructionStartPool {
     pub cmd: u8,
     pub version: u8,
     pub reserved: [u8; 6],
-    pub price: u64,
-    pub sigma: u64,
+    pub price: i64,
+    pub sigma: i64,
 }
 
 pub struct StartPoolParams {
-    pub price: u64,
-    pub sigma: u64,
+    pub price: i64,
+    pub sigma: i64,
 }
 
 impl<'a> DevolInstructionData<'a> for InstructionStartPool {

@@ -10,13 +10,13 @@ pub struct InstructionFinPool {
     pub cmd: u8,
     pub version: u8,
     pub reserved: [u8; 6],
-    pub price: u64,
+    pub price: i64,
     pub reserved2: [u8; 7],
     pub terminate: bool,
 }
 
 pub struct FinPoolParams {
-    pub price: u64,
+    pub price: i64,
     pub terminate: bool,
 }
 
