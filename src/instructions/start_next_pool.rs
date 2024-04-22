@@ -1,8 +1,8 @@
-use std::error::Error;
 use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
 use crate::instructions::devol_instruction_data::DevolInstructionData;
 use crate::instructions::instructions::Instructions;
+use std::error::Error;
 
 pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 872;
 
@@ -42,7 +42,9 @@ pub struct StartNextPoolParams {
 impl<'a> DevolInstructionData<'a> for InstructionStartNextPool {
     type DvlInstrParams = StartNextPoolParams;
 
-    fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionStartNextPool>, Box<dyn Error>> {
+    fn new(
+        params: Self::DvlInstrParams,
+    ) -> Result<Box<InstructionStartNextPool>, Box<dyn Error>> {
         Ok(Box::new(InstructionStartNextPool {
             cmd: Instructions::StartNextPool as u8,
             version: INSTRUCTION_VERSION,
@@ -68,8 +70,8 @@ const INSTRUCTION_VERSION: u8 = 1;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::mem;
     use crate::instructions::devol_instruction_data::DvlInstruction;
+    use std::mem;
 
     pub const INSTR_START_NEXT_POOL_CMD_OFFSET: usize = 0;
     pub const INSTR_START_NEXT_POOL_VERSION_OFFSET: usize = 1;
@@ -88,16 +90,9 @@ mod tests {
 
     #[test]
     fn test_instruction_data_offsets() {
-
         let start_next_pool_params = StartNextPoolParams {
             prices: [0; BUCKETS_COUNT],
-            svm_params: SvmParams{
-                c: 0.,
-                p: 0.,
-                v: 0.,
-                vt: 0.,
-                psi: 0.,
-            },
+            svm_params: SvmParams { c: 0., p: 0., v: 0., vt: 0., psi: 0. },
             margin_vega: 0,
             margin_vanna: 0,
             margin_volga: 0,
@@ -109,24 +104,71 @@ mod tests {
             perm_impact: 0.,
         };
 
-        let data = DvlInstruction::new::<InstructionStartNextPool>(start_next_pool_params).unwrap();
+        let data =
+            DvlInstruction::new::<InstructionStartNextPool>(start_next_pool_params).unwrap();
 
         let base_ptr = &*data as *const _ as usize;
 
-        assert_eq!(&data.cmd as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_CMD_OFFSET);
-        assert_eq!(&data.version as *const _ as usize - base_ptr, INSTR_START_NEXT_POOL_VERSION_OFFSET);
-        assert_eq!(&data.reserved as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_RESERVED_OFFSET);
-        assert_eq!(&data.prices as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_PRICES_OFFSET);
-        assert_eq!(&data.svm_params as *const _ as usize - base_ptr, INSTR_START_NEXT_POOL_SVM_PARAMS_OFFSET);
-        assert_eq!(&data.bounds as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_BOUNDS_OFFSET);
-        assert_eq!(&data.margin_vega as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_MARGIN_VEGA_OFFSET);
-        assert_eq!(&data.margin_vanna as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_MARGIN_VANNA_OFFSET);
-        assert_eq!(&data.margin_volga as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_MARGIN_VOLGA_OFFSET);
-        assert_eq!(&data.range_lr as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_RANGE_LR_OFFSET);
-        assert_eq!(&data.w_lr as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_W_LR_OFFSET);
-        assert_eq!(&data.max_lr as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_MAX_LR_OFFSET);
-        assert_eq!(&data.max_pct_pool as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_MAX_PCT_POOL_OFFSET);
-        assert_eq!(&data.perm_impact as *const _ as usize  - base_ptr, INSTR_START_NEXT_POOL_PERM_IMPACT_OFFSET);
-        assert_eq!(mem::size_of::<InstructionStartNextPool>(), INSTRUCTION_START_NEXT_POOL_SIZE);
+        assert_eq!(
+            &data.cmd as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_CMD_OFFSET
+        );
+        assert_eq!(
+            &data.version as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_VERSION_OFFSET
+        );
+        assert_eq!(
+            &data.reserved as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_RESERVED_OFFSET
+        );
+        assert_eq!(
+            &data.prices as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_PRICES_OFFSET
+        );
+        assert_eq!(
+            &data.svm_params as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_SVM_PARAMS_OFFSET
+        );
+        assert_eq!(
+            &data.bounds as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_BOUNDS_OFFSET
+        );
+        assert_eq!(
+            &data.margin_vega as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_MARGIN_VEGA_OFFSET
+        );
+        assert_eq!(
+            &data.margin_vanna as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_MARGIN_VANNA_OFFSET
+        );
+        assert_eq!(
+            &data.margin_volga as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_MARGIN_VOLGA_OFFSET
+        );
+        assert_eq!(
+            &data.range_lr as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_RANGE_LR_OFFSET
+        );
+        assert_eq!(
+            &data.w_lr as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_W_LR_OFFSET
+        );
+        assert_eq!(
+            &data.max_lr as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_MAX_LR_OFFSET
+        );
+        assert_eq!(
+            &data.max_pct_pool as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_MAX_PCT_POOL_OFFSET
+        );
+        assert_eq!(
+            &data.perm_impact as *const _ as usize - base_ptr,
+            INSTR_START_NEXT_POOL_PERM_IMPACT_OFFSET
+        );
+        
+        assert_eq!(
+            mem::size_of::<InstructionStartNextPool>(),
+            INSTRUCTION_START_NEXT_POOL_SIZE
+        );
     }
 }

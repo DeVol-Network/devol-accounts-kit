@@ -36,7 +36,6 @@ impl<'a> DevolInstructionData<'a> for InstructionWithdrawToken {
 const INSTRUCTION_VERSION: u8 = 1;
 
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -51,7 +50,6 @@ mod tests {
 
     #[test]
     fn test_instruction_data_offsets() {
-
         let withdraw_token_params = WithdrawTokenParams {
             mint_id: 1,
             amount: 2,

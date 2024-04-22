@@ -20,7 +20,7 @@ pub struct FinPoolParams {
 
 impl<'a> DevolInstructionData<'a> for InstructionFinPool {
     type DvlInstrParams = FinPoolParams;
-
+    
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionFinPool>, Box<dyn Error>> {
         Ok(Box::new(InstructionFinPool {
             cmd: Instructions::FinPool as u8,
@@ -33,7 +33,6 @@ impl<'a> DevolInstructionData<'a> for InstructionFinPool {
 }
 
 const INSTRUCTION_VERSION: u8 = 1;
-
 
 
 #[cfg(test)]
@@ -51,7 +50,6 @@ mod tests {
 
     #[test]
     fn test_instruction_data_offsets() {
-
         let fin_pool_params = FinPoolParams {
             price: 1,
             terminate: true,
