@@ -2,17 +2,15 @@ use std::error::Error;
 use crate::instructions::devol_instruction_data::DevolInstructionData;
 use crate::instructions::instructions::Instructions;
 
-
-pub const INSTRUCTION_FIN_POOL_SIZE: usize = 24;
+pub const INSTRUCTION_FIN_POOL_SIZE: usize = 16;
 
 #[repr(C)]
 pub struct InstructionFinPool {
     pub cmd: u8,
     pub version: u8,
-    pub reserved: [u8; 6],
-    pub price: i64,
-    pub reserved2: [u8; 7],
     pub terminate: bool,
+    pub reserved: [u8; 5],
+    pub price: i64,
 }
 
 pub struct FinPoolParams {
@@ -27,11 +25,9 @@ impl<'a> DevolInstructionData<'a> for InstructionFinPool {
         Ok(Box::new(InstructionFinPool {
             cmd: Instructions::FinPool as u8,
             version: INSTRUCTION_VERSION,
-            reserved: [0; 6],
+            reserved: [0; 5],
             price: params.price,
-            reserved2: [0; 7],
             terminate: params.terminate,
-
         }))
     }
 }
@@ -48,9 +44,9 @@ mod tests {
 
     pub const INSTR_FIN_POOL_CMD_OFFSET: usize = 0;
     pub const INSTR_FIN_POOL_VERSION_OFFSET: usize = 1;
-    pub const INSTR_FIN_POOL_RESERVED_OFFSET: usize = 2;
+    pub const INSTR_FIN_POOL_TERMINATE_OFFSET: usize = 2;
+    pub const INSTR_FIN_POOL_RESERVED_OFFSET: usize = 3;
     pub const INSTR_FIN_POOL_PRICE_OFFSET: usize = 8;
-    pub const INSTR_FIN_POOL_TERMINATE_OFFSET: usize = 23;
 
 
     #[test]

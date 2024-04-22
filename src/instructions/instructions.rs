@@ -1,10 +1,11 @@
 #[repr(u8)]
 pub enum Instructions {
+    LpTrade = 111,
     OptionTrade = 112,
-    OptionTradeDebug = 143,
     TransferToken = 118,
     WithdrawToken = 119,
-    FinPool = 130,
     StartPool = 129,
-    LpTrade = 111
+    FinPool = 130,
+    StartNextPool = 132,
+    OptionTradeDebug = 143
 }
