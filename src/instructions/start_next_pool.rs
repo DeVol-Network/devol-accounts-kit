@@ -1,15 +1,10 @@
 use std::error::Error;
+use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
 use crate::instructions::devol_instruction_data::DevolInstructionData;
 
 pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 872;
-pub struct SvmParams {
-    pub v: f64,
-    pub psi: f64,
-    pub p: f64,
-    pub c: f64,
-    pub vt: f64,
-}
+
 #[repr(C)]
 pub struct InstructionStartNextPool {
     pub cmd: u8,
