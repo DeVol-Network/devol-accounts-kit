@@ -2,7 +2,6 @@ use std::error::Error;
 use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
-use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::mints::mints_account::MintsAccount;
 use crate::accounts::root::root_account::RootAccount;

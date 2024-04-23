@@ -23,8 +23,7 @@ impl DevolTransaction for InstructionStartNextPool {
         client: &DvlClient,
         signer: &Keypair,
         transaction_params: Self::DvlTransactionParams,
-    ) -> Result<Box<Instruction>, Box<dyn Error>>
-        where Self: DevolInstructionData {
+    ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.as_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id })?;

@@ -1,6 +1,4 @@
 use std::error::Error;
-use solana_sdk::transaction::Transaction;
-use crate::dvl_client::dvl_client::DvlClient;
 
 pub trait DevolInstructionData<'a> {
     type DvlInstrParams: 'a;
