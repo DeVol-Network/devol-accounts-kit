@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::transactions_instructions::as_transaction_instruction::AsTransactionInstruction;
+use crate::instructions_data::as_transaction_instruction::as_transaction_instruction::AsTransactionInstruction;
 
 pub trait DvlInstructionData<'a> : AsTransactionInstruction {
     type DvlInstrParams: 'a;

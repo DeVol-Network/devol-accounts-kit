@@ -13,4 +13,3 @@ cfg_if::cfg_if! {
         pub mod dvl_client;
     }
 }
-pub mod transactions_instructions;

@@ -7,9 +7,9 @@ use crate::accounts::root::root_account::RootAccount;
 use crate::accounts::worker::pools_trace::pools_trace_account::PoolsTraceAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 use crate::dvl_client::dvl_client::DvlClient;
+use crate::instructions_data::as_transaction_instruction::as_transaction_instruction::AsTransactionInstruction;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::start_next_pool::InstructionStartNextPool;
-use crate::transactions_instructions::as_transaction_instruction::AsTransactionInstruction;
 
 pub struct StartNextPoolTransactionParams {
     pub worker_id: u32,
