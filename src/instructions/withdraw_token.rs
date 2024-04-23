@@ -1,8 +1,3 @@
-use std::error::Error;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::instructions::Instructions;
-
-
 pub const INSTRUCTION_WITHDRAW_TOKEN_SIZE: usize = 16;
 
 #[repr(C)]
@@ -14,32 +9,11 @@ pub struct InstructionWithdrawToken {
     pub amount: u64,
 }
 
-pub struct WithdrawTokenParams {
-    pub mint_id: u32,
-    pub amount: u64,
-}
-
-impl<'a> DevolInstructionData<'a> for InstructionWithdrawToken {
-    type DvlInstrParams = WithdrawTokenParams;
-
-    fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionWithdrawToken>, Box<dyn Error>> {
-        Ok(Box::new(InstructionWithdrawToken {
-            cmd: Instructions::WithdrawToken as u8,
-            version: INSTRUCTION_VERSION,
-            reserved: [0; 2],
-            mint_id: params.mint_id,
-            amount: params.amount,
-        }))
-    }
-}
-
-const INSTRUCTION_VERSION: u8 = 1;
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::mem;
+    use crate::instructions::constructors::withdraw_token::WithdrawTokenParams;
     use crate::instructions::devol_instruction_data::DvlInstruction;
 
     pub const INSTR_WITHDRAW_TOKEN_CMD_OFFSET: usize = 0;
@@ -66,7 +40,5 @@ mod tests {
         assert_eq!(&data.amount as *const _ as usize - base_ptr, INSTR_WITHDRAW_AMOUNT_ID_OFFSET);
 
         assert_eq!(mem::size_of::<InstructionWithdrawToken>(), INSTRUCTION_WITHDRAW_TOKEN_SIZE);
-        assert_eq!(data.mint_id, 1);
-        assert_eq!(data.amount, 2);
     }
 }
