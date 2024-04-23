@@ -1,14 +1,14 @@
 use std::error::Error;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::instructions::Instructions;
-use crate::instructions::transfer_token::{InstructionTransferToken};
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::instructions::Instructions;
+use crate::instructions_data::transfer_token::{InstructionTransferToken};
 
 pub struct TransferTokenParams {
     pub mint_id: u32,
     pub amount: u64,
 }
 
-impl<'a> DevolInstructionData<'a> for InstructionTransferToken {
+impl<'a> DvlInstructionData<'a> for InstructionTransferToken {
     type DvlInstrParams = TransferTokenParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionTransferToken>, Box<dyn Error>> {
@@ -27,7 +27,7 @@ const INSTRUCTION_VERSION: u8 = 1;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     #[test]
     fn test_instruction_transfer_token_params() {

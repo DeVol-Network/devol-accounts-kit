@@ -13,8 +13,8 @@ pub struct InstructionFinPool {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions::constructors::fin_pool::FinPoolParams;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::constructors::fin_pool::FinPoolParams;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     pub const INSTR_FIN_POOL_CMD_OFFSET: usize = 0;
     pub const INSTR_FIN_POOL_VERSION_OFFSET: usize = 1;

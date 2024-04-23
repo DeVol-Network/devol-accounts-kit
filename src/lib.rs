@@ -5,7 +5,7 @@ pub mod constants;
 pub mod utils;
 pub mod tests;
 pub mod dvl_error;
-pub mod instructions;
+pub mod instructions_data;
 cfg_if::cfg_if! {
     if #[cfg(feature = "off-chain")] {
         pub mod account_readers;
@@ -13,4 +13,4 @@ cfg_if::cfg_if! {
         pub mod dvl_client;
     }
 }
-pub mod transactions;
+pub mod transactions_instructions;

@@ -1,9 +1,9 @@
 use std::error::Error;
 use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::instructions::Instructions;
-use crate::instructions::start_next_pool::InstructionStartNextPool;
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::instructions::Instructions;
+use crate::instructions_data::start_next_pool::InstructionStartNextPool;
 
 pub struct StartNextPoolParams {
     pub svm_params: SvmParams,
@@ -19,7 +19,7 @@ pub struct StartNextPoolParams {
     pub perm_impact: f64,
 }
 
-impl<'a> DevolInstructionData<'a> for InstructionStartNextPool {
+impl<'a> DvlInstructionData<'a> for InstructionStartNextPool {
     type DvlInstrParams = StartNextPoolParams;
 
     fn new(
@@ -51,7 +51,7 @@ const INSTRUCTION_VERSION: u8 = 1;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     #[test]
     fn test_instruction_start_next_pool_params() {

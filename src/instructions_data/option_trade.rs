@@ -27,8 +27,8 @@ pub const INSTR_OPTION_TRADE_MAX_BASKET_LENGTH: usize = 4;
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions::constructors::option_trade::OptionTradeParams;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::constructors::option_trade::OptionTradeParams;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     pub const INSTR_OPTION_TRADE_CMD_OFFSET: usize = 0;
     pub const INSTR_OPTION_TRADE_VERSION_OFFSET: usize = 1;

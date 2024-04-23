@@ -1,9 +1,9 @@
 use std::error::Error;
 use crate::constants::BUCKETS_COUNT;
 use crate::dvl_off_chain_error::DvlOffChainError;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::instructions::Instructions;
-use crate::instructions::option_trade::{BasketData, INSTR_OPTION_TRADE_MAX_BASKET_LENGTH, InstructionOptionTrade};
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::instructions::Instructions;
+use crate::instructions_data::option_trade::{BasketData, INSTR_OPTION_TRADE_MAX_BASKET_LENGTH, InstructionOptionTrade};
 
 pub struct OptionTradeParams<'a> {
     pub trade_qty: [i32; BUCKETS_COUNT],
@@ -11,7 +11,7 @@ pub struct OptionTradeParams<'a> {
     pub basket: Option<&'a [BasketData]>,
 }
 
-impl<'a> DevolInstructionData<'a> for InstructionOptionTrade {
+impl<'a> DvlInstructionData<'a> for InstructionOptionTrade {
     type DvlInstrParams = OptionTradeParams<'a>;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionOptionTrade>, Box<dyn Error>> {
@@ -61,8 +61,8 @@ impl Default for InstructionOptionTrade {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
-    use crate::instructions::option_trade::INSTRUCTION_OPTION_TRADE_DATA_SIZE;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
+    use crate::instructions_data::option_trade::INSTRUCTION_OPTION_TRADE_DATA_SIZE;
 
     #[test]
     fn test_default_instruction_option_trade() {

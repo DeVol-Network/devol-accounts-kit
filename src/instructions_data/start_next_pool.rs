@@ -25,9 +25,9 @@ pub struct InstructionStartNextPool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
     use std::mem;
-    use crate::instructions::constructors::start_next_pool::StartNextPoolParams;
+    use crate::instructions_data::constructors::start_next_pool::StartNextPoolParams;
 
     pub const INSTR_START_NEXT_POOL_CMD_OFFSET: usize = 0;
     pub const INSTR_START_NEXT_POOL_VERSION_OFFSET: usize = 1;

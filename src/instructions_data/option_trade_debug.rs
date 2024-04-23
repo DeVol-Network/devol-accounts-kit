@@ -1,5 +1,5 @@
 use crate::constants::BUCKETS_COUNT;
-use crate::instructions::option_trade::{BasketData, InstructionOptionTrade};
+use crate::instructions_data::option_trade::{BasketData, InstructionOptionTrade};
 
 #[repr(C)]
 pub struct InstructionOptionTradeDebug {

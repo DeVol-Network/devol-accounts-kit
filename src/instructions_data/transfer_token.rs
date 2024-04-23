@@ -13,8 +13,8 @@ pub struct InstructionTransferToken {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions::constructors::transfer_token::TransferTokenParams;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::constructors::transfer_token::TransferTokenParams;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     pub const INSTR_TRANSFER_TOKEN_CMD_OFFSET: usize = 0;
     pub const INSTR_TRANSFER_TOKEN_VERSION_OFFSET: usize = 1;

@@ -13,8 +13,8 @@ pub struct InstructionLpTrade {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions::constructors::lp_trade::LpTradeParams;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::constructors::lp_trade::LpTradeParams;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     pub const INSTR_LP_TRADE_CMD_OFFSET: usize = 0;
     pub const INSTR_LP_TRADE_VERSION_OFFSET: usize = 1;

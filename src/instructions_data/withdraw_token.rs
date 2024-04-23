@@ -13,8 +13,8 @@ pub struct InstructionWithdrawToken {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions::constructors::withdraw_token::WithdrawTokenParams;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::constructors::withdraw_token::WithdrawTokenParams;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     pub const INSTR_WITHDRAW_TOKEN_CMD_OFFSET: usize = 0;
     pub const INSTR_WITHDRAW_TOKEN_VERSION_OFFSET: usize = 1;

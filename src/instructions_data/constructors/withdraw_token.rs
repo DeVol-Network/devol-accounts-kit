@@ -1,14 +1,14 @@
 use std::error::Error;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::instructions::Instructions;
-use crate::instructions::withdraw_token::{InstructionWithdrawToken};
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::instructions::Instructions;
+use crate::instructions_data::withdraw_token::{InstructionWithdrawToken};
 
 pub struct WithdrawTokenParams {
     pub mint_id: u32,
     pub amount: u64,
 }
 
-impl<'a> DevolInstructionData<'a> for InstructionWithdrawToken {
+impl<'a> DvlInstructionData<'a> for InstructionWithdrawToken {
     type DvlInstrParams = WithdrawTokenParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionWithdrawToken>, Box<dyn Error>> {
@@ -27,7 +27,7 @@ const INSTRUCTION_VERSION: u8 = 1;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     #[test]
     fn test_instruction_withdraw_token_params() {

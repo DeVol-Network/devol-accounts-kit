@@ -7,22 +7,22 @@ use crate::accounts::root::root_account::RootAccount;
 use crate::accounts::worker::pools_trace::pools_trace_account::PoolsTraceAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 use crate::dvl_client::dvl_client::DvlClient;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::start_next_pool::InstructionStartNextPool;
-use crate::transactions::devol_transaction::DevolTransaction;
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::start_next_pool::InstructionStartNextPool;
+use crate::transactions_instructions::as_transaction_instruction::AsTransactionInstruction;
 
 pub struct StartNextPoolTransactionParams {
     pub worker_id: u32,
 }
 
-impl DevolTransaction for InstructionStartNextPool {
-    type DvlTransactionParams = StartNextPoolTransactionParams;
+impl AsTransactionInstruction for InstructionStartNextPool {
+    type DvlTransactionInstructionParams = StartNextPoolTransactionParams;
 
     fn as_transaction_instruction(
         &self,
         client: &DvlClient,
         signer: &Keypair,
-        transaction_params: Self::DvlTransactionParams,
+        transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.as_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;

@@ -1,14 +1,14 @@
 use std::error::Error;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::fin_pool::InstructionFinPool;
-use crate::instructions::instructions::Instructions;
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::fin_pool::InstructionFinPool;
+use crate::instructions_data::instructions::Instructions;
 
 pub struct FinPoolParams {
     pub price: i64,
     pub terminate: bool,
 }
 
-impl<'a> DevolInstructionData<'a> for InstructionFinPool {
+impl<'a> DvlInstructionData<'a> for InstructionFinPool {
     type DvlInstrParams = FinPoolParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionFinPool>, Box<dyn Error>> {
@@ -27,8 +27,8 @@ const INSTRUCTION_VERSION: u8 = 1;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::constructors::fin_pool::FinPoolParams;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::constructors::fin_pool::FinPoolParams;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     #[test]
     fn test_instruction_fin_pool_params() {

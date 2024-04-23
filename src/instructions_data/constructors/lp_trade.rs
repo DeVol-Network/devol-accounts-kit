@@ -1,13 +1,13 @@
 use std::error::Error;
-use crate::instructions::devol_instruction_data::DevolInstructionData;
-use crate::instructions::instructions::Instructions;
-use crate::instructions::lp_trade::{InstructionLpTrade};
+use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
+use crate::instructions_data::instructions::Instructions;
+use crate::instructions_data::lp_trade::{InstructionLpTrade};
 
 pub struct LpTradeParams {
     pub trade_qty: i32,
 }
 
-impl<'a> DevolInstructionData<'a> for InstructionLpTrade {
+impl<'a> DvlInstructionData<'a> for InstructionLpTrade {
     type DvlInstrParams = LpTradeParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionLpTrade>, Box<dyn Error>> {
@@ -25,7 +25,7 @@ const INSTRUCTION_VERSION: u8 = 1;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::instructions::devol_instruction_data::DvlInstruction;
+    use crate::instructions_data::dvl_instruction_data::DvlInstruction;
 
     #[test]
     fn test_instruction_lp_trade_params() {

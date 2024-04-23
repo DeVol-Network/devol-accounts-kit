@@ -1,6 +1,7 @@
 use std::error::Error;
+use crate::transactions_instructions::as_transaction_instruction::AsTransactionInstruction;
 
-pub trait DevolInstructionData<'a> {
+pub trait DvlInstructionData<'a> : AsTransactionInstruction {
     type DvlInstrParams: 'a;
     fn new(params: Self::DvlInstrParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized;
 
@@ -17,7 +18,7 @@ pub struct DvlInstruction;
 impl DvlInstruction {
     pub fn new<'a, T>(params: T::DvlInstrParams) -> Result<Box<T>, Box<dyn Error>>
         where
-            T: DevolInstructionData<'a>
+            T: DvlInstructionData<'a>
     {
         T::new(params)
     }
