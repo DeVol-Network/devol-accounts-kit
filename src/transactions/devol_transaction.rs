@@ -1,13 +1,15 @@
-// use std::error::Error;
-// use crate::instructions::devol_instruction_data::DevolInstructionData;
+use std::error::Error;
+use solana_sdk::transaction::Transaction;
+use crate::dvl_client::dvl_client::DvlClient;
+use crate::instructions::devol_instruction_data::DevolInstructionData;
 
-// pub struct DevolTransaction;
+// pub trait DevolTransaction {
+//     type DvlTransactionParams;
 //
-// impl DevolTransaction {
-//     pub fn new<'a, T>(params: T::DvlInstrParams) -> Result<Box<Tra>, Box<dyn Error>>
-//         where
-//             T: DevolInstructionData<'a>
-//     {
-//         T::new(params)
-//     }
+//     fn as_transaction (
+//         &self,
+//         dvl_client: &DvlClient,
+//         transaction_params: Self::DvlTransactionParams
+//     ) -> Result<Box<Transaction>, Box<dyn Error>>
+//         where Self: DevolInstructionData;
 // }

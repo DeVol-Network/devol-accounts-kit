@@ -38,13 +38,18 @@ impl DvlClient {
         }
     }
 
-    pub fn read<'a, T: DvlReadable>(&self, params: T::AdditionalCheckParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
-        T::read(self, params)
+    pub fn get_account<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
+        T::read(self, &params)
     }
-    pub fn read_by_public_key<T: DvlReadable + DevolAccount + Copy>(
+
+    pub fn get_account_by_public_key<T: DvlReadable + DevolAccount + Copy>(
         &self,
         public_key: &Pubkey,
     ) -> Result<Box<T>, Box<dyn Error>> {
         T::read_by_public_key(self, public_key)
+    }
+
+    pub fn get_account_public_key<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> {
+        T::get_public_key(self, &params)
     }
 }

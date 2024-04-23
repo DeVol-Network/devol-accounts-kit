@@ -1,18 +1,22 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
-use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
+use crate::account_readers::dvl_readable::{DvlReadable, DvlIndexParam};
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
 use crate::accounts::mints::mints_account::MintsAccount;
 
 
 impl DvlReadable for MintLogAccount {
-    type AdditionalCheckParams<'a> = IndexedAccountParams;
+    type DvlReadParams<'a> = DvlIndexParam;
 
-    fn read<'a>(reader: &DvlClient, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let mints_account = reader.read::<MintsAccount>(()).unwrap();
-        let public_key = &mints_account.data[params.id as usize].log_address;
-        // let account =  Self::read_by_public_key(reader, public_key, params)?;
+    fn get_public_key<'a>(reader: &DvlClient, params: &DvlIndexParam) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        let mints_account = reader.get_account::<MintsAccount>(()).unwrap();
+        Ok(Box::from(mints_account.data[params.id as usize].log_address))
+    }
+
+    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(reader, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account = Self::from_account(
             public_key,
@@ -27,7 +31,7 @@ impl DvlReadable for MintLogAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::account_readers::dvl_readable::IndexedAccountParams;
+    use crate::account_readers::dvl_readable::DvlIndexParam;
     use crate::accounts::mints::mint_log::mint_log_account::{*};
     use crate::accounts::mints::mints_account::MintsAccount;
     use crate::tests::tests::setup_account_reader;
@@ -36,12 +40,12 @@ mod tests {
     fn test_read_mint_log_account() {
         let reader = setup_account_reader();
         // Test read by index
-        let mint_log_0 = reader.read::<MintLogAccount>(IndexedAccountParams {id: 0}).unwrap();
+        let mint_log_0 = reader.get_account::<MintLogAccount>(DvlIndexParam {id: 0}).unwrap();
         check_mint_log_account(&mint_log_0);
         // Test read by public key
-        let mints_account = reader.read::<MintsAccount>(()).unwrap();
+        let mints_account = reader.get_account::<MintsAccount>(()).unwrap();
         let pubkey = &mints_account.data[0].log_address;
-        let mint_log_0 = reader.read_by_public_key::<MintLogAccount>(pubkey).unwrap();
+        let mint_log_0 = reader.get_account_by_public_key::<MintLogAccount>(pubkey).unwrap();
         check_mint_log_account(&mint_log_0);
     }
 

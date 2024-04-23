@@ -1,4 +1,6 @@
 use std::error::Error;
+use solana_sdk::transaction::Transaction;
+use crate::dvl_client::dvl_client::DvlClient;
 
 pub trait DevolInstructionData<'a> {
     type DvlInstrParams: 'a;
@@ -10,9 +12,6 @@ pub trait DevolInstructionData<'a> {
         };
         data_bytes.to_vec()
     }
-
-    // fn as_transaction(&self, dvl_interact: &DvlInteract) -> Result<Box<Transaction>, Box<dyn Error>>
-    //     where Self: Sized;
 }
 
 pub struct DvlInstruction;

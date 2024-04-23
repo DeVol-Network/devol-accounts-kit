@@ -1,14 +1,19 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
-use crate::account_readers::dvl_readable::{ClientRelativeAccountParams, DvlReadable};
+use crate::account_readers::dvl_readable::{DvlClientParam, DvlReadable};
 use crate::accounts::client::payoff_log::payoff_log_account::PayoffLogAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 
 impl DvlReadable for PayoffLogAccount {
-    type AdditionalCheckParams<'a> = ClientRelativeAccountParams <'a>;
+    type DvlReadParams<'a> = DvlClientParam<'a>;
 
-    fn read<'a>(reader: &DvlClient, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &params.client_account.payoff_log;
+    fn get_public_key<'a>(_: &DvlClient, params: &DvlClientParam) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        Ok(Box::from(params.client_account.payoff_log))
+    }
+
+    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(reader, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account = Self::from_account(
             public_key,
@@ -23,7 +28,7 @@ impl DvlReadable for PayoffLogAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::account_readers::dvl_readable::SignableAccountParams;
+    use crate::account_readers::dvl_readable::DvlClientParams;
     use crate::accounts::client::client_account::client_account::ClientAccount;
     use crate::accounts::client::payoff_log::payoff_log_account::{PAYOFF_LOG_ACCOUNT_TAG, PAYOFF_LOG_ACCOUNT_VERSION};
     use crate::generate_pda::generate_pda;
@@ -35,18 +40,18 @@ mod tests {
         let reader = setup_account_reader();
         let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
         // Test auto read
-        let client_account = reader.read::<ClientAccount>(SignableAccountParams {
+        let client_account = reader.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
         }).unwrap();
 
         let payoff =
-            reader.read::<PayoffLogAccount>(ClientRelativeAccountParams {client_account: &client_account }).unwrap();
+            reader.get_account::<PayoffLogAccount>(DvlClientParam {client_account: &client_account }).unwrap();
         check_payoff_log_account(&payoff);
 
         // Test read by public key
         let payoff =
-            reader.read_by_public_key::<PayoffLogAccount>(&client_account.payoff_log).unwrap();
+            reader.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log).unwrap();
         check_payoff_log_account(&payoff);
     }
 

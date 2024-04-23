@@ -1,18 +1,23 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
-use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
+use crate::account_readers::dvl_readable::{DvlReadable, DvlIndexParam};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
 
 impl DvlReadable for PoolsLogAccount {
-    type AdditionalCheckParams<'a> = IndexedAccountParams;
+    type DvlReadParams<'a> = DvlIndexParam;
 
-    fn read<'a>(reader: &DvlClient, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
+    fn get_public_key<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id as usize];
-        let public_key = &worker.pools_log_address;
-        // let account =  Self::read_by_public_key(reader, public_key, Some(params))?;
+        Ok(Box::from(worker.pools_log_address))
+
+    }
+
+    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(reader, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(
             public_key,
@@ -35,12 +40,12 @@ mod tests {
     fn test_read_pools_log_account() {
         let reader = setup_account_reader();
         // Test read by index
-        let pool_log_0 = reader.read::<PoolsLogAccount>(IndexedAccountParams {id: 0}).unwrap();
+        let pool_log_0 = reader.get_account::<PoolsLogAccount>(DvlIndexParam {id: 0}).unwrap();
         check_pools_log_account(&pool_log_0);
         // Test read by public key
-        let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
+        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
         let pubkey = &workers_account.workers[0].pools_log_address;
-        let pool_log_0 = reader.read_by_public_key::<PoolsLogAccount>(pubkey).unwrap();
+        let pool_log_0 = reader.get_account_by_public_key::<PoolsLogAccount>(pubkey).unwrap();
         check_pools_log_account(&pool_log_0);
     }
 

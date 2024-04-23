@@ -216,7 +216,7 @@ impl ClientAccount {
         Ok(Box::new(*account_ref))
     }
 
-    #[allow(dead_code)]
+    #[cfg(test)]
     fn serialize_mut(&mut self) -> &mut [u8] {
         let size = std::mem::size_of::<ClientAccount>();
         unsafe { std::slice::from_raw_parts_mut(self as *mut _ as *mut u8, size) }

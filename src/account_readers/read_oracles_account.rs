@@ -1,4 +1,5 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_regular_account::DevolRegularAccount;
@@ -7,14 +8,18 @@ use crate::generate_pda::generate_pda;
 
 
 impl DvlReadable for OraclesAccount {
-    type AdditionalCheckParams<'a> = ();
+    type DvlReadParams<'a> = ();
 
-    fn read<'a>(reader: &DvlClient, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    fn get_public_key<'a>(reader: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
         let oracle_seed = format!("{}{}", reader.oracle_seed, reader.int_seed);
         let oracle_pda = generate_pda(&reader.admin_public_key, &oracle_seed, &reader.program_id);
-        let public_key = &oracle_pda.key;
+        Ok(Box::from(oracle_pda.key))
+    }
+
+    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(reader, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
-        let account =  Self::from_account(
+        let account = Self::from_account(
             public_key,
             &mut rpc_data,
             &reader.root_pda.key,
@@ -23,6 +28,7 @@ impl DvlReadable for OraclesAccount {
         Ok(account)
     }
 }
+
 #[cfg(test)]
 mod tests {
     use crate::accounts::oracles::oracles_account::{ORACLES_ACCOUNT_TAG, ORACLES_ACCOUNT_VERSION, OraclesAccount};
@@ -35,7 +41,7 @@ mod tests {
         // Test read by public key
         let oracle_pda = generate_pda(&reader.admin_public_key, &reader.oracle_seed, &reader.program_id);
         let pubkey = &oracle_pda.key;
-        let oracles_account = reader.read_by_public_key::<OraclesAccount>(pubkey).unwrap();
+        let oracles_account = reader.get_account_by_public_key::<OraclesAccount>(pubkey).unwrap();
         check_oracles_account(&oracles_account);
     }
 

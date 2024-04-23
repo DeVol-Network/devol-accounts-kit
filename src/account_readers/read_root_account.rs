@@ -1,16 +1,21 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::root::root_account::RootAccount;
 
 impl DvlReadable for RootAccount {
-    type AdditionalCheckParams<'a> = ();
+    type DvlReadParams<'a> = ();
 
-    fn read<'a>(reader: &DvlClient, _params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &reader.root_pda.key;
+    fn get_public_key<'a>(reader: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        Ok(Box::from(reader.root_pda.key))
+    }
+
+    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(reader, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
-        let account =  Self::from_account(
+        let account = Self::from_account(
             public_key,
             &mut rpc_data,
             &reader.root_pda.key,
@@ -32,7 +37,7 @@ mod tests {
     fn test_read_root_account() {
         let reader = setup_account_reader();
         // Test auto read
-        let root_account = match reader.read::<RootAccount>(()) {
+        let root_account = match reader.get_account::<RootAccount>(()) {
             Ok(account) => account,
             Err(e) => {
                 panic!("Failed to read root account: {}", e);
@@ -41,7 +46,7 @@ mod tests {
         check_root_account(&root_account);
         // Test read by public key
         let public_key = Pubkey::from_str(ROOT_ADDRESS).expect("Failed to parse public key");
-        let root_account = match reader.read_by_public_key::<RootAccount>(&public_key) {
+        let root_account = match reader.get_account_by_public_key::<RootAccount>(&public_key) {
             Ok(account) => account,
             Err(e) => panic!("Failed to read root account by public key: {}", e),
         };

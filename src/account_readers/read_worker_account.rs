@@ -1,24 +1,28 @@
 use std::error::Error;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
-use crate::account_readers::dvl_readable::{DvlReadable, IndexedAccountParams};
+use crate::account_readers::dvl_readable::{DvlReadable, DvlIndexParam};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
 impl DvlReadable for WorkerAccount {
-    type AdditionalCheckParams<'a> = IndexedAccountParams;
-    fn read<'a>(reader: &DvlClient, params: Self::AdditionalCheckParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let workers_account = reader.read::<AllWorkersAccount>(()).unwrap();
+    type DvlReadParams<'a> = DvlIndexParam;
+    fn get_public_key<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id as usize];
-        let public_key = &worker.address;
-        // let account =  Self::read_by_public_key(reader, public_key, Some(params))?;
+        Ok(Box::from(worker.address))
+    }
+
+    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(reader, params)?;
         let mut rpc_data = reader.client.get_account(public_key)?;
         let account =  Self::from_account(
             public_key,
             &mut rpc_data,
             &reader.root_pda.key,
             &reader.program_id,
-            Some(params.id)
+            Some(params.id),
         )?;
         Ok(account)
     }
@@ -34,12 +38,12 @@ mod tests {
     fn test_read_worker_account() {
         let reader = setup_account_reader();
         // Test read by index
-        let worker_0 = reader.read::<WorkerAccount>(IndexedAccountParams{id: 0}).unwrap();
+        let worker_0 = reader.get_account::<WorkerAccount>(DvlIndexParam {id: 0}).unwrap();
         check_worker_account(&worker_0);
         // Test read by public key
-        let mints_account = reader.read::<AllWorkersAccount>(()).unwrap();
+        let mints_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
         let pubkey = &mints_account.workers[0].address;
-        let worker_0 = reader.read_by_public_key::<WorkerAccount>(pubkey).unwrap();
+        let worker_0 = reader.get_account_by_public_key::<WorkerAccount>(pubkey).unwrap();
         check_worker_account(&worker_0);
     }
 
