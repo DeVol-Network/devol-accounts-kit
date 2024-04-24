@@ -12,8 +12,7 @@ solana-client = { version = '^1.18.0', optional = true }
 pyth-sdk-solana = "^0.10.1"
 solana-program = '^1.18.3'
 cfg-if = "^1.0.0"
-[dependencies.thiserror]
-version = "^1.0.56"
+thiserror = "^1.0.56"
 
 [features]
 default = []
