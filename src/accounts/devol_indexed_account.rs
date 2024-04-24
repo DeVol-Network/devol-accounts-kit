@@ -16,7 +16,7 @@ pub trait DevolIndexedAccount : DevolAccount {
     #[inline(always)]
     fn check_id(account_info: &AccountInfo, id: Option<u32>) -> Result<(), DvlError> {
         if let Some(id) = id {
-            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            let tag = AccountTag::from_u8(Self::expected_tag());
             let read_id = unsafe { *(account_info.data.borrow().as_ptr().add(Self::id_offset()) as *const u32) };
             if read_id != id as u32 {
                 return Err(DvlError::new_with_account(tag, ContractError::InvalidAccountId));

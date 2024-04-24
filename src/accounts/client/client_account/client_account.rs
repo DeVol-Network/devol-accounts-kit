@@ -138,7 +138,7 @@ impl ClientAccount {
         signer_params: Option<&SignerAccountParams>,
     ) -> Result<(), DvlError> {
         if let Some(signer_params) = signer_params{
-            let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+            let tag = AccountTag::from_u8(Self::expected_tag());
             if signer_params.devol_sign && account.signer_address != *signer_params.signer {
                 return Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
             } else if !signer_params.devol_sign && account.owner_address != *signer_params.signer {
@@ -158,7 +158,7 @@ impl ClientAccount {
         Self::check_basic(account_info,root_addr,program_id)?;
         let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
         Self::check_signer(account, signer_params)?;
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+        let tag = AccountTag::from_u8(Self::expected_tag());
         Self::check_expanded_size(tag, account_info.data.borrow())?;
         Ok(())
     }
@@ -193,7 +193,7 @@ impl ClientAccount {
     {
         Self::check_all(account_info, root_addr, program_id, signer_params)?;
         if !account_info.is_writable {
-            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()), ContractError::AccountWritableAttribute));
         }
         let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
         Ok(account)

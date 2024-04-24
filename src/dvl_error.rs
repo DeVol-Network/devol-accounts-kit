@@ -60,6 +60,24 @@ impl DvlError {
         let account_related_bit = if self.account.is_some() { 1 << 30 } else { 0 };
         sign_bit | account_related_bit | account_code | error_code
     }
+
+    pub fn from_code(code: u32) -> Self {
+        let error_code = (code & 0xFFFF) as u16;
+        let account_code = ((code >> 16) & 0xFF) as u8;
+        let has_account = (code >> 30) & 1 == 1;
+
+        let error = ContractError::from_u16(error_code);
+
+        let account = if has_account {
+            Some(AccountTag::from_u8(account_code))
+        } else {
+            None
+        };
+        Self {
+            error,
+            account,
+        }
+    }
 }
 
 impl std::fmt::Display for DvlError {
@@ -110,5 +128,13 @@ mod tests {
             assert_eq!(error_code & (0xFF << 16), 0, "The account code bits 24-16 should be unset for non-account-specific errors.");
             assert_eq!(error_code & 0xFFFF, *error as u16 as u32, "The least significant 16 bits should correctly represent the error code.");
         }
+    }
+
+    #[test]
+    fn test_decode_error() {
+        let error_code = DvlError::new_with_account(AccountTag::AllWorkers, ContractError::AccountOwner).encode();
+        let dvl_error = DvlError::from_code(error_code);
+        assert_eq!(dvl_error.error, ContractError::AccountOwner);
+        assert_eq!(dvl_error.account, Some(AccountTag::AllWorkers));
     }
 }

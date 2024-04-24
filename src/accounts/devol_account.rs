@@ -21,7 +21,7 @@ pub trait DevolAccount {
 
     #[inline(always)]
     fn check_basic(account_info: &AccountInfo, root_addr: &Pubkey, program_id: &Pubkey) -> Result<(), DvlError> {
-        let tag = AccountTag::from_u8(Self::expected_tag()).unwrap();
+        let tag = AccountTag::from_u8(Self::expected_tag());
         Self::check_size(tag, account_info.data.borrow())?;
         let header = Self::account_header(account_info.data.borrow());
         Self::check_tag_and_version(tag, header)?;
@@ -99,7 +99,7 @@ pub trait DevolAccount {
     {
         Self::check_basic(account_info, root_addr, program_id)?;
         if !account_info.is_writable {
-            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()).unwrap(), ContractError::AccountWritableAttribute));
+            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()), ContractError::AccountWritableAttribute));
         }
         let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
         Ok(account)
