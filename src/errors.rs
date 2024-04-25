@@ -1,6 +1,7 @@
 use std::fmt::{Debug};
 use strum_macros::{EnumIter, FromRepr};
 use thiserror::Error;
+use crate::dvl_error::DvlError;
 
 #[repr(u16)]
 #[derive(Copy, Clone, Debug, Error, EnumIter, FromRepr, PartialEq)]
@@ -214,4 +215,10 @@ impl ContractError {
             Self::UnknownError
         }
     }
+}
+
+#[test]
+fn test_display_error() {
+    let error = DvlError::new_with_account(AccountTag::MintLog, ContractError::AccountSize);
+    assert_eq!(format!("{}", error), "Error: Incorrect account size, Account: MintLog");
 }

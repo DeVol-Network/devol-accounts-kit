@@ -1,7 +1,7 @@
 use std::fmt::Formatter;
 use crate::errors::{AccountTag, ContractError};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct DvlError {
     error: ContractError,
     account: Option<AccountTag>,
@@ -86,6 +86,17 @@ impl std::fmt::Display for DvlError {
             Some(account) => write!(f, "Error: {}, Account: {:?}", self.error, account),
             None => write!(f, "Error: {}", self.error),
         }
+    }
+}
+
+impl std::fmt::Debug for DvlError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "DvlError {{ error: {}, account: ", self.error)?;
+        match self.account {
+            Some(account) => write!(f, "{:?}", account),
+            None => write!(f, "None"),
+        }?;
+        write!(f, " }}")
     }
 }
 
