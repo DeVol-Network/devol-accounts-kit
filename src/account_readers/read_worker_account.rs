@@ -8,20 +8,20 @@ use crate::accounts::worker::worker_account::WorkerAccount;
 
 impl DvlReadable for WorkerAccount {
     type DvlReadParams<'a> = DvlIndexParam;
-    fn get_public_key<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
-        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
+    fn get_public_key<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        let workers_account = client.get_account::<AllWorkersAccount>(()).unwrap();
         let worker = workers_account.workers[params.id as usize];
         Ok(Box::from(worker.address))
     }
 
-    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(reader, params)?;
-        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
+    fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(client, params)?;
+        let mut rpc_data = client.rpc_client.get_account(public_key)?;
         let account =  Self::from_account(
             public_key,
             &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
+            &client.root_pda.key,
+            &client.program_id,
             Some(params.id),
         )?;
         Ok(account)
@@ -36,17 +36,17 @@ mod tests {
 
     #[test]
     fn test_read_worker_account_by_index() -> Result<(), Box<dyn Error>> {
-        let reader = setup_devol_client();
-        let worker_0 = reader.get_account::<WorkerAccount>(DvlIndexParam { id: 0 })?;
+        let client = setup_devol_client();
+        let worker_0 = client.get_account::<WorkerAccount>(DvlIndexParam { id: 0 })?;
         Ok(())
     }
 
     #[test]
     fn test_read_worker_account_by_public_key() -> Result<(), Box<dyn Error>> {
-        let reader = setup_devol_client();
-        let mints_account = reader.get_account::<AllWorkersAccount>(())?;
+        let client = setup_devol_client();
+        let mints_account = client.get_account::<AllWorkersAccount>(())?;
         let pubkey = &mints_account.workers[0].address;
-        let worker_0 = reader.get_account_by_public_key::<WorkerAccount>(pubkey)?;
+        let worker_0 = client.get_account_by_public_key::<WorkerAccount>(pubkey)?;
         Ok(())
     }
 }

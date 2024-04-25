@@ -21,27 +21,27 @@ pub struct DvlClientParams<'a> {
 pub trait DvlReadable {
     type DvlReadParams<'a>;
 
-    fn get_public_key<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>>
+    fn get_public_key<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>>
         where
             Self: Sized;
 
-    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>>
+    fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
 
     fn read_by_public_key(
-        reader: &DvlClient,
+        client: &DvlClient,
         public_key: &Pubkey,
     ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized + DevolAccount + Copy
     {
-        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
+        let mut rpc_data = client.rpc_client.get_account(public_key)?;
         let account = Self::from_account_basic(
             public_key,
             &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
+            &client.root_pda.key,
+            &client.program_id,
         )?;
 
         Ok(account)

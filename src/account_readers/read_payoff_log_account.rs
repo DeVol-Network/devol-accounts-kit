@@ -12,14 +12,14 @@ impl DvlReadable for PayoffLogAccount {
         Ok(Box::from(params.client_account.payoff_log))
     }
 
-    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(reader, params)?;
-        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
+    fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(client, params)?;
+        let mut rpc_data = client.rpc_client.get_account(public_key)?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
+            &client.root_pda.key,
+            &client.program_id,
             Some(params.client_account.id),
         )?;
         Ok(account)
@@ -38,14 +38,14 @@ mod tests {
 
     #[test]
     fn test_read_payoff_log_account_auto() -> Result<(), Box<dyn Error>> {
-        let reader = setup_devol_client();
-        let client_pda = dvl_generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
-        let client_account = reader.get_account::<ClientAccount>(DvlClientParams {
+        let client = setup_devol_client();
+        let client_pda = dvl_generate_pda(&client.admin_public_key, &client.main_seed, &client.program_id);
+        let client_account = client.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
         })?;
 
-        let _payoff = reader.get_account::<PayoffLogAccount>(DvlClientParam {
+        let _payoff = client.get_account::<PayoffLogAccount>(DvlClientParam {
             client_account: &client_account,
         })?;
         Ok(())
@@ -53,14 +53,14 @@ mod tests {
 
     #[test]
     fn test_read_payoff_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
-        let reader = setup_devol_client();
-        let client_pda = dvl_generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
-        let client_account = reader.get_account::<ClientAccount>(DvlClientParams {
+        let client = setup_devol_client();
+        let client_pda = dvl_generate_pda(&client.admin_public_key, &client.main_seed, &client.program_id);
+        let client_account = client.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
         })?;
 
-        let _payoff = reader.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log)?;
+        let _payoff = client.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log)?;
         Ok(())
     }
 }

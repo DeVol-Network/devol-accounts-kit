@@ -13,14 +13,14 @@ impl DvlReadable for ClientAccount
         Ok(Box::from(*params.client_address))
     }
 
-    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(reader, params)?;
-        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
+    fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(client, params)?;
+        let mut rpc_data = client.rpc_client.get_account(public_key)?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
+            &client.root_pda.key,
+            &client.program_id,
             params.signer_account_params,
         )?;
         Ok(account)
@@ -38,9 +38,9 @@ mod tests {
 
     #[test]
     fn test_read_client_account() -> Result<(), Box<dyn Error>> {
-        let reader = setup_devol_client();
-        let client_pda = dvl_generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
-        let _client_account = reader.get_account::<ClientAccount>(DvlClientParams {
+        let client = setup_devol_client();
+        let client_pda = dvl_generate_pda(&client.admin_public_key, &client.main_seed, &client.program_id);
+        let _client_account = client.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
         })?;

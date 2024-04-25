@@ -8,18 +8,18 @@ use crate::accounts::root::root_account::RootAccount;
 impl DvlReadable for RootAccount {
     type DvlReadParams<'a> = ();
 
-    fn get_public_key<'a>(reader: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
-        Ok(Box::from(reader.root_pda.key))
+    fn get_public_key<'a>(client: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        Ok(Box::from(client.root_pda.key))
     }
 
-    fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(reader, params)?;
-        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
+    fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(client, params)?;
+        let mut rpc_data = client.rpc_client.get_account(public_key)?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,
-            &reader.root_pda.key,
-            &reader.program_id,
+            &client.root_pda.key,
+            &client.program_id,
         )?;
         Ok(account)
     }
@@ -37,16 +37,16 @@ mod tests {
 
     #[test]
     fn test_read_root_account_auto() -> Result<(), Box<dyn Error>> {
-        let reader = setup_devol_client();
-        let _root_account = reader.get_account::<RootAccount>(())?;
+        let client = setup_devol_client();
+        let _root_account = client.get_account::<RootAccount>(())?;
         Ok(())
     }
 
     #[test]
     fn test_read_root_account_by_public_key() -> Result<(), Box<dyn Error>> {
         let public_key = Pubkey::from_str(ROOT_ADDRESS)?;
-        let reader = setup_devol_client();
-        let _root_account = reader.get_account_by_public_key::<RootAccount>(&public_key)?;
+        let client = setup_devol_client();
+        let _root_account = client.get_account_by_public_key::<RootAccount>(&public_key)?;
         Ok(())
     }
 }
