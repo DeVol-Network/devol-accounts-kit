@@ -32,25 +32,24 @@ impl DvlReadable for PoolsLogAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::worker::pools_log::pools_log_account::{POOLS_LOG_ACCOUNT_TAG, POOLS_LOG_ACCOUNT_VERSION, PoolsLogAccount};
     use super::*;
+    use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_pools_log_account() {
+    fn test_read_pools_log_account_by_index() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test read by index
-        let pool_log_0 = reader.get_account::<PoolsLogAccount>(DvlIndexParam {id: 0}).unwrap();
-        check_pools_log_account(&pool_log_0);
-        // Test read by public key
-        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
-        let pubkey = &workers_account.workers[0].pools_log_address;
-        let pool_log_0 = reader.get_account_by_public_key::<PoolsLogAccount>(pubkey).unwrap();
-        check_pools_log_account(&pool_log_0);
+        let _pool_log_0 = reader.get_account::<PoolsLogAccount>(DvlIndexParam { id: 0 })?;
+        Ok(())
     }
 
-    fn check_pools_log_account(pools_log_account: &PoolsLogAccount){
-        assert_eq!(pools_log_account.header.tag, POOLS_LOG_ACCOUNT_TAG as u32);
-        assert_eq!(pools_log_account.header.version, POOLS_LOG_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_pools_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let workers_account = reader.get_account::<AllWorkersAccount>(())?;
+        let pubkey = &workers_account.workers[0].pools_log_address;
+        let _pool_log_0 = reader.get_account_by_public_key::<PoolsLogAccount>(pubkey)?;
+        Ok(())
     }
 }

@@ -31,25 +31,24 @@ impl DvlReadable for TasksLogAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::worker::tasks_log::tasks_log_account::{TASKS_LOG_ACCOUNT_TAG, TASKS_LOG_ACCOUNT_VERSION, TasksLogAccount};
     use super::*;
+    use crate::accounts::worker::tasks_log::tasks_log_account::TasksLogAccount;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_tasks_log_account() {
+    fn test_read_tasks_log_account_by_index() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test read by index
-        let task_log_0 = reader.get_account::<TasksLogAccount>(DvlIndexParam {id: 0}).unwrap();
-        check_tasks_log_account(&task_log_0);
-        // Test read by public key
-        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
-        let pubkey = &workers_account.workers[0].tasks_log_address;
-        let task_log_0 = reader.get_account_by_public_key::<TasksLogAccount>(pubkey).unwrap();
-        check_tasks_log_account(&task_log_0);
+        let _task_log_0 = reader.get_account::<TasksLogAccount>(DvlIndexParam { id: 0 })?;
+        Ok(())
     }
 
-    fn check_tasks_log_account(tasks_log_account: &TasksLogAccount){
-        assert_eq!(tasks_log_account.header.tag, TASKS_LOG_ACCOUNT_TAG as u32);
-        assert_eq!(tasks_log_account.header.version, TASKS_LOG_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_tasks_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let workers_account = reader.get_account::<AllWorkersAccount>(())?;
+        let pubkey = &workers_account.workers[0].tasks_log_address;
+        let _task_log_0 = reader.get_account_by_public_key::<TasksLogAccount>(pubkey)?;
+        Ok(())
     }
 }

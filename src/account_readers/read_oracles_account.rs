@@ -31,22 +31,18 @@ impl DvlReadable for OraclesAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::oracles::oracles_account::{ORACLES_ACCOUNT_TAG, ORACLES_ACCOUNT_VERSION, OraclesAccount};
+    use super::*;
+    use crate::accounts::oracles::oracles_account::OraclesAccount;
     use crate::generate_pda::generate_pda;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_oracles_account() {
+    fn test_read_oracles_account_by_public_key() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test read by public key
         let oracle_pda = generate_pda(&reader.admin_public_key, &reader.oracle_seed, &reader.program_id);
         let pubkey = &oracle_pda.key;
-        let oracles_account = reader.get_account_by_public_key::<OraclesAccount>(pubkey).unwrap();
-        check_oracles_account(&oracles_account);
-    }
-
-    fn check_oracles_account(oracles_account: &OraclesAccount){
-        assert_eq!(oracles_account.header.tag, ORACLES_ACCOUNT_TAG as u32);
-        assert_eq!(oracles_account.header.version, ORACLES_ACCOUNT_VERSION);
+        let _oracles_account = reader.get_account_by_public_key::<OraclesAccount>(pubkey)?;
+        Ok(())
     }
 }

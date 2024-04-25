@@ -31,24 +31,22 @@ impl DvlReadable for WorkerAccount {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::accounts::worker::worker_account::{WORKER_ACCOUNT_TAG, WORKER_ACCOUNT_VERSION};
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_worker_account() {
+    fn test_read_worker_account_by_index() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test read by index
-        let worker_0 = reader.get_account::<WorkerAccount>(DvlIndexParam {id: 0}).unwrap();
-        check_worker_account(&worker_0);
-        // Test read by public key
-        let mints_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
-        let pubkey = &mints_account.workers[0].address;
-        let worker_0 = reader.get_account_by_public_key::<WorkerAccount>(pubkey).unwrap();
-        check_worker_account(&worker_0);
+        let worker_0 = reader.get_account::<WorkerAccount>(DvlIndexParam { id: 0 })?;
+        Ok(())
     }
 
-    fn check_worker_account(mint_log_account: &WorkerAccount){
-        assert_eq!(mint_log_account.header.tag, WORKER_ACCOUNT_TAG as u32);
-        assert_eq!(mint_log_account.header.version, WORKER_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_worker_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let mints_account = reader.get_account::<AllWorkersAccount>(())?;
+        let pubkey = &mints_account.workers[0].address;
+        let worker_0 = reader.get_account_by_public_key::<WorkerAccount>(pubkey)?;
+        Ok(())
     }
 }

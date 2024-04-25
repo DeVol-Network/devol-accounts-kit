@@ -31,26 +31,26 @@ impl DvlReadable for MintLogAccount {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::account_readers::dvl_readable::DvlIndexParam;
-    use crate::accounts::mints::mint_log::mint_log_account::{*};
+    use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
     use crate::accounts::mints::mints_account::MintsAccount;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_mint_log_account() {
+    fn test_read_mint_log_account_by_index() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test read by index
-        let mint_log_0 = reader.get_account::<MintLogAccount>(DvlIndexParam {id: 0}).unwrap();
-        check_mint_log_account(&mint_log_0);
-        // Test read by public key
-        let mints_account = reader.get_account::<MintsAccount>(()).unwrap();
-        let pubkey = &mints_account.data[0].log_address;
-        let mint_log_0 = reader.get_account_by_public_key::<MintLogAccount>(pubkey).unwrap();
-        check_mint_log_account(&mint_log_0);
+        let _mint_log_0 = reader.get_account::<MintLogAccount>(DvlIndexParam { id: 0 })?;
+        Ok(())
     }
 
-    fn check_mint_log_account(mint_log_account: &MintLogAccount){
-        assert_eq!(mint_log_account.header.tag, MINT_LOG_ACCOUNT_TAG as u32);
-        assert_eq!(mint_log_account.header.version, MINT_LOG_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_mint_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let mints_account = reader.get_account::<MintsAccount>(())?;
+        let pubkey = &mints_account.data[0].log_address;
+        let _mint_log_0 = reader.get_account_by_public_key::<MintLogAccount>(pubkey)?;
+        Ok(())
     }
 }

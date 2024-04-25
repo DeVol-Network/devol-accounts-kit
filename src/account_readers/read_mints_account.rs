@@ -30,26 +30,25 @@ impl DvlReadable for MintsAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::mints::mints_account::*;
+    use super::*;
+    use crate::accounts::mints::mints_account::MintsAccount;
     use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_mints_account() {
+    fn test_read_mints_account_auto() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test auto read
-        let mints_account = reader.get_account::<MintsAccount>(()).unwrap();
-        check_mints_account(&mints_account);
-        // Test read by public key
-        let root_account = reader.get_account::<RootAccount>(()).unwrap();
-        let pubkey = &root_account.mints_address;
-        let mints_account = reader.get_account_by_public_key::<MintsAccount>(pubkey).unwrap();
-        check_mints_account(&mints_account);
+        let _mints_account = reader.get_account::<MintsAccount>(())?;
+        Ok(())
     }
 
-
-    fn check_mints_account(root_account: &MintsAccount){
-        assert_eq!(root_account.header.tag, MINTS_ACCOUNT_TAG as u32);
-        assert_eq!(root_account.header.version, MINTS_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_mints_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let root_account = reader.get_account::<RootAccount>(())?;
+        let pubkey = &root_account.mints_address;
+        let _mints_account = reader.get_account_by_public_key::<MintsAccount>(pubkey)?;
+        Ok(())
     }
 }

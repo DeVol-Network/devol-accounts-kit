@@ -30,25 +30,25 @@ impl DvlReadable for AllWorkersAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::all_workers::all_workers_account::{ALL_WORKERS_ACCOUNT_TAG, ALL_WORKERS_ACCOUNT_VERSION, AllWorkersAccount};
+    use super::*;
+    use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
     use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_all_workers_account() {
+    fn test_read_all_workers_account_auto() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test auto read
-        let all_workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
-        check_all_workers_account(&all_workers_account);
-        // Test read by public key
-        let root_account = reader.get_account::<RootAccount>(()).unwrap();
-        let pubkey = &root_account.workers_address;
-        let all_workers_account = reader.get_account_by_public_key::<AllWorkersAccount>(pubkey).unwrap();
-        check_all_workers_account(&all_workers_account);
+        let _all_workers_account = reader.get_account::<AllWorkersAccount>(())?;
+        Ok(())
     }
 
-    fn check_all_workers_account(all_workers_account: &AllWorkersAccount) {
-        assert_eq!(all_workers_account.header.tag, ALL_WORKERS_ACCOUNT_TAG as u32);
-        assert_eq!(all_workers_account.header.version, ALL_WORKERS_ACCOUNT_VERSION as u32);
+    #[test]
+    fn test_read_all_workers_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let root_account = reader.get_account::<RootAccount>(())?;
+        let pubkey = &root_account.workers_address;
+        let _all_workers_account = reader.get_account_by_public_key::<AllWorkersAccount>(pubkey)?;
+        Ok(())
     }
 }

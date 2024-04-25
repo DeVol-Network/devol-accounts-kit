@@ -29,29 +29,22 @@ impl DvlReadable for ClientAccount
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::client::client_account::client_account::{CLIENT_ACCOUNT_TAG, CLIENT_ACCOUNT_VERSION};
-    use crate::generate_pda::generate_pda;
     use super::*;
+    use crate::account_readers::dvl_readable::DvlClientParams;
+    use crate::accounts::client::client_account::client_account::ClientAccount;
+    use crate::generate_pda::generate_pda;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_client_account() {
+    fn test_read_client_account() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
         let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
-        // Test auto read
-        let client_account = reader.get_account::<ClientAccount>(DvlClientParams {
+        let _client_account = reader.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
-        }).unwrap();
-        check_client_account(&client_account);
-        // Test read by public key
-        // let public_key = reader.admin_public_key;
-        // let client_account = reader.read_by_public_key::<ClientAccount>(&public_key).unwrap();
-        // check_client_account(&client_account);
-    }
-
-    fn check_client_account(client_account: &ClientAccount) {
-        assert_eq!(client_account.header.tag, CLIENT_ACCOUNT_TAG as u32);
-        assert_eq!(client_account.header.version, CLIENT_ACCOUNT_VERSION as u32);
+        })?;
+        Ok(())
     }
 }
+

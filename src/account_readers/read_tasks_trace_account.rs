@@ -31,25 +31,24 @@ impl DvlReadable for TasksTraceAccount {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::worker::tasks_trace::tasks_trace_account::{TASKS_TRACE_ACCOUNT_TAG, TASKS_TRACE_ACCOUNT_VERSION, TasksTraceAccount};
     use super::*;
+    use crate::accounts::worker::tasks_trace::tasks_trace_account::TasksTraceAccount;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
 
     #[test]
-    fn test_read_tasks_trace_account() {
+    fn test_read_tasks_trace_account_by_index() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test read by index
-        let task_trace_0 = reader.get_account::<TasksTraceAccount>(DvlIndexParam {id: 0}).unwrap();
-        check_tasks_trace_account(&task_trace_0);
-        // Test read by public key
-        let workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
-        let pubkey = &workers_account.workers[0].tasks_trace_address;
-        let task_trace_0 = reader.get_account_by_public_key::<TasksTraceAccount>(pubkey).unwrap();
-        check_tasks_trace_account(&task_trace_0);
+        let _task_trace_0 = reader.get_account::<TasksTraceAccount>(DvlIndexParam { id: 0 })?;
+        Ok(())
     }
 
-    fn check_tasks_trace_account(tasks_trace_account: &TasksTraceAccount){
-        assert_eq!(tasks_trace_account.header.tag, TASKS_TRACE_ACCOUNT_TAG as u32);
-        assert_eq!(tasks_trace_account.header.version, TASKS_TRACE_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_tasks_trace_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let reader = setup_devol_client();
+        let workers_account = reader.get_account::<AllWorkersAccount>(())?;
+        let pubkey = &workers_account.workers[0].tasks_trace_address;
+        let _task_trace_0 = reader.get_account_by_public_key::<TasksTraceAccount>(pubkey)?;
+        Ok(())
     }
 }

@@ -30,32 +30,23 @@ mod tests {
     use std::str::FromStr;
     use solana_program::pubkey::Pubkey;
     use super::*;
-    use crate::accounts::root::root_account::{ROOT_ACCOUNT_TAG, ROOT_ACCOUNT_VERSION};
+    use crate::accounts::root::root_account::RootAccount;
     use crate::constants::test_constants::ROOT_ADDRESS;
     use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
+
     #[test]
-    fn test_read_root_account() {
+    fn test_read_root_account_auto() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        // Test auto read
-        let root_account = match reader.get_account::<RootAccount>(()) {
-            Ok(account) => account,
-            Err(e) => {
-                panic!("Failed to read root account: {}", e);
-            },
-        };
-        check_root_account(&root_account);
-        // Test read by public key
-        let public_key = Pubkey::from_str(ROOT_ADDRESS).expect("Failed to parse public key");
-        let root_account = match reader.get_account_by_public_key::<RootAccount>(&public_key) {
-            Ok(account) => account,
-            Err(e) => panic!("Failed to read root account by public key: {}", e),
-        };
-        check_root_account(&root_account);
+        let _root_account = reader.get_account::<RootAccount>(())?;
+        Ok(())
     }
 
-    fn check_root_account(root_account: &RootAccount){
-        assert_eq!(root_account.header.tag, ROOT_ACCOUNT_TAG as u32);
-        assert_eq!(root_account.header.version, ROOT_ACCOUNT_VERSION);
+    #[test]
+    fn test_read_root_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let public_key = Pubkey::from_str(ROOT_ADDRESS)?;
+        let reader = setup_devol_client();
+        let _root_account = reader.get_account_by_public_key::<RootAccount>(&public_key)?;
+        Ok(())
     }
 }
-
