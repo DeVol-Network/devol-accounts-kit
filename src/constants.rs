@@ -6,7 +6,7 @@ pub const VANILLA_MEMO_SIZE: usize = 49;
 pub const HOURS: usize = 24;
 
 #[cfg(test)]
-pub mod test_constants {
+pub(crate) mod test_constants {
     pub const RPC_URL: &str = "https://devnet.helius-rpc.com/?api-key=a4fd5524-2f2d-4713-9acf-aeb92a7e503a";
     pub const INT_SEED: usize = 1012;
     pub const PROGRAM_ID: &str = "2aJHohZdg4oaSuXGQzSDzZC3BJvEoN5JhpBu9GERiroo";
