@@ -13,7 +13,7 @@ use crate::accounts::devol_account::DevolAccount;
 use crate::generate_pda::{generate_pda, PDA};
 
 pub struct DvlClient {
-    pub client: RpcClient,
+    pub rpc_client: RpcClient,
     pub int_seed: usize,
     pub admin_public_key: Pubkey,
     pub program_id: Pubkey,
@@ -32,7 +32,7 @@ impl DvlClient {
         let root_pda = generate_pda(&admin_public_key, &root_seed, &program_id);
 
         Self {
-            client,
+            rpc_client: client,
             int_seed,
             admin_public_key,
             program_id,
@@ -75,16 +75,16 @@ impl DvlClient {
         }
         instructions.push(instruction);
 
-        let commitment = commitment_config.unwrap_or_else(|| self.client.commitment());
+        let commitment = commitment_config.unwrap_or_else(|| self.rpc_client.commitment());
 
         let retries = max_retries.unwrap_or(1);
         for i in 0..retries {
-            let latest_blockhash = self.client.get_latest_blockhash()?;
+            let latest_blockhash = self.rpc_client.get_latest_blockhash()?;
 
             let mut new_transaction = Transaction::new_with_payer(&instructions, Some(&signer_kp.pubkey()));
             new_transaction.try_sign(&[&signer_kp], latest_blockhash)?;
 
-            let send_result = self.client.send_and_confirm_transaction_with_spinner_and_commitment(
+            let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(
                 &new_transaction,
                 commitment,
             );

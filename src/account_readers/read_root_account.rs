@@ -14,7 +14,7 @@ impl DvlReadable for RootAccount {
 
     fn read<'a>(reader: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let public_key = &*Self::get_public_key(reader, params)?;
-        let mut rpc_data = reader.client.get_account(public_key)?;
+        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,

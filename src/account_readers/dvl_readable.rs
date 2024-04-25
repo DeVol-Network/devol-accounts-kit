@@ -36,7 +36,7 @@ pub trait DvlReadable {
         where
             Self: Sized + DevolAccount + Copy
     {
-        let mut rpc_data = reader.client.get_account(public_key)?;
+        let mut rpc_data = reader.rpc_client.get_account(public_key)?;
         let account = Self::from_account_basic(
             public_key,
             &mut rpc_data,
