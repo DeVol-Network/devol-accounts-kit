@@ -10,7 +10,7 @@ use solana_sdk::signer::Signer;
 use solana_sdk::transaction::Transaction;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_account::DevolAccount;
-use crate::generate_pda::{generate_pda, PDA};
+use crate::generate_pda::{dvl_generate_pda, PDA};
 
 pub struct DvlClient {
     pub rpc_client: RpcClient,
@@ -29,7 +29,7 @@ impl DvlClient {
         let admin_public_key = Pubkey::from_str(admin_public_key_str).unwrap();
         let program_id = Pubkey::from_str(program_id_str).unwrap();
         let root_seed = format!("rt{}", int_seed);
-        let root_pda = generate_pda(&admin_public_key, &root_seed, &program_id);
+        let root_pda = dvl_generate_pda(&admin_public_key, &root_seed, &program_id);
 
         Self {
             rpc_client: client,

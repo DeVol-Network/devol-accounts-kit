@@ -5,7 +5,7 @@ pub struct PDA {
     pub bump_seed: u8,
 }
 
-pub fn generate_pda(
+pub fn dvl_generate_pda(
     address: &Pubkey,
     seed_str: &str,
     program_id: &Pubkey,

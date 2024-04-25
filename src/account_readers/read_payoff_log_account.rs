@@ -32,14 +32,14 @@ mod tests {
     use crate::account_readers::dvl_readable::DvlClientParams;
     use crate::accounts::client::client_account::client_account::ClientAccount;
     use crate::accounts::client::payoff_log::payoff_log_account::PayoffLogAccount;
-    use crate::generate_pda::generate_pda;
+    use crate::generate_pda::dvl_generate_pda;
     use crate::tests::tests::setup_devol_client;
     use std::error::Error;
 
     #[test]
     fn test_read_payoff_log_account_auto() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
+        let client_pda = dvl_generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
         let client_account = reader.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
@@ -54,7 +54,7 @@ mod tests {
     #[test]
     fn test_read_payoff_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
         let reader = setup_devol_client();
-        let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
+        let client_pda = dvl_generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
         let client_account = reader.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_pda.key,
             signer_account_params: None,
