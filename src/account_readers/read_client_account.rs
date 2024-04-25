@@ -32,11 +32,11 @@ mod tests {
     use crate::accounts::client::client_account::client_account::{CLIENT_ACCOUNT_TAG, CLIENT_ACCOUNT_VERSION};
     use crate::generate_pda::generate_pda;
     use super::*;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_client_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         let client_pda = generate_pda(&reader.admin_public_key, &reader.main_seed, &reader.program_id);
         // Test auto read
         let client_account = reader.get_account::<ClientAccount>(DvlClientParams {

@@ -34,11 +34,11 @@ impl DvlReadable for PoolsLogAccount {
 mod tests {
     use crate::accounts::worker::pools_log::pools_log_account::{POOLS_LOG_ACCOUNT_TAG, POOLS_LOG_ACCOUNT_VERSION, PoolsLogAccount};
     use super::*;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_pools_log_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by index
         let pool_log_0 = reader.get_account::<PoolsLogAccount>(DvlIndexParam {id: 0}).unwrap();
         check_pools_log_account(&pool_log_0);

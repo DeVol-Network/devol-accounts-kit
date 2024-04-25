@@ -32,11 +32,11 @@ impl DvlReadable for AllWorkersAccount {
 mod tests {
     use crate::accounts::all_workers::all_workers_account::{ALL_WORKERS_ACCOUNT_TAG, ALL_WORKERS_ACCOUNT_VERSION, AllWorkersAccount};
     use crate::accounts::root::root_account::RootAccount;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_all_workers_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test auto read
         let all_workers_account = reader.get_account::<AllWorkersAccount>(()).unwrap();
         check_all_workers_account(&all_workers_account);

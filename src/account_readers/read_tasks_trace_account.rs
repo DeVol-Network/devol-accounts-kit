@@ -33,11 +33,11 @@ impl DvlReadable for TasksTraceAccount {
 mod tests {
     use crate::accounts::worker::tasks_trace::tasks_trace_account::{TASKS_TRACE_ACCOUNT_TAG, TASKS_TRACE_ACCOUNT_VERSION, TasksTraceAccount};
     use super::*;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_tasks_trace_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by index
         let task_trace_0 = reader.get_account::<TasksTraceAccount>(DvlIndexParam {id: 0}).unwrap();
         check_tasks_trace_account(&task_trace_0);

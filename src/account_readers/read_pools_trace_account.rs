@@ -33,11 +33,11 @@ impl DvlReadable for PoolsTraceAccount {
 mod tests {
     use crate::accounts::worker::pools_trace::pools_trace_account::{POOLS_TRACE_ACCOUNT_TAG, POOLS_TRACE_ACCOUNT_VERSION, PoolsTraceAccount};
     use super::*;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_pools_trace_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by index
         let pool_trace_0 = reader.get_account::<PoolsTraceAccount>(DvlIndexParam {id: 0}).unwrap();
         check_pools_trace_account(&pool_trace_0);

@@ -33,11 +33,11 @@ impl DvlReadable for OraclesAccount {
 mod tests {
     use crate::accounts::oracles::oracles_account::{ORACLES_ACCOUNT_TAG, ORACLES_ACCOUNT_VERSION, OraclesAccount};
     use crate::generate_pda::generate_pda;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_oracles_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by public key
         let oracle_pda = generate_pda(&reader.admin_public_key, &reader.oracle_seed, &reader.program_id);
         let pubkey = &oracle_pda.key;

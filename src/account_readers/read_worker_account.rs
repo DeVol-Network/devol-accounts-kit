@@ -32,11 +32,11 @@ impl DvlReadable for WorkerAccount {
 mod tests {
     use super::*;
     use crate::accounts::worker::worker_account::{WORKER_ACCOUNT_TAG, WORKER_ACCOUNT_VERSION};
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_worker_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by index
         let worker_0 = reader.get_account::<WorkerAccount>(DvlIndexParam {id: 0}).unwrap();
         check_worker_account(&worker_0);

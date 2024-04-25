@@ -33,11 +33,11 @@ impl DvlReadable for TasksLogAccount {
 mod tests {
     use crate::accounts::worker::tasks_log::tasks_log_account::{TASKS_LOG_ACCOUNT_TAG, TASKS_LOG_ACCOUNT_VERSION, TasksLogAccount};
     use super::*;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_tasks_log_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by index
         let task_log_0 = reader.get_account::<TasksLogAccount>(DvlIndexParam {id: 0}).unwrap();
         check_tasks_log_account(&task_log_0);

@@ -32,11 +32,11 @@ impl DvlReadable for MintsAccount {
 mod tests {
     use crate::accounts::mints::mints_account::*;
     use crate::accounts::root::root_account::RootAccount;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_mints_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test auto read
         let mints_account = reader.get_account::<MintsAccount>(()).unwrap();
         check_mints_account(&mints_account);

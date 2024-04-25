@@ -31,11 +31,11 @@ impl DvlReadable for InstrumentsAccount {
 mod tests {
     use crate::accounts::instruments::instruments_account::{INSTR_ACCOUNT_TAG, INSTR_ACCOUNT_VERSION, InstrumentsAccount};
     use crate::accounts::root::root_account::RootAccount;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_instruments_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test auto read
         let instruments_account = reader.get_account::<InstrumentsAccount>(()).unwrap();
         check_instruments_account(&instruments_account);

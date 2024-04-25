@@ -34,11 +34,11 @@ mod tests {
     use crate::account_readers::dvl_readable::DvlIndexParam;
     use crate::accounts::mints::mint_log::mint_log_account::{*};
     use crate::accounts::mints::mints_account::MintsAccount;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
 
     #[test]
     fn test_read_mint_log_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test read by index
         let mint_log_0 = reader.get_account::<MintLogAccount>(DvlIndexParam {id: 0}).unwrap();
         check_mint_log_account(&mint_log_0);

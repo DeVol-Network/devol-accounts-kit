@@ -32,10 +32,10 @@ mod tests {
     use super::*;
     use crate::accounts::root::root_account::{ROOT_ACCOUNT_TAG, ROOT_ACCOUNT_VERSION};
     use crate::constants::test_constants::ROOT_ADDRESS;
-    use crate::tests::tests::setup_account_reader;
+    use crate::tests::tests::setup_devol_client;
     #[test]
     fn test_read_root_account() {
-        let reader = setup_account_reader();
+        let reader = setup_devol_client();
         // Test auto read
         let root_account = match reader.get_account::<RootAccount>(()) {
             Ok(account) => account,
