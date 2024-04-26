@@ -1,4 +1,5 @@
 pub const INSTRUCTION_TRANSFER_TOKEN_SIZE: usize = 16;
+pub const INSTRUCTION_TRANSFER_TOKEN_VERSION: u8 = 2;
 
 #[repr(C)]
 pub struct InstructionTransferToken {

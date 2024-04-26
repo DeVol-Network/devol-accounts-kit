@@ -30,7 +30,6 @@ impl DvlReadable for MintsAccount {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::accounts::mints::mints_account::MintsAccount;
     use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_devol_client;

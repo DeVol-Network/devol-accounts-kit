@@ -1,6 +1,8 @@
 use crate::constants::BUCKETS_COUNT;
 use crate::instructions_data::option_trade::{BasketData, InstructionOptionTrade};
 
+pub const INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE: usize = 456;
+
 #[repr(C)]
 pub struct InstructionOptionTradeDebug {
     pub option_trade: InstructionOptionTrade,
@@ -21,7 +23,6 @@ mod tests {
     use super::*;
     use std::mem;
 
-    pub const INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE: usize = 456;
     pub const INSTR_OPTION_TRADE_DEBUG_OPTION_TRADE_OFFSET: usize = 0;
     pub const INSTR_OPTION_TRADE_DEBUG_TIME_TO_EXPIRATION_OFFSET: usize = 440;
     pub const INSTR_OPTION_TRADE_DEBUG_UNDERLYING_PRICE_OFFSET: usize = 448;

@@ -29,7 +29,6 @@ impl DvlReadable for ClientAccount
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::account_readers::dvl_readable::DvlClientParams;
     use crate::accounts::client::client_account::client_account::ClientAccount;
     use crate::generate_pda::dvl_generate_pda;

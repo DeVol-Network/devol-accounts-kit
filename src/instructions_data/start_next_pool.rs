@@ -2,6 +2,7 @@ use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
 
 pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 872;
+pub const INSTRUCTION_START_NEXT_POOL_VERSION: u8 = 2;
 
 #[repr(C)]
 pub struct InstructionStartNextPool {

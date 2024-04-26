@@ -9,6 +9,8 @@ pub struct BasketData {
 }
 
 pub const INSTRUCTION_OPTION_TRADE_DATA_SIZE: usize = 440;
+pub const INSTRUCTION_OPTION_TRADE_VERSION: u8 = 2;
+pub const DEFAULT_OPTION_TRADE_MAX_COST: i64 = -1_000_000_000;
 
 #[repr(C)]
 pub struct InstructionOptionTrade {

@@ -30,7 +30,6 @@ impl DvlReadable for OraclesAccount {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::accounts::oracles::oracles_account::OraclesAccount;
     use crate::generate_pda::dvl_generate_pda;
     use crate::tests::tests::setup_devol_client;

@@ -3,7 +3,7 @@ use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::start_next_pool::InstructionStartNextPool;
+use crate::instructions_data::start_next_pool::{INSTRUCTION_START_NEXT_POOL_VERSION, InstructionStartNextPool};
 
 pub struct StartNextPoolParams {
     pub svm_params: SvmParams,
@@ -27,7 +27,7 @@ impl<'a> DvlInstructionData<'a> for InstructionStartNextPool {
     ) -> Result<Box<InstructionStartNextPool>, Box<dyn Error>> {
         Ok(Box::new(InstructionStartNextPool {
             cmd: Instructions::StartNextPool as u8,
-            version: INSTRUCTION_VERSION,
+            version: INSTRUCTION_START_NEXT_POOL_VERSION,
             reserved: [0; 6],
             prices: params.prices,
             svm_params: params.svm_params,
@@ -44,9 +44,6 @@ impl<'a> DvlInstructionData<'a> for InstructionStartNextPool {
         }))
     }
 }
-
-const INSTRUCTION_VERSION: u8 = 1;
-
 
 #[cfg(test)]
 mod tests {
@@ -88,7 +85,7 @@ mod tests {
         let data =
             DvlInstruction::new::<InstructionStartNextPool>(start_next_pool_params).unwrap();
         assert_eq!(data.cmd, Instructions::StartNextPool as u8);
-        assert_eq!(data.version, INSTRUCTION_VERSION);
+        assert_eq!(data.version, INSTRUCTION_START_NEXT_POOL_VERSION);
         assert_eq!(data.prices, [TEST_PRICE; BUCKETS_COUNT]);
         assert_eq!(data.svm_params.c, TEST_C);
         assert_eq!(data.svm_params.p, TEST_P);

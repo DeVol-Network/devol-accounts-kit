@@ -39,6 +39,7 @@ impl Default for InstructionOptionTradeDebug {
 mod tests {
     use super::*;
     use crate::constants::BUCKETS_COUNT;
+    use crate::instructions_data::option_trade_debug::INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE;
 
     #[test]
     fn test_default_instruction_option_trade_debug() {
@@ -72,6 +73,20 @@ mod tests {
         assert_eq!(debug_trade.option_trade.cmd, Instructions::OptionTradeDebug as u8);
         assert_eq!(debug_trade.option_trade.max_cost, test_max_cost);
         assert_eq!(debug_trade.option_trade.trade_qty, test_trade_qty);
+    }
+
+    #[test]
+    fn test_as_vec_le_instruction_option_trade_debug() {
+        let trade_params = OptionTradeDebugParams {
+            trade_qty: [0; BUCKETS_COUNT],
+            basket: None,
+            max_cost: None,
+            time_to_expiration: 0,
+            underlying_price: 0,
+        };
+        let data = DvlInstruction::new::<InstructionOptionTradeDebug>(trade_params).unwrap();
+        let buf = data.as_vec_le();
+        assert_eq!(buf.len(), INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE);
     }
 
 }

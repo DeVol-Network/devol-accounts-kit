@@ -29,7 +29,6 @@ impl DvlReadable for RootAccount {
 mod tests {
     use std::str::FromStr;
     use solana_program::pubkey::Pubkey;
-    use super::*;
     use crate::accounts::root::root_account::RootAccount;
     use crate::constants::test_constants::ROOT_ADDRESS;
     use crate::tests::tests::setup_devol_client;

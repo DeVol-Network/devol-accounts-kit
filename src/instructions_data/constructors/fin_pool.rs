@@ -1,6 +1,6 @@
 use std::error::Error;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
-use crate::instructions_data::fin_pool::InstructionFinPool;
+use crate::instructions_data::fin_pool::{INSTRUCTION_FIN_POOL_VERSION, InstructionFinPool};
 use crate::instructions_data::instructions::Instructions;
 
 pub struct FinPoolParams {
@@ -14,7 +14,7 @@ impl<'a> DvlInstructionData<'a> for InstructionFinPool {
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionFinPool>, Box<dyn Error>> {
         Ok(Box::new(InstructionFinPool {
             cmd: Instructions::FinPool as u8,
-            version: INSTRUCTION_VERSION,
+            version: INSTRUCTION_FIN_POOL_VERSION,
             reserved: [0; 5],
             price: params.price,
             terminate: params.terminate,
@@ -22,7 +22,6 @@ impl<'a> DvlInstructionData<'a> for InstructionFinPool {
     }
 }
 
-const INSTRUCTION_VERSION: u8 = 1;
 
 #[cfg(test)]
 mod tests {
@@ -41,7 +40,7 @@ mod tests {
         };
         let data = DvlInstruction::new::<InstructionFinPool>(fin_pool_params).unwrap();
         assert_eq!(data.cmd, Instructions::FinPool as u8);
-        assert_eq!(data.version, INSTRUCTION_VERSION);
+        assert_eq!(data.version, INSTRUCTION_FIN_POOL_VERSION);
         assert_eq!(data.price, TEST_PRICE);
         assert_eq!(data.terminate, TEST_TERMINATE);
     }

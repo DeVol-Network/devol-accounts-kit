@@ -30,7 +30,6 @@ impl DvlReadable for AllWorkersAccount {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
     use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_devol_client;

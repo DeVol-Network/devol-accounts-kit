@@ -37,7 +37,7 @@ mod tests {
     #[test]
     fn test_read_worker_account_by_index() -> Result<(), Box<dyn Error>> {
         let client = setup_devol_client();
-        let worker_0 = client.get_account::<WorkerAccount>(DvlIndexParam { id: 0 })?;
+        let _worker_0 = client.get_account::<WorkerAccount>(DvlIndexParam { id: 0 })?;
         Ok(())
     }
 
@@ -46,7 +46,7 @@ mod tests {
         let client = setup_devol_client();
         let mints_account = client.get_account::<AllWorkersAccount>(())?;
         let pubkey = &mints_account.workers[0].address;
-        let worker_0 = client.get_account_by_public_key::<WorkerAccount>(pubkey)?;
+        let _worker_0 = client.get_account_by_public_key::<WorkerAccount>(pubkey)?;
         Ok(())
     }
 }

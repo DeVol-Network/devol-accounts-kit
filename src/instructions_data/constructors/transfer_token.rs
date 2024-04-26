@@ -1,7 +1,7 @@
 use std::error::Error;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::transfer_token::{InstructionTransferToken};
+use crate::instructions_data::transfer_token::{INSTRUCTION_TRANSFER_TOKEN_VERSION, InstructionTransferToken};
 
 pub struct TransferTokenParams {
     pub mint_id: u32,
@@ -14,15 +14,13 @@ impl<'a> DvlInstructionData<'a> for InstructionTransferToken {
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionTransferToken>, Box<dyn Error>> {
         Ok(Box::new(InstructionTransferToken {
             cmd: Instructions::TransferToken as u8,
-            version: INSTRUCTION_VERSION,
+            version: INSTRUCTION_TRANSFER_TOKEN_VERSION,
             reserved: [0; 2],
             mint_id: params.mint_id,
             amount: params.amount,
         }))
     }
 }
-
-const INSTRUCTION_VERSION: u8 = 1;
 
 #[cfg(test)]
 mod tests {
@@ -40,7 +38,7 @@ mod tests {
         };
         let data = DvlInstruction::new::<InstructionTransferToken>(withdraw_token_params).unwrap();
         assert_eq!(data.cmd, Instructions::TransferToken as u8);
-        assert_eq!(data.version, INSTRUCTION_VERSION);
+        assert_eq!(data.version, INSTRUCTION_TRANSFER_TOKEN_VERSION);
         assert_eq!(data.mint_id, TEST_MINT_ID);
         assert_eq!(data.amount, TEST_AMOUNT);
     }

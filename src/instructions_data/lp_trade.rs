@@ -1,4 +1,5 @@
 pub const INSTRUCTION_LP_TRADE_SIZE: usize = 8;
+pub const INSTRUCTION_LP_TRADE_VERSION: u8 = 2;
 
 #[repr(C)]
 pub struct InstructionLpTrade {

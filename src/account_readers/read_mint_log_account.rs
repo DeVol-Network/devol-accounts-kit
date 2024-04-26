@@ -31,7 +31,6 @@ impl DvlReadable for MintLogAccount {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::account_readers::dvl_readable::DvlIndexParam;
     use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
     use crate::accounts::mints::mints_account::MintsAccount;

@@ -1,4 +1,5 @@
 pub const INSTRUCTION_FIN_POOL_SIZE: usize = 16;
+pub const INSTRUCTION_FIN_POOL_VERSION: u8 = 2;
 
 #[repr(C)]
 pub struct InstructionFinPool {

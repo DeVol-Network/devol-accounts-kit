@@ -29,7 +29,6 @@ impl DvlReadable for InstrumentsAccount {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::accounts::instruments::instruments_account::InstrumentsAccount;
     use crate::accounts::root::root_account::RootAccount;
     use crate::tests::tests::setup_devol_client;
