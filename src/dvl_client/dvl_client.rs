@@ -135,13 +135,13 @@ impl DvlClient {
 }
 
 pub struct DvlSendTransactionParams<'a> {
-    instructions: Vec<Instruction>,
-    signer_kp: Keypair,
-    commitment_config: Option<CommitmentConfig>,
-    compute_budget: Option<u32>,
-    compute_unit_price: Option<u64>,
-    verbose: Option<bool>,
-    log_prefix: Option<&'a str>,
-    max_retries: Option<usize>,
-    retry_delay: Option<u64>,
+    pub instructions: Vec<Instruction>,
+    pub signer_kp: Keypair,
+    pub commitment_config: Option<CommitmentConfig>,
+    pub compute_budget: Option<u32>,
+    pub compute_unit_price: Option<u64>,
+    pub verbose: Option<bool>,
+    pub log_prefix: Option<&'a str>,
+    pub max_retries: Option<usize>,
+    pub retry_delay: Option<u64>,
 }
