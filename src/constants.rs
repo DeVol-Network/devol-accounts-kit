@@ -4,6 +4,7 @@ pub const BUCKETS_COUNT: usize = 95;
 pub const VANILLA_COST_SIZE: usize = 4;
 pub const VANILLA_MEMO_SIZE: usize = 49;
 pub const HOURS: usize = 24;
+pub const TOKEN_PROGRAM_ID: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 
 #[cfg(test)]
 pub mod test_constants {
