@@ -67,7 +67,7 @@ impl DvlClient {
         compute_budget: Option<u32>,
         compute_unit_price: Option<u32>,
         max_retries: Option<usize>,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<String, Box<dyn Error>> {
         if let Some(max_units) = compute_budget {
             let compute_budget_instruction =
                 ComputeBudgetInstruction::set_compute_unit_limit(max_units);
@@ -96,7 +96,7 @@ impl DvlClient {
             match send_result {
                 Ok(signature) => {
                     println!("Transaction sent successfully with signature: {}", signature);
-                    return Ok(());
+                    return Ok(signature.to_string());
                 },
                 Err(_) if i < retries - 1 => continue,
                 Err(e) => {
