@@ -64,35 +64,27 @@ impl DvlClient {
 
     pub fn send_transaction(
         &self,
-        mut instructions: Vec<Instruction>,
-        signer_kp: Keypair,
-        commitment_config: Option<CommitmentConfig>,
-        compute_budget: Option<u32>,
-        compute_unit_price: Option<u64>,
-        verbose: Option<bool>,
-        log_prefix: Option<&str>,
-        max_retries: Option<usize>,
-        retry_delay: Option<u64>,
+        mut params: DvlSendTransactionParams,
     ) -> Result<String, Box<dyn Error>> {
-        if let Some(max_units) = compute_budget {
+        if let Some(max_units) = params.compute_budget {
             let compute_budget_instruction = ComputeBudgetInstruction::set_compute_unit_limit(max_units);
-            instructions.push(compute_budget_instruction);
+            params.instructions.push(compute_budget_instruction);
         }
-        if let Some(compute_unit_price) = compute_unit_price {
+        if let Some(compute_unit_price) = params.compute_unit_price {
             let priority_fee_instruction = ComputeBudgetInstruction::set_compute_unit_price(compute_unit_price);
-            instructions.push(priority_fee_instruction);
+            params.instructions.push(priority_fee_instruction);
         }
 
-        let commitment = commitment_config.unwrap_or_else(|| self.rpc_client.commitment());
-        let retries = max_retries.unwrap_or(1);
-        let delay = retry_delay.unwrap_or(1);
-        let log_prefix = log_prefix.unwrap_or("");
-        let verbose = verbose.unwrap_or(false);
+        let commitment = params.commitment_config.unwrap_or_else(|| self.rpc_client.commitment());
+        let retries = params.max_retries.unwrap_or(1);
+        let delay = params.retry_delay.unwrap_or(1);
+        let log_prefix = params.log_prefix.unwrap_or("");
+        let verbose = params.verbose.unwrap_or(false);
 
         for i in 0..retries {
             let latest_blockhash = self.rpc_client.get_latest_blockhash()?;
-            let mut new_transaction = Transaction::new_with_payer(&instructions, Some(&signer_kp.pubkey()));
-            new_transaction.try_sign(&[&signer_kp], latest_blockhash)?;
+            let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer_kp.pubkey()));
+            new_transaction.try_sign(&[&params.signer_kp], latest_blockhash)?;
 
             let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(&new_transaction, commitment);
 
@@ -140,4 +132,16 @@ impl DvlClient {
         Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "All retry attempts failed")))
     }
 
+}
+
+pub struct DvlSendTransactionParams<'a> {
+    instructions: Vec<Instruction>,
+    signer_kp: Keypair,
+    commitment_config: Option<CommitmentConfig>,
+    compute_budget: Option<u32>,
+    compute_unit_price: Option<u64>,
+    verbose: Option<bool>,
+    log_prefix: Option<&'a str>,
+    max_retries: Option<usize>,
+    retry_delay: Option<u64>,
 }
