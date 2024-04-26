@@ -65,7 +65,7 @@ impl DvlClient {
         signer_kp: Keypair,
         commitment_config: Option<CommitmentConfig>,
         compute_budget: Option<u32>,
-        compute_unit_price: Option<u32>,
+        compute_unit_price: Option<u64>,
         max_retries: Option<usize>,
     ) -> Result<String, Box<dyn Error>> {
         if let Some(max_units) = compute_budget {
@@ -75,7 +75,7 @@ impl DvlClient {
         }
         if let Some(compute_unit_price) = compute_unit_price {
             let priority_fee_instruction =
-                ComputeBudgetInstruction::set_compute_unit_limit(compute_unit_price);
+                ComputeBudgetInstruction::set_compute_unit_price(compute_unit_price);
             instructions.push(priority_fee_instruction);
         }
 
