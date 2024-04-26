@@ -4,7 +4,8 @@ use solana_program::pubkey::Pubkey;
 use solana_program::system_program;
 use solana_sdk::signature::Keypair;
 use solana_sdk::signer::Signer;
-use crate::account_readers::dvl_readable::DvlIndexParam;
+use crate::account_readers::dvl_readable::{DvlClientParams, DvlIndexParam};
+use crate::accounts::client::client_account::client_account::ClientAccount;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::oracles::oracles_account::OraclesAccount;
 use crate::accounts::root::root_account::RootAccount;
@@ -33,7 +34,10 @@ impl AsTransactionInstruction for InstructionOptionTradeDebug {
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.as_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
-        let client_acc_key = transaction_params.client_key;
+        let client_acc_key = client.account_public_key::<ClientAccount>(DvlClientParams {
+            client_address: &transaction_params.client_key,
+            signer_account_params: None,
+        })?;
         let instruments_acc_key = client.account_public_key::<InstrumentsAccount>(())?;
         let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
         let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
@@ -71,7 +75,7 @@ impl AsTransactionInstruction for InstructionOptionTradeDebug {
                 is_writable: false,
             },
             AccountMeta {
-                pubkey: client_acc_key,
+                pubkey: *client_acc_key,
                 is_signer: false,
                 is_writable: true,
             },
