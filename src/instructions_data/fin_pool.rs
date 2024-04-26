@@ -10,6 +10,7 @@ pub struct InstructionFinPool {
     pub price: i64,
 }
 
+#[cfg(feature = "off-chain")]
 #[cfg(test)]
 mod tests {
     use super::*;

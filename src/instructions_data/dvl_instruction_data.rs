@@ -1,5 +1,13 @@
 use std::error::Error;
-use crate::instructions_data::as_transaction_instruction::as_transaction_instruction::AsTransactionInstruction;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "off-chain")] {
+        use crate::instructions_data::as_transaction_instruction::as_transaction_instruction::AsTransactionInstruction;
+    }
+    else {
+        use crate::instructions_data::as_transaction_instruction_on_chain::AsTransactionInstruction;
+    }
+}
+
 
 pub trait DvlInstructionData<'a> : AsTransactionInstruction {
     type DvlInstrParams: 'a;

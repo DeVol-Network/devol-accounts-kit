@@ -9,7 +9,7 @@ pub struct InstructionLpTrade {
     pub trade_qty: i32,
 }
 
-
+#[cfg(feature = "off-chain")]
 #[cfg(test)]
 mod tests {
     use super::*;

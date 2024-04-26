@@ -10,6 +10,7 @@ pub struct InstructionTransferToken {
     pub amount: u64,
 }
 
+#[cfg(feature = "off-chain")]
 #[cfg(test)]
 mod tests {
     use super::*;

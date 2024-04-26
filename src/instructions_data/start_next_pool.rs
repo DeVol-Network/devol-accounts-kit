@@ -23,6 +23,7 @@ pub struct InstructionStartNextPool {
     pub perm_impact: f64,
 }
 
+#[cfg(feature = "off-chain")]
 #[cfg(test)]
 mod tests {
     use super::*;

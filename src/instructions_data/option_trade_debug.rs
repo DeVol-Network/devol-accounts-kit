@@ -18,6 +18,7 @@ pub struct OptionTradeDebugParams<'a> {
     pub underlying_price: i64,
 }
 
+#[cfg(feature = "off-chain")]
 #[cfg(test)]
 mod tests {
     use super::*;
