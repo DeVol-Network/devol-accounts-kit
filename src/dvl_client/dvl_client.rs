@@ -61,19 +61,23 @@ impl DvlClient {
 
     pub fn send_transaction(
         &self,
-        instruction: Instruction,
+        mut instructions: Vec<Instruction>,
         signer_kp: Keypair,
         commitment_config: Option<CommitmentConfig>,
         compute_budget: Option<u32>,
+        compute_unit_price: Option<u32>,
         max_retries: Option<usize>,
     ) -> Result<(), Box<dyn Error>> {
-        let mut instructions = Vec::<Instruction>::new();
         if let Some(max_units) = compute_budget {
             let compute_budget_instruction =
                 ComputeBudgetInstruction::set_compute_unit_limit(max_units);
             instructions.push(compute_budget_instruction);
         }
-        instructions.push(instruction);
+        if let Some(compute_unit_price) = compute_unit_price {
+            let priority_fee_instruction =
+                ComputeBudgetInstruction::set_compute_unit_limit(compute_unit_price);
+            instructions.push(priority_fee_instruction);
+        }
 
         let commitment = commitment_config.unwrap_or_else(|| self.rpc_client.commitment());
 
