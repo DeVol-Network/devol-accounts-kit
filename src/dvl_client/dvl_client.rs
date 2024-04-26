@@ -1,7 +1,5 @@
 use std::error::Error;
 use std::str::FromStr;
-use std::thread;
-use std::time::Duration;
 use solana_client::client_error::ClientErrorKind;
 use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_request::{RpcError, RpcResponseErrorData};
@@ -71,69 +69,75 @@ impl DvlClient {
         commitment_config: Option<CommitmentConfig>,
         compute_budget: Option<u32>,
         compute_unit_price: Option<u64>,
+        verbose: Option<bool>,
+        log_prefix: Option<&str>,
         max_retries: Option<usize>,
+        retry_delay: Option<u64>,
     ) -> Result<String, Box<dyn Error>> {
         if let Some(max_units) = compute_budget {
-            let compute_budget_instruction =
-                ComputeBudgetInstruction::set_compute_unit_limit(max_units);
+            let compute_budget_instruction = ComputeBudgetInstruction::set_compute_unit_limit(max_units);
             instructions.push(compute_budget_instruction);
         }
         if let Some(compute_unit_price) = compute_unit_price {
-            let priority_fee_instruction =
-                ComputeBudgetInstruction::set_compute_unit_price(compute_unit_price);
+            let priority_fee_instruction = ComputeBudgetInstruction::set_compute_unit_price(compute_unit_price);
             instructions.push(priority_fee_instruction);
         }
 
         let commitment = commitment_config.unwrap_or_else(|| self.rpc_client.commitment());
-
         let retries = max_retries.unwrap_or(1);
+        let delay = retry_delay.unwrap_or(1);
+        let log_prefix = log_prefix.unwrap_or("");
+        let verbose = verbose.unwrap_or(false);
+
         for i in 0..retries {
             let latest_blockhash = self.rpc_client.get_latest_blockhash()?;
-
             let mut new_transaction = Transaction::new_with_payer(&instructions, Some(&signer_kp.pubkey()));
             new_transaction.try_sign(&[&signer_kp], latest_blockhash)?;
 
-            let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(
-                &new_transaction,
-                commitment,
-            );
+            let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(&new_transaction, commitment);
 
             match send_result {
                 Ok(signature) => {
-                    println!("Transaction sent successfully with signature: {}", signature);
+                    if verbose {
+                        println!("{}Transaction sent successfully with signature: {}", log_prefix, signature);
+                    }
                     return Ok(signature.to_string());
                 },
                 Err(e) if i < retries - 1 => {
+                    if verbose {
+                        println!("{}Retrying transaction due to error: {:?}", log_prefix, e);
+                    }
                     match e.kind {
                         ClientErrorKind::RpcError(RpcError::RpcResponseError { code, message, data }) => {
                             if let RpcResponseErrorData::SendTransactionPreflightFailure(sim_result) = data {
                                 if let Some(TransactionError::InstructionError(index, InstructionError::Custom(error_code))) = sim_result.err {
                                     let dvl_error = DvlError::from_code(error_code);
-                                    println!("Custom error in instruction at index {}: {}", index, dvl_error);
+                                    println!("{}Custom error in instruction at index {}: {}", log_prefix, index, dvl_error);
                                     return Err(Box::new(dvl_error));
                                 } else {
-                                    println!("Transaction simulation failed with error: {:?}", sim_result.err);
+                                    println!("{}Transaction simulation failed with error: {:?}", log_prefix, sim_result.err);
                                 }
                             } else {
-                                println!("RPC error: {}, code: {}, message: {}", code, message, data);
+                                println!("{}RPC error: {}, code: {}, message: {}", log_prefix, code, message, data);
                             }
                         },
-                        _ => {
-                            println!("Unexpected error kind: {:?}", e.kind);
-                        }
+                        _ => println!("{}Unexpected error kind: {:?}", log_prefix, e.kind),
                     }
-
+                    std::thread::sleep(std::time::Duration::from_secs(delay));
                 },
                 Err(e) => {
-                    eprintln!("Failed to send transaction after {} attempts: {}", retries, e);
+                    if verbose {
+                        eprintln!("{}Failed to send transaction after {} attempts: {}", log_prefix, retries, e);
+                    }
                     return Err(Box::new(e));
                 }
             }
         }
 
-        Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "All retry attempts failed",
-        )))
+        if verbose {
+            eprintln!("{}All retry attempts failed", log_prefix);
+        }
+        Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "All retry attempts failed")))
     }
+
 }
