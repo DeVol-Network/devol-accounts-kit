@@ -1,6 +1,6 @@
 use std::error::Error;
 cfg_if::cfg_if! {
-    if #[cfg(feature = "off-chain")] {
+    if #[cfg(not(feature = "on-chain"))] {
         use crate::instructions_data::as_transaction_instruction::as_transaction_instruction::AsTransactionInstruction;
     }
     else {

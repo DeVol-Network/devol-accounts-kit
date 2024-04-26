@@ -1,6 +1,6 @@
 mod platform_test;
 
-#[cfg(feature = "off-chain")]
+#[cfg(not(feature = "on-chain"))]
 #[cfg(test)]
 pub(crate) mod tests {
     use solana_client::rpc_client::RpcClient;

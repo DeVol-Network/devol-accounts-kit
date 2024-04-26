@@ -10,7 +10,7 @@ pub struct InstructionWithdrawToken {
     pub amount: u64,
 }
 
-#[cfg(feature = "off-chain")]
+#[cfg(not(feature = "on-chain"))]
 #[cfg(test)]
 mod tests {
     use super::*;

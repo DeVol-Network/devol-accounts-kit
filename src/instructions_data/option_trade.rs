@@ -25,7 +25,7 @@ pub struct InstructionOptionTrade {
 
 pub const INSTR_OPTION_TRADE_MAX_BASKET_LENGTH: usize = 4;
 
-#[cfg(feature = "off-chain")]
+#[cfg(not(feature = "on-chain"))]
 #[cfg(test)]
 mod tests {
     use super::*;

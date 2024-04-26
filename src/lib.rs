@@ -7,7 +7,7 @@ pub mod tests;
 pub mod dvl_error;
 pub mod instructions_data;
 cfg_if::cfg_if! {
-    if #[cfg(feature = "off-chain")] {
+    if #[cfg(not(feature = "on-chain"))] {
         pub mod account_readers;
         pub mod dvl_off_chain_error;
         pub mod dvl_client;

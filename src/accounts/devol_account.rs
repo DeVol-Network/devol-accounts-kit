@@ -122,7 +122,7 @@ pub trait DevolAccount {
     }
 }
 
-#[cfg(feature = "off-chain")]
+#[cfg(not(feature = "on-chain"))]
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
