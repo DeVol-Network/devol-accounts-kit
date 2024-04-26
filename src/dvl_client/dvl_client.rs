@@ -1,15 +1,20 @@
 use std::error::Error;
 use std::str::FromStr;
+use std::thread;
+use std::time::Duration;
+use solana_client::client_error::ClientErrorKind;
 use solana_client::rpc_client::RpcClient;
-use solana_program::instruction::Instruction;
+use solana_client::rpc_request::{RpcError, RpcResponseErrorData};
+use solana_program::instruction::{Instruction, InstructionError};
 use solana_program::pubkey::Pubkey;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::compute_budget::ComputeBudgetInstruction;
 use solana_sdk::signature::Keypair;
 use solana_sdk::signer::Signer;
-use solana_sdk::transaction::Transaction;
+use solana_sdk::transaction::{Transaction, TransactionError};
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_account::DevolAccount;
+use crate::dvl_error::DvlError;
 use crate::generate_pda::{dvl_generate_pda, PDA};
 
 pub struct DvlClient {
@@ -98,7 +103,27 @@ impl DvlClient {
                     println!("Transaction sent successfully with signature: {}", signature);
                     return Ok(signature.to_string());
                 },
-                Err(_) if i < retries - 1 => continue,
+                Err(e) if i < retries - 1 => {
+                    match e.kind {
+                        ClientErrorKind::RpcError(RpcError::RpcResponseError { code, message, data }) => {
+                            if let RpcResponseErrorData::SendTransactionPreflightFailure(sim_result) = data {
+                                if let Some(TransactionError::InstructionError(index, InstructionError::Custom(error_code))) = sim_result.err {
+                                    let dvl_error = DvlError::from_code(error_code);
+                                    println!("Custom error in instruction at index {}: {}", index, dvl_error);
+                                    return Err(Box::new(dvl_error));
+                                } else {
+                                    println!("Transaction simulation failed with error: {:?}", sim_result.err);
+                                }
+                            } else {
+                                println!("RPC error: {}, code: {}, message: {}", code, message, data);
+                            }
+                        },
+                        _ => {
+                            println!("Unexpected error kind: {:?}", e.kind);
+                        }
+                    }
+
+                },
                 Err(e) => {
                     eprintln!("Failed to send transaction after {} attempts: {}", retries, e);
                     return Err(Box::new(e));
