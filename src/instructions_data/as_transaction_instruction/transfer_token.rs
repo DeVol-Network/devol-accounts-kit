@@ -2,7 +2,6 @@ use std::error::Error;
 use std::str::FromStr;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
-use solana_sdk::signature::{Signer};
 use crate::account_readers::dvl_readable::DvlIndexParam;
 use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
 use crate::accounts::mints::mints_account::MintsAccount;
