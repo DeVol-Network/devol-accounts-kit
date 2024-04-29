@@ -1,4 +1,7 @@
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
+
 pub const INSTRUCTION_PAYOFF_SIZE: usize = 12;
+pub const INSTRUCTION_PAYOFF_VERSION: u8 = 2;
 
 #[repr(C)]
 pub struct InstructionPayoff {
@@ -9,6 +12,12 @@ pub struct InstructionPayoff {
     pub pool_id: u32,
 }
 
+impl<'a> DvlDeserializableInstruction<'a> for InstructionPayoff {
+    #[inline(always)]
+    fn expected_size() -> usize { INSTRUCTION_PAYOFF_SIZE }
+    #[inline(always)]
+    fn expected_version() -> u8 { INSTRUCTION_PAYOFF_VERSION }
+}
 
 #[cfg(test)]
 mod tests {

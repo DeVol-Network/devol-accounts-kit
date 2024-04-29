@@ -19,7 +19,7 @@ pub trait DvlDeserializableInstruction<'a> {
         if vec.len() != Self::expected_size() {
             return Err(DvlError::new(ContractError::InstructionDataLength));
         }
-        Self::expected_version()?;
+        Self::check_version(vec)?;
         Ok(unsafe { &*(vec.as_ptr() as *const Self) })
     }
 }
