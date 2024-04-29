@@ -2,7 +2,6 @@ use std::error::Error;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
 use solana_program::system_program;
-use solana_sdk::signature::Keypair;
 use solana_sdk::signer::Signer;
 use crate::account_readers::dvl_readable::{DvlClientParams, DvlIndexParam};
 use crate::accounts::client::client_account::client_account::ClientAccount;

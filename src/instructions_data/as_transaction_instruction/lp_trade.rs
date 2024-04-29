@@ -1,7 +1,7 @@
 use std::error::Error;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
-use solana_sdk::signature::{Keypair, Signer};
+use solana_sdk::signature::{Signer};
 use crate::account_readers::dvl_readable::DvlIndexParam;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::root::root_account::RootAccount;
