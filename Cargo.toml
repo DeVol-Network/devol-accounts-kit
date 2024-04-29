@@ -1,13 +1,13 @@
 [package]
 name = "devol-accounts-kit"
-version = "0.0.13"
+version = "0.0.14"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 bs58 = '0.5.1'
-solana-sdk = { version = '^1.18.3' , optional = true }
+solana-sdk = { version = '^1.18.3', optional = true }
 solana-client = { version = '^1.18.3', optional = true }
 pyth-sdk-solana = "^0.10.1"
 solana-program = '^1.18.3'
