@@ -29,7 +29,7 @@ impl AsTransactionInstruction for InstructionOptionTradeDebug {
     fn as_transaction_instruction(
         &self,
         client: &DvlClient,
-        signer: &Keypair,
+        signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
@@ -65,7 +65,7 @@ impl AsTransactionInstruction for InstructionOptionTradeDebug {
 
         let account_metas = Vec::from([
             AccountMeta {
-                pubkey: signer.pubkey(),
+                pubkey: *signer,
                 is_signer: true,
                 is_writable: false,
             },

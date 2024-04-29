@@ -23,7 +23,12 @@ pub struct LpTradeTransactionParams {
 impl AsTransactionInstruction for InstructionLpTrade {
     type DvlTransactionInstructionParams = LpTradeTransactionParams;
 
-    fn as_transaction_instruction(&self, client: &DvlClient, signer: &Keypair, transaction_params: Self::DvlTransactionInstructionParams) -> Result<Box<Instruction>, Box<dyn Error>> {
+    fn as_transaction_instruction(
+        &self,
+        client: &DvlClient,
+        signer: &Pubkey,
+        transaction_params: Self::DvlTransactionInstructionParams,
+    ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let instruments_acc_key = client.account_public_key::<InstrumentsAccount>(())?;
@@ -34,7 +39,7 @@ impl AsTransactionInstruction for InstructionLpTrade {
         let tasks_log_key = client.account_public_key::<TasksLogAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
         let account_metas = Vec::from([
             AccountMeta {
-                pubkey: signer.pubkey(),
+                pubkey: *signer,
                 is_signer: true,
                 is_writable: false,
             },

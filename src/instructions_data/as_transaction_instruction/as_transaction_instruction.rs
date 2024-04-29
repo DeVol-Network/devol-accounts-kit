@@ -1,6 +1,6 @@
 use std::error::Error;
 use solana_program::instruction::Instruction;
-use solana_sdk::signature::Keypair;
+use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 
 pub trait AsTransactionInstruction {
@@ -9,7 +9,7 @@ pub trait AsTransactionInstruction {
     fn as_transaction_instruction (
         &self,
         client: &DvlClient,
-        signer: &Keypair,
+        signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams
     ) -> Result<Box<Instruction>, Box<dyn Error>>;
 }

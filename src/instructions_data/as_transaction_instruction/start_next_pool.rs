@@ -1,5 +1,6 @@
 use std::error::Error;
 use solana_program::instruction::{AccountMeta, Instruction};
+use solana_program::pubkey::Pubkey;
 use solana_sdk::signature::Keypair;
 use solana_sdk::signer::Signer;
 use crate::account_readers::dvl_readable::DvlIndexParam;
@@ -21,7 +22,7 @@ impl AsTransactionInstruction for InstructionStartNextPool {
     fn as_transaction_instruction(
         &self,
         client: &DvlClient,
-        signer: &Keypair,
+        signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
@@ -30,7 +31,7 @@ impl AsTransactionInstruction for InstructionStartNextPool {
         let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
         let account_metas = Vec::from([
             AccountMeta {
-                pubkey: signer.pubkey(),
+                pubkey: *signer,
                 is_signer: true,
                 is_writable: false,
             },
