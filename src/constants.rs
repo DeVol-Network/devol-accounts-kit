@@ -5,6 +5,8 @@ pub const VANILLA_COST_SIZE: usize = 4;
 pub const VANILLA_MEMO_SIZE: usize = 49;
 pub const HOURS: usize = 24;
 pub const TOKEN_PROGRAM_ID: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+pub const DECIMAL_SHIFT: usize = 20;
+pub const FD: f64 = (1 << DECIMAL_SHIFT) as f64;
 
 #[cfg(test)]
 pub(crate) mod test_constants {

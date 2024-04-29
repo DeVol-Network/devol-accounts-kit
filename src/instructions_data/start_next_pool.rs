@@ -51,14 +51,14 @@ mod tests {
         let start_next_pool_params = StartNextPoolParams {
             prices: [0.0; BUCKETS_COUNT],
             svm_params: SvmParams { c: 0., p: 0., v: 0., vt: 0., psi: 0. },
-            margin_vega: 0,
-            margin_vanna: 0,
-            margin_volga: 0,
+            margin_vega: 0.,
+            margin_vanna: 0.,
+            margin_volga: 0.,
             bounds: [0; BOUNDS_COUNT],
-            w_lr: 0,
-            range_lr: 0,
-            max_pct_pool: 0,
-            max_lr: 0,
+            w_lr: 0.,
+            range_lr: 0.,
+            max_pct_pool: 0.,
+            max_lr: 0.,
             perm_impact: 0.,
         };
 
