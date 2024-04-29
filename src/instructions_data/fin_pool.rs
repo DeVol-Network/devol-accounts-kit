@@ -14,6 +14,8 @@ pub struct InstructionFinPool {
 
 impl<'a> DvlDeserializableInstruction<'a> for InstructionFinPool {
     #[inline(always)]
+    fn expected_size() -> usize { INSTRUCTION_FIN_POOL_SIZE +2 }
+    #[inline(always)]
     fn expected_version() -> u8 { INSTRUCTION_FIN_POOL_VERSION }
 }
 
