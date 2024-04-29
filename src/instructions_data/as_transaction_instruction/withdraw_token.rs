@@ -2,7 +2,6 @@ use std::error::Error;
 use std::str::FromStr;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
-use solana_sdk::signature::{Keypair, Signer};
 use crate::account_readers::dvl_readable::DvlIndexParam;
 use crate::accounts::mints::mint_log::mint_log_account::MintLogAccount;
 use crate::accounts::mints::mints_account::MintsAccount;
@@ -25,7 +24,7 @@ impl AsTransactionInstruction for InstructionWithdrawToken {
     fn as_transaction_instruction(
         &self,
         client: &DvlClient,
-        signer: &Keypair,
+        signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
@@ -44,7 +43,7 @@ impl AsTransactionInstruction for InstructionWithdrawToken {
 
         let account_metas = Vec::from([
             AccountMeta {
-                pubkey: signer.pubkey(),
+                pubkey: *signer,
                 is_signer: true,
                 is_writable: false,
             },

@@ -3,12 +3,11 @@ use std::str::FromStr;
 use solana_client::client_error::ClientErrorKind;
 use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_request::{RpcError, RpcResponseErrorData};
+use solana_program::hash::Hash;
 use solana_program::instruction::{Instruction, InstructionError};
 use solana_program::pubkey::Pubkey;
 use solana_sdk::commitment_config::CommitmentConfig;
 use solana_sdk::compute_budget::ComputeBudgetInstruction;
-use solana_sdk::signature::Keypair;
-use solana_sdk::signer::Signer;
 use solana_sdk::transaction::{Transaction, TransactionError};
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::devol_account::DevolAccount;
@@ -83,8 +82,8 @@ impl DvlClient {
 
         for i in 0..retries {
             let latest_blockhash = self.rpc_client.get_latest_blockhash()?;
-            let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer_kp.pubkey()));
-            new_transaction.try_sign(&[&params.signer_kp], latest_blockhash)?;
+            let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer));
+            (params.signer_fn)(&mut new_transaction, latest_blockhash)?;
 
             let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(&new_transaction, commitment);
 
@@ -134,9 +133,12 @@ impl DvlClient {
 
 }
 
+pub type SignerFunction = Box<dyn Fn(&mut Transaction, Hash) -> Result<(), Box<dyn Error>> + Send + Sync>;
+
 pub struct DvlSendTransactionParams<'a> {
     pub instructions: Vec<Instruction>,
-    pub signer_kp: Keypair,
+    pub signer: &'a Pubkey,
+    pub signer_fn: SignerFunction,
     pub commitment_config: Option<CommitmentConfig>,
     pub compute_budget: Option<u32>,
     pub compute_unit_price: Option<u64>,

@@ -1,7 +1,6 @@
 use std::error::Error;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
-use solana_sdk::signature::{Keypair, Signer};
 use crate::account_readers::dvl_readable::DvlIndexParam;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::root::root_account::RootAccount;
@@ -23,7 +22,12 @@ pub struct LpTradeTransactionParams {
 impl AsTransactionInstruction for InstructionLpTrade {
     type DvlTransactionInstructionParams = LpTradeTransactionParams;
 
-    fn as_transaction_instruction(&self, client: &DvlClient, signer: &Keypair, transaction_params: Self::DvlTransactionInstructionParams) -> Result<Box<Instruction>, Box<dyn Error>> {
+    fn as_transaction_instruction(
+        &self,
+        client: &DvlClient,
+        signer: &Pubkey,
+        transaction_params: Self::DvlTransactionInstructionParams,
+    ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let instruments_acc_key = client.account_public_key::<InstrumentsAccount>(())?;
@@ -34,7 +38,7 @@ impl AsTransactionInstruction for InstructionLpTrade {
         let tasks_log_key = client.account_public_key::<TasksLogAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
         let account_metas = Vec::from([
             AccountMeta {
-                pubkey: signer.pubkey(),
+                pubkey: *signer,
                 is_signer: true,
                 is_writable: false,
             },

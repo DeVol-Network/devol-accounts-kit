@@ -2,8 +2,6 @@ use std::error::Error;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
 use solana_program::system_program;
-use solana_sdk::signature::Keypair;
-use solana_sdk::signer::Signer;
 use crate::account_readers::dvl_readable::{DvlClientParams, DvlIndexParam};
 use crate::accounts::client::client_account::client_account::ClientAccount;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
@@ -29,7 +27,7 @@ impl AsTransactionInstruction for InstructionOptionTrade {
     fn as_transaction_instruction(
         &self,
         client: &DvlClient,
-        signer: &Keypair,
+        signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
@@ -65,7 +63,7 @@ impl AsTransactionInstruction for InstructionOptionTrade {
 
         let account_metas = Vec::from([
             AccountMeta {
-                pubkey: signer.pubkey(),
+                pubkey: *signer,
                 is_signer: true,
                 is_writable: false,
             },
