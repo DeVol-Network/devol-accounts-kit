@@ -3,7 +3,7 @@ use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT, FD};
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::start_next_pool::{INSTRUCTION_START_NEXT_POOL_SIZE, INSTRUCTION_START_NEXT_POOL_VERSION, InstructionStartNextPool};
+use crate::instructions_data::start_next_pool::{INSTRUCTION_START_NEXT_POOL_VERSION, InstructionStartNextPool};
 
 pub struct StartNextPoolParams {
     pub svm_params: SvmParams,
@@ -20,11 +20,6 @@ pub struct StartNextPoolParams {
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionStartNextPool {
-    #[inline(always)]
-    fn expected_size() -> usize {INSTRUCTION_START_NEXT_POOL_SIZE}
-    #[inline(always)]
-    fn expected_version() -> u8 {INSTRUCTION_START_NEXT_POOL_VERSION}
-
     type DvlInstrParams = StartNextPoolParams;
 
     fn new(

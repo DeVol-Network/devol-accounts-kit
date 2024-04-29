@@ -2,15 +2,10 @@ use std::error::Error;
 use crate::instructions_data::constructors::option_trade::OptionTradeParams;
 use crate::instructions_data::dvl_instruction_data::{DvlInstructionData, DvlInstruction};
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::option_trade::{INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
-use crate::instructions_data::option_trade_debug::{INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE, InstructionOptionTradeDebug, OptionTradeDebugParams};
+use crate::instructions_data::option_trade::{InstructionOptionTrade};
+use crate::instructions_data::option_trade_debug::{InstructionOptionTradeDebug, OptionTradeDebugParams};
 
 impl<'a> DvlInstructionData<'a> for InstructionOptionTradeDebug {
-    #[inline(always)]
-    fn expected_size() -> usize {INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE}
-    #[inline(always)]
-    fn expected_version() -> u8 {INSTRUCTION_OPTION_TRADE_VERSION} // always the same as OPTION TRADE version
-
     type DvlInstrParams = OptionTradeDebugParams<'a>;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {

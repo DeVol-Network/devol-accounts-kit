@@ -1,5 +1,6 @@
 use crate::accounts::worker::svm_params::SvmParams;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
 pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 872;
 pub const INSTRUCTION_START_NEXT_POOL_VERSION: u8 = 2;
@@ -21,6 +22,13 @@ pub struct InstructionStartNextPool {
     pub max_lr: i64,
     pub max_pct_pool: i64,
     pub perm_impact: f64,
+}
+
+impl<'a> DvlDeserializableInstruction<'a> for InstructionStartNextPool {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_START_NEXT_POOL_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_START_NEXT_POOL_VERSION}
 }
 
 #[cfg(not(feature = "on-chain"))]

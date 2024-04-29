@@ -1,3 +1,5 @@
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
+
 pub const INSTRUCTION_FIN_POOL_SIZE: usize = 16;
 pub const INSTRUCTION_FIN_POOL_VERSION: u8 = 2;
 
@@ -8,6 +10,13 @@ pub struct InstructionFinPool {
     pub terminate: bool,
     pub reserved: [u8; 5],
     pub price: i64,
+}
+
+impl<'a> DvlDeserializableInstruction<'a> for InstructionFinPool {
+    #[inline(always)]
+    fn expected_size() -> usize { INSTRUCTION_FIN_POOL_SIZE }
+    #[inline(always)]
+    fn expected_version() -> u8 { INSTRUCTION_FIN_POOL_VERSION }
 }
 
 #[cfg(not(feature = "on-chain"))]

@@ -1,6 +1,6 @@
 use std::error::Error;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
-use crate::instructions_data::fin_pool::{INSTRUCTION_FIN_POOL_SIZE, INSTRUCTION_FIN_POOL_VERSION, InstructionFinPool};
+use crate::instructions_data::fin_pool::{INSTRUCTION_FIN_POOL_VERSION, InstructionFinPool};
 use crate::instructions_data::instructions::Instructions;
 
 pub struct FinPoolParams {
@@ -9,11 +9,6 @@ pub struct FinPoolParams {
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionFinPool {
-    #[inline(always)]
-    fn expected_size() -> usize {INSTRUCTION_FIN_POOL_SIZE}
-    #[inline(always)]
-    fn expected_version() -> u8 {INSTRUCTION_FIN_POOL_VERSION}
-
     type DvlInstrParams = FinPoolParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionFinPool>, Box<dyn Error>> {

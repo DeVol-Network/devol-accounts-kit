@@ -8,6 +8,7 @@ pub mod fin_pool;
 pub mod lp_trade;
 pub mod start_next_pool;
 pub mod as_transaction_instruction_on_chain;
+mod dvl_deserializable_instruction;
 cfg_if::cfg_if! {
     if #[cfg(not(feature = "on-chain"))] {
         pub mod constructors;

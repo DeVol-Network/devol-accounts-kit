@@ -1,3 +1,5 @@
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
+
 pub const INSTRUCTION_LP_TRADE_SIZE: usize = 8;
 pub const INSTRUCTION_LP_TRADE_VERSION: u8 = 2;
 
@@ -7,6 +9,14 @@ pub struct InstructionLpTrade {
     pub version: u8,
     pub reserved: [u8; 2],
     pub trade_qty: i32,
+}
+
+impl<'a> DvlDeserializableInstruction<'a> for InstructionLpTrade {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_LP_TRADE_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_LP_TRADE_VERSION}
+
 }
 
 #[cfg(not(feature = "on-chain"))]

@@ -1,4 +1,5 @@
 use crate::constants::BUCKETS_COUNT;
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug)]
 #[repr(C)]
@@ -24,6 +25,13 @@ pub struct InstructionOptionTrade {
 }
 
 pub const INSTR_OPTION_TRADE_MAX_BASKET_LENGTH: usize = 4;
+
+impl<'a> DvlDeserializableInstruction<'a> for InstructionOptionTrade {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_OPTION_TRADE_DATA_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_OPTION_TRADE_VERSION}
+}
 
 #[cfg(not(feature = "on-chain"))]
 #[cfg(test)]

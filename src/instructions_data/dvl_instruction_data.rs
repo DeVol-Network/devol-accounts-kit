@@ -1,6 +1,5 @@
 use std::error::Error;
-use crate::dvl_error::DvlError;
-use crate::errors::ContractError;
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 cfg_if::cfg_if! {
     if #[cfg(not(feature = "on-chain"))] {
         use crate::instructions_data::as_transaction_instruction::as_transaction_instruction::AsTransactionInstruction;
@@ -11,17 +10,7 @@ cfg_if::cfg_if! {
 }
 
 
-pub trait DvlInstructionData<'a> : AsTransactionInstruction {
-    fn expected_size() -> usize;
-    fn expected_version() -> u8;
-    #[inline(always)]
-    fn check_version(vec: &'a[u8]) -> Result<(), DvlError> {
-        if vec[1] != Self::expected_version() {
-            return Err(DvlError::new(ContractError::InstructionDataVersion));
-        }
-        Ok(())
-    }
-
+pub trait DvlInstructionData<'a>: AsTransactionInstruction + DvlDeserializableInstruction<'a> {
     type DvlInstrParams: 'a;
     fn new(params: Self::DvlInstrParams) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized;
 
@@ -30,13 +19,6 @@ pub trait DvlInstructionData<'a> : AsTransactionInstruction {
             std::slice::from_raw_parts(self as *const Self as *const u8, std::mem::size_of::<Self>())
         };
         data_bytes.to_vec()
-    }
-
-    fn from_vec_le(vec: &'a[u8]) -> Result<&'a Self, DvlError> where Self: Sized {
-        if vec.len() != Self::expected_size() {
-            return Err(DvlError::new(ContractError::InstructionDataLength));
-        }
-        Ok(unsafe { &*(vec.as_ptr() as *const Self) })
     }
 }
 

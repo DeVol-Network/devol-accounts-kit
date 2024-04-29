@@ -1,3 +1,5 @@
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
+
 pub const INSTRUCTION_WITHDRAW_TOKEN_SIZE: usize = 16;
 pub const INSTRUCTION_WITHDRAW_TOKEN_VERSION: u8 = 2;
 
@@ -8,6 +10,13 @@ pub struct InstructionWithdrawToken {
     pub reserved: [u8; 2],
     pub mint_id: u32,
     pub amount: u64,
+}
+
+impl<'a> DvlDeserializableInstruction<'a> for InstructionWithdrawToken {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_WITHDRAW_TOKEN_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_WITHDRAW_TOKEN_VERSION}
 }
 
 #[cfg(not(feature = "on-chain"))]

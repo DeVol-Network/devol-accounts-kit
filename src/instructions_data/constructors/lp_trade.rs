@@ -1,18 +1,13 @@
 use std::error::Error;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::lp_trade::{INSTRUCTION_LP_TRADE_SIZE, INSTRUCTION_LP_TRADE_VERSION, InstructionLpTrade};
+use crate::instructions_data::lp_trade::{INSTRUCTION_LP_TRADE_VERSION, InstructionLpTrade};
 
 pub struct LpTradeParams {
     pub trade_qty: i32,
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionLpTrade {
-    #[inline(always)]
-    fn expected_size() -> usize {INSTRUCTION_LP_TRADE_SIZE}
-    #[inline(always)]
-    fn expected_version() -> u8 {INSTRUCTION_LP_TRADE_VERSION}
-
     type DvlInstrParams = LpTradeParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionLpTrade>, Box<dyn Error>> {

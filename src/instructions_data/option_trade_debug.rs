@@ -1,5 +1,6 @@
 use crate::constants::BUCKETS_COUNT;
-use crate::instructions_data::option_trade::{BasketData, InstructionOptionTrade};
+use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
+use crate::instructions_data::option_trade::{BasketData, INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
 
 pub const INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE: usize = 456;
 
@@ -16,6 +17,13 @@ pub struct OptionTradeDebugParams<'a> {
     pub basket: Option<&'a [BasketData]>,
     pub time_to_expiration: i64,
     pub underlying_price: i64,
+}
+
+impl<'a> DvlDeserializableInstruction<'a> for InstructionOptionTradeDebug {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_OPTION_TRADE_VERSION} // always the same as OPTION TRADE version
 }
 
 #[cfg(not(feature = "on-chain"))]
