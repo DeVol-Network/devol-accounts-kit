@@ -19,6 +19,7 @@ impl<'a> DvlDeserializableInstruction<'a> for InstructionPayoff {
     fn expected_version() -> u8 { INSTRUCTION_PAYOFF_VERSION }
 }
 
+#[cfg(not(feature = "on-chain"))]
 #[cfg(test)]
 mod tests {
     use std::mem;
