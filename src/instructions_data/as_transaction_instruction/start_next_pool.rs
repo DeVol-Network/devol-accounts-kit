@@ -24,7 +24,7 @@ impl AsTransactionInstruction for InstructionStartNextPool {
         signer: &Keypair,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
-        let data = self.as_vec_le();
+        let data = self.to_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
         let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id })?;

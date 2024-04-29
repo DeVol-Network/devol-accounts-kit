@@ -28,7 +28,7 @@ impl AsTransactionInstruction for InstructionTransferToken {
         signer: &Keypair,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
-        let data = self.as_vec_le();
+        let data = self.to_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let mint_acc_key = client.account_public_key::<MintsAccount>(())?;
         let mints_acc = client.get_account::<MintsAccount>(())?;

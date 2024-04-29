@@ -32,7 +32,7 @@ impl AsTransactionInstruction for InstructionOptionTrade {
         signer: &Keypair,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
-        let data = self.as_vec_le();
+        let data = self.to_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let client_acc_key = client.account_public_key::<ClientAccount>(DvlClientParams {
             client_address: &transaction_params.client_key,

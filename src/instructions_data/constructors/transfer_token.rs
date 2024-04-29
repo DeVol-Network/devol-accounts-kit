@@ -1,7 +1,7 @@
 use std::error::Error;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::transfer_token::{INSTRUCTION_TRANSFER_TOKEN_VERSION, InstructionTransferToken};
+use crate::instructions_data::transfer_token::{INSTRUCTION_TRANSFER_TOKEN_SIZE, INSTRUCTION_TRANSFER_TOKEN_VERSION, InstructionTransferToken};
 
 pub struct TransferTokenParams {
     pub mint_id: u32,
@@ -9,6 +9,11 @@ pub struct TransferTokenParams {
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionTransferToken {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_TRANSFER_TOKEN_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_TRANSFER_TOKEN_VERSION}
+
     type DvlInstrParams = TransferTokenParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionTransferToken>, Box<dyn Error>> {

@@ -24,7 +24,7 @@ impl AsTransactionInstruction for InstructionLpTrade {
     type DvlTransactionInstructionParams = LpTradeTransactionParams;
 
     fn as_transaction_instruction(&self, client: &DvlClient, signer: &Keypair, transaction_params: Self::DvlTransactionInstructionParams) -> Result<Box<Instruction>, Box<dyn Error>> {
-        let data = self.as_vec_le();
+        let data = self.to_vec_le();
         let root_acc_key = client.account_public_key::<RootAccount>(())?;
         let instruments_acc_key = client.account_public_key::<InstrumentsAccount>(())?;
         let client_acc_key = transaction_params.client_key;

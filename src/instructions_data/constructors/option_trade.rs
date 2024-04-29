@@ -3,7 +3,7 @@ use crate::constants::BUCKETS_COUNT;
 use crate::dvl_off_chain_error::DvlOffChainError;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::option_trade::{BasketData, DEFAULT_OPTION_TRADE_MAX_COST, INSTR_OPTION_TRADE_MAX_BASKET_LENGTH, INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
+use crate::instructions_data::option_trade::{BasketData, DEFAULT_OPTION_TRADE_MAX_COST, INSTR_OPTION_TRADE_MAX_BASKET_LENGTH, INSTRUCTION_OPTION_TRADE_DATA_SIZE, INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
 
 pub struct OptionTradeParams<'a> {
     pub trade_qty: [i32; BUCKETS_COUNT],
@@ -12,6 +12,11 @@ pub struct OptionTradeParams<'a> {
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionOptionTrade {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_OPTION_TRADE_DATA_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_OPTION_TRADE_VERSION}
+
     type DvlInstrParams = OptionTradeParams<'a>;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionOptionTrade>, Box<dyn Error>> {
@@ -118,7 +123,7 @@ mod tests {
             max_cost: None,
         };
         let data = DvlInstruction::new::<InstructionOptionTrade>(trade_params).unwrap();
-        let buf = data.as_vec_le();
+        let buf = data.to_vec_le();
         assert_eq!(buf.len(), INSTRUCTION_OPTION_TRADE_DATA_SIZE);
     }
 }

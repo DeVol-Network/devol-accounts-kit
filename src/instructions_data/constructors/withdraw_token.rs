@@ -1,7 +1,7 @@
 use std::error::Error;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::withdraw_token::{INSTRUCTION_WITHDRAW_TOKEN_VERSION, InstructionWithdrawToken};
+use crate::instructions_data::withdraw_token::{INSTRUCTION_WITHDRAW_TOKEN_SIZE, INSTRUCTION_WITHDRAW_TOKEN_VERSION, InstructionWithdrawToken};
 
 pub struct WithdrawTokenParams {
     pub mint_id: u32,
@@ -9,6 +9,11 @@ pub struct WithdrawTokenParams {
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionWithdrawToken {
+    #[inline(always)]
+    fn expected_size() -> usize {INSTRUCTION_WITHDRAW_TOKEN_SIZE}
+    #[inline(always)]
+    fn expected_version() -> u8 {INSTRUCTION_WITHDRAW_TOKEN_VERSION}
+
     type DvlInstrParams = WithdrawTokenParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionWithdrawToken>, Box<dyn Error>> {
