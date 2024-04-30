@@ -1,22 +1,128 @@
 name: Rust CI
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-
+  check_version_and_changelog:
     runs-on: ubuntu-latest
-
+    permissions: 
+      issues: write
+      pull-requests: write
+      repository-projects: write
     steps:
-    - uses: actions/checkout@v4
-    - name: Test off-chain
-      run: cargo test
-    - name: Test on-chain
-      run: cargo test --features "on-chain"
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY_DEVOL_ACCOUNTS_KIT }}
+
+      - name: Cargo Config to use CLI with Git
+        run: |
+          mkdir -p .cargo
+          echo '[net]' >> .cargo/config.toml
+          echo 'git-fetch-with-cli = true' >> .cargo/config.toml
+          
+      - uses: actions/checkout@v4
+      
+      - name: Checkout Master Branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'master'
+
+      - name: Get Version from Master Branch
+        run: |
+          echo "MASTER_VERSION=$(cargo read-manifest | jq -r .version)" >> $GITHUB_ENV
+
+      - name: Checkout Current Branch
+        uses: actions/checkout@v4
+
+      - name: Get Version from Current Branch
+        run: |
+          echo "PR_VERSION=$(cargo read-manifest | jq -r .version)" >> $GITHUB_ENV
+
+      - name: Check if the version in Cargo.toml has been increased
+        run: |
+          echo "Master version: ${{env.MASTER_VERSION}}"
+          echo "PR version: ${{env.PR_VERSION}}"
+          IFS='.' read -r -a PR_VERSION_PARTS <<< "$PR_VERSION"
+          IFS='.' read -r -a MASTER_VERSION_PARTS <<< "$MASTER_VERSION"
+          if ! ([ "${PR_VERSION_PARTS[0]}" -gt "${MASTER_VERSION_PARTS[0]}" ] ||
+             ([ "${PR_VERSION_PARTS[0]}" -eq "${MASTER_VERSION_PARTS[0]}" ] &&
+              [ "${PR_VERSION_PARTS[1]}" -gt "${MASTER_VERSION_PARTS[1]}" ]) ||
+             ([ "${PR_VERSION_PARTS[0]}" -eq "${MASTER_VERSION_PARTS[0]}" ] &&
+              [ "${PR_VERSION_PARTS[1]}" -eq "${MASTER_VERSION_PARTS[1]}" ] &&
+              [ "${PR_VERSION_PARTS[2]}" -gt "${MASTER_VERSION_PARTS[2]}" ])); then
+            echo "ERROR_MESSAGE=The version number (${{env.PR_VERSION}}) in Cargo.toml is not greater than the master branch version (${{env.MASTER_VERSION}})" >> $GITHUB_ENV
+            exit 1
+          fi
+          
+      - name: Check Changelog entry
+        run: |
+          if ! grep -q "## \[${{env.PR_VERSION}}\]" CHANGELOG.md; then
+            echo "ERROR_MESSAGE=No changelog entry found for version ${{env.PR_VERSION}} in CHANGELOG.md." >> $GITHUB_ENV
+            exit 1
+          fi
+          
+      - name: Post errors to PR on check failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            :x: **Check Failed!**
+            ```
+            ${{env.ERROR_MESSAGE}}
+            ```
+          reactions: eyes
+
+  build_and_test:
+    needs: check_version_and_changelog
+    runs-on: ubuntu-latest
+    permissions: 
+      issues: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY_DEVOL_ACCOUNTS_KIT }}
+
+      - name: Cargo Config to use CLI with Git
+        run: |
+          mkdir -p .cargo
+          echo '[net]' >> .cargo/config.toml
+          echo 'git-fetch-with-cli = true' >> .cargo/config.toml
+          
+      
+      - uses: actions/checkout@v4
+
+      - name: Configure environment
+        id: configure_env
+        run: |
+          echo 'OFF_CHAIN_BUILD_CMD=cargo build' >> $GITHUB_ENV
+          echo 'OFF_CHAIN_TEST_CMD=cargo test' >> $GITHUB_ENV
+          echo 'ON_CHAIN_TEST_CMD=cargo test --features "on-chain"' >> $GITHUB_ENV
+          
+      - name: Build
+        id: off_chain_build
+        run: |
+          echo "OFF_CHAIN_BUILD_OUTPUT=$(eval ${{env.OFF_CHAIN_BUILD_CMD}})" >> $GITHUB_ENV
+
+      - name: Test off-chain
+        id: off_chain_test
+        if: success() && !cancelled()
+        run: |
+          echo "OFF_CHAIN_TEST_OUTPUT=$(eval ${{env.OFF_CHAIN_TEST_CMD}})" >> $GITHUB_ENV
+        
+      - name: Test on-chain
+        id: on_chain_test
+        if: success() && !cancelled()
+        run: |
+          echo "ON_CHAIN_TEST_OUTPUT=$(eval ${{env.ON_CHAIN_TEST_CMD}})" >> $GITHUB_ENV
+  
