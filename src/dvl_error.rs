@@ -7,7 +7,7 @@ pub struct DvlError {
     account: Option<AccountTag>,
 }
 
-impl DvlError {
+// impl DvlError {
     /// Creates a new `ContractErrorDetails` with a specified error and associated account.
     pub fn new_with_account(account: AccountTag, error: ContractError) -> Self {
         Self {
