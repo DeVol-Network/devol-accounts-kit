@@ -8,7 +8,6 @@ pub struct DvlError {
 }
 
 
-
 // impl DvlError {
     /// Creates a new `ContractErrorDetails` with a specified error and associated account.
     pub fn new_with_account(account: AccountTag, error: ContractError) -> Self {
