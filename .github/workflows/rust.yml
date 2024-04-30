@@ -37,8 +37,8 @@ jobs:
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
-          MASTER_VERSION=$(jq -r .version Cargo.toml)
-          git restore Cargo.toml
+          MASTER_VERSION=$(cargo read-manifest | jq -r .version)
+          git restore Cargo.toml 
           PR_VERSION=$(cargo read-manifest | jq -r .version)
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
           if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
