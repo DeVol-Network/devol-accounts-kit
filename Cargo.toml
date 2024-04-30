@@ -20,4 +20,3 @@ strum_macros = "^0.26.2"
 default = ["solana-sdk", "solana-client"]
 on-chain = []
 
-
