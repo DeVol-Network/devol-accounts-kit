@@ -28,12 +28,15 @@ jobs:
           echo 'git-fetch-with-cli = true' >> .cargo/config.toml
           
       - uses: actions/checkout@v4
+
+      - name: Fetch and Checkout Cargo.toml from master
+        run: |
+          git fetch origin master --depth=1
+          git checkout origin/master -- Cargo.toml
       
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
-          git fetch origin master:Cargo.toml --depth=1
-          git checkout FETCH_HEAD -- Cargo.toml
           MASTER_VERSION=$(jq -r .version Cargo.toml)
           git restore Cargo.toml
           PR_VERSION=$(cargo read-manifest | jq -r .version)
