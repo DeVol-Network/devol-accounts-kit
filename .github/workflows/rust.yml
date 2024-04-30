@@ -16,7 +16,6 @@ jobs:
       pull-requests: write
       repository-projects: write
     steps:
-      - uses: actions/checkout@v4
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -27,6 +26,8 @@ jobs:
           mkdir -p .cargo
           echo '[net]' >> .cargo/config.toml
           echo 'git-fetch-with-cli = true' >> .cargo/config.toml
+          
+      - uses: actions/checkout@v4
       
       - name: Check version in Cargo.toml has been increased
         id: check_version
