@@ -10,13 +10,49 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-
+  check_version_and_changelog:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Test off-chain
-      run: cargo test
-    - name: Test on-chain
-      run: cargo test --features "on-chain"
+      - uses: actions/checkout@v4
+      - name: Check version in Cargo.toml has been increased
+        id: check_version
+        run: |
+          # Получаем последнюю версию в ветке master
+          git fetch origin master:Cargo.toml --depth=1
+          MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
+          echo "Master version: $MASTER_VERSION"
+          PR_VERSION=$(cargo read-manifest | jq -r .version)
+          echo "PR version: $PR_VERSION"
+          if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
+            echo "::error::Version in Cargo.toml has not been increased from master branch version."
+            exit 1
+          fi
+          echo "::set-output name=version::$PR_VERSION"
+      - name: Check Changelog entry
+        run: |
+          VERSION=${{ steps.check_version.outputs.version }}
+          if ! grep -q "## \[$VERSION\]" Changelog.md; then
+            echo "::error::No changelog entry for version $VERSION found."
+            exit 1
+          fi
+  build_and_test:
+    needs: check_version_and_changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test off-chain
+        run: cargo test
+      - name: Test on-chain
+        run: cargo test --features "on-chain"
+
+  deploy:
+    needs: build_and_test
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag new version
+        run: |
+          VERSION=$(cargo read-manifest | jq -r .version)
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
