@@ -32,14 +32,13 @@ jobs:
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
+          PR_VERSION=$(cargo read-manifest | jq -r .version)
           git fetch origin ${{ github.base_ref }}:Cargo.toml --depth=1
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
-          PR_VERSION=$(cargo read-manifest | jq -r .version)
           if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
             echo "ERROR_MESSAGE=The version number ($PR_VERSION) in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION)" >> $GITHUB_ENV
             exit 1
           fi
-          echo "::set-output name=version::$PR_VERSION"
       - name: Check Changelog entry
         run: |
           VERSION=${{ steps.check_version.outputs.version }}
