@@ -17,6 +17,17 @@ jobs:
       repository-projects: write
     steps:
       - uses: actions/checkout@v4
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY_DEVOL_ACCOUNTS_KIT }}
+
+      - name: Cargo Config to use CLI with Git
+        run: |
+          mkdir -p .cargo
+          echo '[net]' >> .cargo/config.toml
+          echo 'git-fetch-with-cli = true' >> .cargo/config.toml
+      
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
