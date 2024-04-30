@@ -19,11 +19,10 @@ jobs:
         run: |
           git fetch origin master:Cargo.toml --depth=1
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
-          echo "Master version: $MASTER_VERSION"
           PR_VERSION=$(cargo read-manifest | jq -r .version)
-          echo "PR version: $PR_VERSION"
           if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
             echo "::error::Version in Cargo.toml has not been increased from master branch version."
+            echo "The version number in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION)." > error_message.txt
             exit 1
           fi
           echo "::set-output name=version::$PR_VERSION"
@@ -32,20 +31,50 @@ jobs:
           VERSION=${{ steps.check_version.outputs.version }}
           if ! grep -q "## \[$VERSION\]" Changelog.md; then
             echo "::error::No changelog entry for version $VERSION found."
+            echo "No changelog entry found for version $VERSION in Changelog.md." > error_message.txt
             exit 1
           fi
+      - name: Post errors to PR on check failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            :x: **Check Failed!**
+            ```
+            $(cat error_message.txt)
+            ```
+          reactions: eyes
+
   build_and_test:
     needs: check_version_and_changelog
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Test off-chain
-        run: cargo test
+        id: off_chain_test
+        run: echo "::set-output name=output::$(cargo test 2>&1)"
       - name: Test on-chain
-        run: cargo test --features "on-chain"
-      - name: Catch compilation errors
-        if: ${{ failure() }}
-        run: echo "::error::Compilation failed. See logs above for details."
+        id: on_chain_test
+        run: echo "::set-output name=output::$(cargo test --features 'on-chain' 2>&1)"
+      - name: Post errors to PR on failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            :warning: **Tests Failed!**
+            **Off-chain Test Output:**
+            ```
+            ${{ steps.off_chain_test.outputs.output }}
+            ```
+            **On-chain Test Output:**
+            ```
+            ${{ steps.on_chain_test.outputs.output }}
+            ```
+          reactions: eyes
 
   deploy:
     needs: build_and_test
@@ -55,6 +84,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Tag new version
         run: |
-          VERSION=$(cargo read-manifest | jq -r .version)
+          VERSION=${{ needs.check_version_and_changelog.outputs.version }}
           git tag -a "v$VERSION" -m "Release version $VERSION"
           git push origin "v$VERSION"
