@@ -101,28 +101,18 @@ jobs:
           
       
       - uses: actions/checkout@v4
-
-      - name: Configure environment
-        id: configure_env
-        run: |
-          echo 'OFF_CHAIN_BUILD_CMD=cargo build' >> $GITHUB_ENV
-          echo 'OFF_CHAIN_TEST_CMD=cargo test' >> $GITHUB_ENV
-          echo 'ON_CHAIN_TEST_CMD=cargo test --features "on-chain"' >> $GITHUB_ENV
           
       - name: Build
         id: off_chain_build
-        run: |
-          echo "OFF_CHAIN_BUILD_OUTPUT=$(eval ${{env.OFF_CHAIN_BUILD_CMD}})" >> $GITHUB_ENV
+        run: cargo build
 
       - name: Test off-chain
         id: off_chain_test
         if: success() && !cancelled()
-        run: |
-          echo "OFF_CHAIN_TEST_OUTPUT=$(eval ${{env.OFF_CHAIN_TEST_CMD}})" >> $GITHUB_ENV
+        run: cargo test
         
       - name: Test on-chain
         id: on_chain_test
         if: success() && !cancelled()
-        run: |
-          echo "ON_CHAIN_TEST_OUTPUT=$(eval ${{env.ON_CHAIN_TEST_CMD}})" >> $GITHUB_ENV
+        run: cargo test --features "on-chain"
   
