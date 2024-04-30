@@ -23,9 +23,9 @@ jobs:
           git fetch origin master:Cargo.toml --depth=1
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
           PR_VERSION=$(cargo read-manifest | jq -r .version)
+          echo "ERROR_MESSAGE=$("::error::The version number in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION).")" >> $GITHUB_ENV
           if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
-            echo "::error::Version in Cargo.toml has not been increased from master branch version."
-            echo "The version number in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION)." > error_message.txt
+            echo ${{env.ERROR_MESSAGE}}
             exit 1
           fi
           echo "::set-output name=version::$PR_VERSION"
@@ -46,7 +46,7 @@ jobs:
           body: |
             :x: **Check Failed!**
             ```
-            $(cat error_message.txt)
+            echo ${{env.ERROR_MESSAGE}}
             ```
           reactions: eyes
 
