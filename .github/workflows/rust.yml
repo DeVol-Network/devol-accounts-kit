@@ -44,8 +44,7 @@ jobs:
         run: |
           VERSION=${{ steps.check_version.outputs.version }}
           if ! grep -q "## \[$VERSION\]" Changelog.md; then
-            echo "::error::No changelog entry for version $VERSION found."
-            echo "No changelog entry found for version $VERSION in Changelog.md." > error_message.txt
+            echo "ERROR_MESSAGE=No changelog entry found for version $VERSION in CHANGELOG.md." >> $GITHUB_ENV
             exit 1
           fi
       - name: Post errors to PR on check failure
