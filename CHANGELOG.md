@@ -21,3 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - User don't need to pass his private key anymore, just sign function
 
+## [0.0.12] - 2024-04-29
+
+### Added
+
+- Deserializer for instructions (on-chain)
+
