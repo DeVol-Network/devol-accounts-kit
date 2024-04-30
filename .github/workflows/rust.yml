@@ -29,11 +29,17 @@ jobs:
           
       - uses: actions/checkout@v4
       
+      - name: Fetch master branch Cargo.toml
+        run: |
+          git fetch origin master:Cargo.toml --depth=1
+          git checkout FETCH_HEAD -- Cargo.toml
+
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
+          MASTER_VERSION=$(jq -r .version Cargo.toml)
+          git restore Cargo.toml
           PR_VERSION=$(cargo read-manifest | jq -r .version)
-          git fetch origin master:Cargo.toml --depth=1
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
           if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
             echo "ERROR_MESSAGE=The version number ($PR_VERSION) in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION)" >> $GITHUB_ENV
