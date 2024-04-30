@@ -20,7 +20,7 @@ jobs:
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
-          git fetch origin master:Cargo.toml --depth=1
+          git fetch origin ${{ github.base_ref }}:Cargo.toml --depth=1
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
           PR_VERSION=$(cargo read-manifest | jq -r .version)
           if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
