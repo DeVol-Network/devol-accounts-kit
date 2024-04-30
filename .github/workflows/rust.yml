@@ -17,7 +17,6 @@ jobs:
       - name: Check version in Cargo.toml has been increased
         id: check_version
         run: |
-          # Получаем последнюю версию в ветке master
           git fetch origin master:Cargo.toml --depth=1
           MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
           echo "Master version: $MASTER_VERSION"
@@ -44,6 +43,9 @@ jobs:
         run: cargo test
       - name: Test on-chain
         run: cargo test --features "on-chain"
+      - name: Catch compilation errors
+        if: ${{ failure() }}
+        run: echo "::error::Compilation failed. See logs above for details."
 
   deploy:
     needs: build_and_test
