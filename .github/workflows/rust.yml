@@ -9,46 +9,58 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  check_version_and_changelog:
-    runs-on: ubuntu-latest
-    permissions: 
-      issues: write
-      pull-requests: write
-      repository-projects: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check version in Cargo.toml has been increased
-        id: check_version
-        run: |
-          git fetch origin master:Cargo.toml --depth=1
-          MASTER_VERSION=$(cargo read-manifest --manifest-path Cargo.toml | jq -r .version)
-          PR_VERSION=$(cargo read-manifest | jq -r .version)
-          if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
-            echo "::error::Version in Cargo.toml has not been increased from master branch version."
-            echo "The version number in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION)." > error_message.txt
-            exit 1
-          fi
-          echo "::set-output name=version::$PR_VERSION"
-      - name: Check Changelog entry
-        run: |
-          VERSION=${{ steps.check_version.outputs.version }}
-          if ! grep -q "## \[$VERSION\]" Changelog.md; then
-            echo "::error::No changelog entry for version $VERSION found."
-            echo "No changelog entry found for version $VERSION in Changelog.md." > error_message.txt
-            exit 1
-          fi
-      - name: Post errors to PR on check failure
-        if: failure()
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            :x: **Check Failed!**
-            ```
-            $(cat error_message.txt)
-            ```
-          reactions: eyes
+check_version_and_changelog:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY_DEVOL_ACCOUNTS_KIT }}
+
+    - name: Cargo Config to use CLI with Git
+      run: |
+        mkdir -p .cargo
+        echo '[net]' >> .cargo/config.toml
+        echo 'git-fetch-with-cli = true' >> .cargo/config.toml
+
+    - name: Fetch and Checkout Cargo.toml from master
+      run: |
+        git fetch origin master --depth=1
+        git checkout origin/master -- Cargo.toml
+        MASTER_VERSION=$(cargo read-manifest | jq -r .version)
+        git restore Cargo.toml
+
+    - name: Read version from PR
+      id: check_version
+      run: |
+        PR_VERSION=$(cargo read-manifest | jq -r .version)
+        if [ "$(printf '%s\n' "$PR_VERSION" "$MASTER_VERSION" | sort -V | head -n1)" = "$MASTER_VERSION" ]; then
+          echo "ERROR_MESSAGE=The version number in Cargo.toml has not been increased from the master branch version ($MASTER_VERSION)." >> $GITHUB_ENV
+          exit 1
+        fi
+        echo "::set-output name=version::$PR_VERSION"
+
+    - name: Check Changelog entry
+      run: |
+        VERSION=${{ steps.check_version.outputs.version }}
+        if ! grep -q "## \[$VERSION\]" Changelog.md; then
+          echo "ERROR_MESSAGE=No changelog entry found for version $VERSION in CHANGELOG.md." >> $GITHUB_ENV
+          exit 1
+        fi
+
+    - name: Post errors to PR on check failure
+      if: failure()
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          :x: **Check Failed!**
+          ```
+          ${{env.ERROR_MESSAGE}}
+          ```
+        reactions: eyes
 
   build_and_test:
     needs: check_version_and_changelog
@@ -58,6 +70,17 @@ jobs:
       pull-requests: write
       repository-projects: write
     steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY_DEVOL_ACCOUNTS_KIT }}
+
+      - name: Cargo Config to use CLI with Git
+        run: |
+          mkdir -p .cargo
+          echo '[net]' >> .cargo/config.toml
+          echo 'git-fetch-with-cli = true' >> .cargo/config.toml
+          
       - uses: actions/checkout@v4
       - name: Test off-chain
         id: off_chain_test
