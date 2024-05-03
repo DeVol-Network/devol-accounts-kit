@@ -1,4 +1,5 @@
 use pyth_sdk_solana::state::SolanaPriceAccount;
+use serde::{Deserialize, Serialize};
 use solana_program::account_info::AccountInfo;
 use solana_program::clock::Clock;
 use solana_program::sysvar::Sysvar;
@@ -12,7 +13,7 @@ pub const ORACLES_DATA_SIZE: usize = 216;
 pub const ORACLES_DATA_COUNT: usize = 8;
 
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct OracleData {
     pub base_ticker: [u8; 8],              // The base currency ticker, e.g., BTC in BTC/USD
     pub relative_ticker: [u8; 8],          // The quote currency ticker, e.g., USD in BTC/USD

@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
@@ -19,7 +20,7 @@ pub const ROOT_ACCOUNT_SIZE: usize = 216;
 pub const ROOT_ACCOUNT_TAG: u8 = 0;
 pub const ROOT_ACCOUNT_VERSION: u32 = 2;
 
-#[derive(PartialEq, PartialOrd, Clone, Copy)]
+#[derive(PartialEq, PartialOrd, Clone, Copy, Serialize, Deserialize)]
 #[repr(u32)]
 pub enum OpenAccountFeePayer {
     Client = 0,

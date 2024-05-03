@@ -1,4 +1,6 @@
-#[derive(PartialEq, PartialOrd, Copy, Clone)]
+use serde::{Deserialize, Serialize};
+
+#[derive(PartialEq, PartialOrd, Copy, Clone, Serialize, Deserialize)]
 #[repr(u32)]
 pub enum WorkerState {
     Unassigned = 1,

@@ -1,7 +1,8 @@
+use serde::{Deserialize, Serialize};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::oracles::oracle_provider::OracleProvider;
 
-#[derive(PartialEq, PartialOrd, Copy, Clone)]
+#[derive(PartialEq, PartialOrd, Copy, Clone, Serialize, Deserialize)]
 #[repr(u8)]
 pub enum DataLen {
     Undefined,
@@ -12,14 +13,14 @@ pub enum DataLen {
 } // size: 1 byte
 
 
-#[derive(PartialEq, PartialOrd, Copy, Clone)]
+#[derive(PartialEq, PartialOrd, Copy, Clone, Serialize, Deserialize)]
 #[repr(u8)]
 pub enum Endian {
     LE,
     BE,
 } // size: 1 byte
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 #[repr(C)]
 pub struct OracleDataField{
     pub data_len: DataLen,      // Length of the data (8, 32, 64, 128 bits)
@@ -43,7 +44,7 @@ impl Default for OracleDataField {
 pub const ORACLE_DATA_FIELDS_QUANTITY: usize = 3;
 pub const ORACLE_PARAMS_SIZE: usize = 64;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 #[repr(C)]
 pub struct OracleParams {
     pub version: u8,                    // Version of the OracleParams structure
