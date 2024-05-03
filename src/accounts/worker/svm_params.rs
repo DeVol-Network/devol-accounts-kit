@@ -1,5 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 #[repr(C)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct SvmParams {
     pub v: f64,
     pub psi: f64,

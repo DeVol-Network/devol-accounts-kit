@@ -1,4 +1,6 @@
-#[derive(Clone, Copy, PartialEq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[repr(u8)]
 pub enum OracleProvider {
     Custom = 0,
