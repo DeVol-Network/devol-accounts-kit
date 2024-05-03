@@ -90,73 +90,73 @@ pub enum ContractError {
     #[error("Task cannot start before the current date; adjust task start time")]
     TaskStartBeforeCurrentDate  = 0x0029,
     #[error("Cannot assign new task as the maximum number of workers for the instrument has been reached")]
-    MaxWorkersExceeded          = 0x0030,
+    MaxWorkersExceeded          = 0x002A,
     #[error("Specified fee payer for account opening does not match any valid options")]
-    InvalidFeePayerOption       = 0x0031,
+    InvalidFeePayerOption       = 0x002B,
     #[error("Cannot finalize pool as it is still active (worker is active)")]
-    PoolActiveCannotFinalize    = 0x0032,
+    PoolActiveCannotFinalize    = 0x002C,
     #[error("Cannot finalize pool as the designated time for finalization has not yet been reached")]
-    PoolFinalizeTimeNotReached  = 0x0033,
+    PoolFinalizeTimeNotReached  = 0x002D,
     #[error("Provided PDA does not match expected for account creation")]
-    IncorrectExpectedPDA        = 0x0034,
+    IncorrectExpectedPDA        = 0x002E,
     #[error("Failed to transfer lamports to newly created account for rent exemption")]
-    LamportsTransferFailed      = 0x0035,
+    LamportsTransferFailed      = 0x002F,
     #[error("Created account size does not match the expected size")]
-    CreatedAccountSizeMismatch  = 0x0036,
+    CreatedAccountSizeMismatch  = 0x0030,
     #[error("Attempting to execute a trade with zero volume is not allowed")]
-    ZeroVolumeTradeAttempt      = 0x0037,
+    ZeroVolumeTradeAttempt      = 0x0031,
     #[error("Trade operation attempted outside allowed activity hours or while pool is inactive")]
-    TradeOutsideActivePeriod    = 0x0038,
+    TradeOutsideActivePeriod    = 0x0032,
     #[error("Cannot participate in more than 128 pools simultaneously as LP")]
-    MaxPoolsParticipationReached= 0x0039,
+    MaxPoolsParticipationReached= 0x0033,
     #[error("Attempt to sell more pool tokens than owned")]
-    PoolTokenSaleExceedsHoldings= 0x003A,
+    PoolTokenSaleExceedsHoldings= 0x0034,
     #[error("Trade exceeds maximum allowed deposit in pool, cannot proceed")]
-    DepositExceedsPoolLimit     = 0x003B,
+    DepositExceedsPoolLimit     = 0x0035,
     #[error("Worker account in transaction does not match the one specified in instruction")]
-    WorkerAccountMismatch       = 0x003C,
+    WorkerAccountMismatch       = 0x0036,
     #[error("Specified pool index exceeds maximum limit or is not valid")]
-    PoolIndexOutOfRange         = 0x003D,
+    PoolIndexOutOfRange         = 0x0037,
     #[error("Cannot proceed; settlement price not set or pool yet to be finalized")]
-    SettlementPriceUnavailable  = 0x003E,
+    SettlementPriceUnavailable  = 0x0038,
     #[error("Attempt to claim payoff before pool expiration is not allowed")]
-    EarlyPayoffAttempt          = 0x003F,
+    EarlyPayoffAttempt          = 0x0039,
     #[error("Invalid access to pool data for the client or worker account")]
-    InvalidPoolAccess           = 0x0040,
+    InvalidPoolAccess           = 0x003A,
     #[error("Worker state is not valid for task assignment; must be in 'Assigned' state")]
-    WorkerInvalidStateForTask   = 0x0041,
+    WorkerInvalidStateForTask   = 0x003B,
     #[error("Worker's task duration cannot be zero; set a valid duration")]
-    WorkerDurationZero          = 0x0042,
+    WorkerDurationZero          = 0x003C,
     #[error("Worker's initial offering price cannot be below ID; ensure correct price setup")]
-    WorkerInitPxBelowID         = 0x0043,
+    WorkerInitPxBelowID         = 0x003D,
     #[error("Worker's width factor cannot exceed ID; adjust width factor")]
-    WorkerWidthFactorExceedsID  = 0x0044,
+    WorkerWidthFactorExceedsID  = 0x003E,
     #[error("Worker's fee rate is out of acceptable bounds; ensure fee rate is within limits")]
-    WorkerFeeRateOutOfBounds    = 0x0045,
+    WorkerFeeRateOutOfBounds    = 0x003F,
     #[error("Worker's fee ratio is out of acceptable bounds; adjust fee ratio to fit within limits")]
-    WorkerFeeRatioOutOfBounds   = 0x0046,
+    WorkerFeeRatioOutOfBounds   = 0x0040,
     #[error("Worker's inventories ratio is out of acceptable bounds; ensure inventories ratio is within limits")]
-    WorkerInvRatioOutOfBounds   = 0x0047,
+    WorkerInvRatioOutOfBounds   = 0x0041,
     #[error("Transaction must be executed by KYC administrator only, but current signer is not authorized")]
-    KycAdminOnlyTransaction     = 0x0048,
+    KycAdminOnlyTransaction     = 0x0042,
     #[error("Token account owner does not match expected SPL Token program")]
-    TokenOwnerMismatch          = 0x0049,
+    TokenOwnerMismatch          = 0x0043,
     #[error("Token account's mint does not match the specified mint account")]
-    TokenMintMismatch           = 0x004A,
+    TokenMintMismatch           = 0x0044,
     #[error("Account is not initialized")]
-    AccountUninitialized        = 0x004B,
+    AccountUninitialized        = 0x0045,
     #[error("Token account's public key does not match the expected")]
-    TokenPkMismatch             = 0x004C,
+    TokenPkMismatch             = 0x0046,
     #[error("Program token account does not match the specified program account")]
-    ProgramTokenAccMismatch     = 0x004D,
+    ProgramTokenAccMismatch     = 0x0047,
     #[error("Token transfer failed")]
-    TransferFailed              = 0x004E,
+    TransferFailed              = 0x0048,
     #[error("Token transfer execution failed")]
-    TransferExecutionFailed     = 0x004F,
+    TransferExecutionFailed     = 0x0049,
     #[error("Insufficient balance for withdrawal")]
-    InsufficientBalance         = 0x0050,
+    InsufficientBalance         = 0x004A,
     #[error("Attempted to invoke a non-existent smart contract instruction; check the instruction number")]
-    InvalidInstruction          = 0x0051,
+    InvalidInstruction          = 0x004B,
     // ↑ *** Add new errors above *** ↑
     #[error("Unknown error code, please update SDK version to get detailed message")]
     UnknownError          = 0xFFFF,
