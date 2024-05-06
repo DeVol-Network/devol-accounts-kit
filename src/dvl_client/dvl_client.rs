@@ -1,6 +1,6 @@
 use std::error::Error;
 use solana_client::client_error::ClientErrorKind;
-use solana_client::rpc_client::RpcClient;
+use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_client::rpc_request::{RpcError, RpcResponseErrorData};
 use solana_program::hash::Hash;
 use solana_program::instruction::{Instruction, InstructionError};
@@ -43,24 +43,24 @@ impl DvlClient {
         }
     }
 
-    pub fn get_account<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
-        T::read(self, &params)
+    pub async fn get_account<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
+        T::read(self, &params).await
     }
 
-    pub fn get_account_by_public_key<T: DvlReadable + DevolAccount + Copy>(
+    pub async fn get_account_by_public_key<T: DvlReadable + DevolAccount + Copy + Send>(
         &self,
         public_key: &Pubkey,
     ) -> Result<Box<T>, Box<dyn Error>> {
-        T::read_by_public_key(self, public_key)
+        T::read_by_public_key(self, public_key).await
     }
 
-    pub fn account_public_key<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> {
-        T::get_public_key(self, &params)
+    pub async fn account_public_key<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> {
+        T::get_public_key(self, &params).await
     }
 
-    pub fn send_transaction(
+    pub async fn send_transaction(
         &self,
-        mut params: DvlSendTransactionParams,
+        mut params: DvlSendTransactionParams<'_>,
     ) -> Result<String, Box<dyn Error>> {
         if let Some(max_units) = params.compute_budget {
             let compute_budget_instruction = ComputeBudgetInstruction::set_compute_unit_limit(max_units);
@@ -78,11 +78,11 @@ impl DvlClient {
         let verbose = params.verbose.unwrap_or(false);
 
         for i in 0..retries {
-            let latest_blockhash = self.rpc_client.get_latest_blockhash()?;
+            let latest_blockhash = self.rpc_client.get_latest_blockhash().await?;
             let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer));
             (params.signer_fn)(&mut new_transaction, latest_blockhash)?;
 
-            let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(&new_transaction, commitment);
+            let send_result = self.rpc_client.send_and_confirm_transaction_with_spinner_and_commitment(&new_transaction, commitment).await;
 
             match send_result {
                 Ok(signature) => {
@@ -111,7 +111,7 @@ impl DvlClient {
                         },
                         _ => println!("{}Unexpected error kind: {:?}", log_prefix, e.kind),
                     }
-                    std::thread::sleep(std::time::Duration::from_secs(delay));
+                    tokio::time::sleep(tokio::time::Duration::from_secs(delay)).await;
                 },
                 Err(e) => {
                     if verbose {

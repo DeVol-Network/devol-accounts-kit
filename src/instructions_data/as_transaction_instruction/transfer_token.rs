@@ -1,5 +1,6 @@
 use std::error::Error;
 use std::str::FromStr;
+use async_trait::async_trait;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_readable::DvlIndexParam;
@@ -17,24 +18,24 @@ pub struct TransferTokenTransactionParams {
     pub client_key: Pubkey,
 }
 
+#[async_trait]
 impl AsTransactionInstruction for InstructionTransferToken {
     type DvlTransactionInstructionParams = TransferTokenTransactionParams;
 
-
-    fn as_transaction_instruction(
+    async fn as_transaction_instruction(
         &self,
         client: &DvlClient,
         signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
-        let root_acc_key = client.account_public_key::<RootAccount>(())?;
-        let mint_acc_key = client.account_public_key::<MintsAccount>(())?;
-        let mints_acc = client.get_account::<MintsAccount>(())?;
+        let root_acc_key = client.account_public_key::<RootAccount>(()).await?;
+        let mint_acc_key = client.account_public_key::<MintsAccount>(()).await?;
+        let mints_acc = client.get_account::<MintsAccount>(()).await?;
         let mints_program_acc_key = mints_acc.data[transaction_params.mint_id as usize].program_address;
         let mints_address_acc_key = mints_acc.data[transaction_params.mint_id as usize].address;
         let client_acc_key = transaction_params.client_key;
-        let log_acc_key = client.account_public_key::<MintLogAccount>(DvlIndexParam { id: transaction_params.mint_id })?;
+        let log_acc_key = client.account_public_key::<MintLogAccount>(DvlIndexParam { id: transaction_params.mint_id }).await?;
         let token_program_id_key = Pubkey::from_str(TOKEN_PROGRAM_ID)?;
 
         let account_metas = Vec::from([

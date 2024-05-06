@@ -1,4 +1,5 @@
 use std::error::Error;
+use async_trait::async_trait;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_readable::DvlIndexParam;
@@ -15,20 +16,21 @@ pub struct FinPoolTransactionParams {
     pub worker_id: u32,
 }
 
+#[async_trait]
 impl AsTransactionInstruction for InstructionFinPool {
     type DvlTransactionInstructionParams = FinPoolTransactionParams;
 
-    fn as_transaction_instruction(
+    async fn as_transaction_instruction(
         &self,
         client: &DvlClient,
         signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
-        let root_acc_key = client.account_public_key::<RootAccount>(())?;
-        let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
-        let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
-        let tasks_trace_key = client.account_public_key::<TasksTraceAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
+        let root_acc_key = client.account_public_key::<RootAccount>(()).await?;
+        let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
+        let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
+        let tasks_trace_key = client.account_public_key::<TasksTraceAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
         let account_metas = Vec::from([
             AccountMeta {
                 pubkey: *signer,

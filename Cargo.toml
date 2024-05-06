@@ -1,6 +1,6 @@
 [package]
 name = "devol-accounts-kit"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,7 +16,9 @@ thiserror = "^1.0.56"
 strum = "^0.26.2"
 strum_macros = "^0.26.2"
 serde = { version = "^1.0.136", features = ["derive"] }
+async-trait = "0.1.80"
+tokio = { version = "1.30.0", optional = true }
 
 [features]
-default = ["solana-sdk", "solana-client"]
+default = ["solana-sdk", "solana-client", "tokio"]
 on-chain = []

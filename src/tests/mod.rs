@@ -4,7 +4,7 @@ mod platform_test;
 #[cfg(test)]
 pub(crate) mod tests {
     use std::str::FromStr;
-    use solana_client::rpc_client::RpcClient;
+    use solana_client::nonblocking::rpc_client::RpcClient;
     use solana_program::pubkey::Pubkey;
     use crate::dvl_client::dvl_client::DvlClient;
     use crate::constants::test_constants::*;
