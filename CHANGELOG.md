@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Start next pool params constructor now receive f32 array as pool bounds params instead of i32
+- DvlClient receive Pubkey instead of &str
 
 ## [0.1.3] - 2024-05-03
 

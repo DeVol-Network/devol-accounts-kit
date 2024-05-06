@@ -1,5 +1,4 @@
 use std::error::Error;
-use std::str::FromStr;
 use solana_client::client_error::ClientErrorKind;
 use solana_client::rpc_client::RpcClient;
 use solana_client::rpc_request::{RpcError, RpcResponseErrorData};
@@ -27,9 +26,7 @@ pub struct DvlClient {
 }
 
 impl DvlClient {
-    pub fn new(client: RpcClient, int_seed: usize, admin_public_key_str: &str, program_id_str: &str) -> Self {
-        let admin_public_key = Pubkey::from_str(admin_public_key_str).unwrap();
-        let program_id = Pubkey::from_str(program_id_str).unwrap();
+    pub fn new(client: RpcClient, int_seed: usize, admin_public_key: Pubkey, program_id: Pubkey) -> Self {
         let root_seed = format!("rt{}", int_seed);
         let root_pda = dvl_generate_pda(&admin_public_key, &root_seed, &program_id);
 
