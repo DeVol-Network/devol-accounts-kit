@@ -8,7 +8,7 @@ use crate::instructions_data::start_next_pool::{INSTRUCTION_START_NEXT_POOL_VERS
 pub struct StartNextPoolParams {
     pub svm_params: SvmParams,
     pub prices: [f32; BUCKETS_COUNT],
-    pub bounds: [i32; BOUNDS_COUNT],
+    pub bounds: [f32; BOUNDS_COUNT],
     pub margin_vega: f64,
     pub margin_vanna: f64,
     pub margin_volga: f64,
@@ -25,6 +25,10 @@ impl<'a> DvlInstructionData<'a> for InstructionStartNextPool {
     fn new(
         params: Self::DvlInstrParams,
     ) -> Result<Box<InstructionStartNextPool>, Box<dyn Error>> {
+        let mut bounds_i32 = [0; BOUNDS_COUNT];
+        for i in 0..BOUNDS_COUNT {
+            bounds_i32[i] = (params.bounds[i] + 0.5) as i32;
+        }
         Ok(Box::new(InstructionStartNextPool {
             cmd: Instructions::StartNextPool as u8,
             version: INSTRUCTION_START_NEXT_POOL_VERSION,
@@ -34,7 +38,7 @@ impl<'a> DvlInstructionData<'a> for InstructionStartNextPool {
             margin_vega: (params.margin_vega * FD) as i64,
             margin_vanna: (params.margin_vanna * FD) as i64,
             margin_volga: (params.margin_volga * FD) as i64,
-            bounds: params.bounds,
+            bounds: bounds_i32,
             reserved2: [0; 4],
             w_lr: (params.w_lr * FD) as i64,
             range_lr: (params.range_lr * FD) as i64,
@@ -75,7 +79,7 @@ mod tests {
             margin_vega: TEST_MARGIN,
             margin_vanna: TEST_MARGIN,
             margin_volga: TEST_MARGIN,
-            bounds: [TEST_BOUND; BOUNDS_COUNT],
+            bounds: [TEST_BOUND as f32; BOUNDS_COUNT],
             w_lr: TEST_LR,
             range_lr: TEST_LR,
             max_pct_pool: TEST_LR,

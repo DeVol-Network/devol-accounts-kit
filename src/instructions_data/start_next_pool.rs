@@ -62,7 +62,7 @@ mod tests {
             margin_vega: 0.,
             margin_vanna: 0.,
             margin_volga: 0.,
-            bounds: [0; BOUNDS_COUNT],
+            bounds: [0.; BOUNDS_COUNT],
             w_lr: 0.,
             range_lr: 0.,
             max_pct_pool: 0.,
