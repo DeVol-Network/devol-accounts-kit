@@ -1,4 +1,5 @@
 use std::error::Error;
+use async_trait::async_trait;
 use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_readable::{DvlClientParams, DvlIndexParam};
@@ -18,18 +19,18 @@ pub struct PayoffTransactionParams {
     pub client_key: Pubkey,
 }
 
-
+#[async_trait]
 impl AsTransactionInstruction for InstructionPayoff {
     type DvlTransactionInstructionParams = PayoffTransactionParams;
 
-    fn as_transaction_instruction(
+    async fn as_transaction_instruction(
         &self,
         client: &DvlClient,
         signer: &Pubkey,
         transaction_params: Self::DvlTransactionInstructionParams,
     ) -> Result<Box<Instruction>, Box<dyn Error>> {
         let data = self.to_vec_le();
-        let root_acc_key = client.account_public_key::<RootAccount>(())?;
+        let root_acc_key = client.account_public_key::<RootAccount>(()).await?;
         let client_acc_key = transaction_params.client_key;
         let devol_sign_flag = true;
         let signer_account_params = SignerAccountParams {
@@ -37,10 +38,10 @@ impl AsTransactionInstruction for InstructionPayoff {
             devol_sign: devol_sign_flag,
         };
         let signer_account_params_option: Option<&SignerAccountParams> = Some(&signer_account_params);
-        let client_acc = client.get_account::<ClientAccount>(DvlClientParams { client_address: &transaction_params.client_key, signer_account_params: signer_account_params_option })?;
-        let instruments_acc_key = client.account_public_key::<InstrumentsAccount>(())?;
-        let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
-        let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id })?;
+        let client_acc = client.get_account::<ClientAccount>(DvlClientParams { client_address: &transaction_params.client_key, signer_account_params: signer_account_params_option }).await?;
+        let instruments_acc_key = client.account_public_key::<InstrumentsAccount>(()).await?;
+        let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
+        let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
 
         let account_metas = Vec::from([
             AccountMeta {
