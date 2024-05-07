@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Serialization for Worker
 
+### Changed
+- Start pool instruction doesn't need a price distribution
+
 ## [0.2.0] - 2024-05-06
 
 ### Changed
