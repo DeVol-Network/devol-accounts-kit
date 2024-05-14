@@ -28,42 +28,42 @@ impl DvlReadable for PayoffLogAccount {
     }
 }
 
-// todo fix
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use crate::account_readers::dvl_readable::DvlClientParams;
-//     use crate::accounts::client::client_account::client_account::ClientAccount;
-//     use crate::accounts::client::payoff_log::payoff_log_account::PayoffLogAccount;
-//     use crate::generate_pda::dvl_generate_pda;
-//     use crate::tests::tests::setup_devol_client;
-//     use std::error::Error;
-//
-//     #[test]
-//     fn test_read_payoff_log_account_auto() -> Result<(), Box<dyn Error>> {
-//         let client = setup_devol_client();
-//         let client_pda = dvl_generate_pda(&client.admin_public_key, &client.main_seed, &client.program_id);
-//         let client_account = client.get_account::<ClientAccount>(DvlClientParams {
-//             client_address: &client_pda.key,
-//             signer_account_params: None,
-//         })?;
-//
-//         let _payoff = client.get_account::<PayoffLogAccount>(DvlClientParam {
-//             client_account: &client_account,
-//         })?;
-//         Ok(())
-//     }
-//
-//     #[test]
-//     fn test_read_payoff_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
-//         let client = setup_devol_client();
-//         let client_pda = dvl_generate_pda(&client.admin_public_key, &client.main_seed, &client.program_id);
-//         let client_account = client.get_account::<ClientAccount>(DvlClientParams {
-//             client_address: &client_pda.key,
-//             signer_account_params: None,
-//         })?;
-//
-//         let _payoff = client.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log)?;
-//         Ok(())
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::account_readers::dvl_readable::DvlClientParams;
+    use crate::accounts::client::client_account::client_account::ClientAccount;
+    use crate::accounts::client::payoff_log::payoff_log_account::PayoffLogAccount;
+    use crate::tests::tests::setup_devol_client;
+    use std::error::Error;
+    use std::str::FromStr;
+    use crate::constants::test_constants::ADMIN_PUBLIC_KEY;
+
+    #[tokio::test]
+    async fn test_read_payoff_log_account_auto() -> Result<(), Box<dyn Error>> {
+        let client = setup_devol_client();
+        let client_wallet_public_key = Pubkey::from_str(ADMIN_PUBLIC_KEY).unwrap();
+        let client_account = client.get_account::<ClientAccount>(DvlClientParams {
+            client_address: &client_wallet_public_key,
+            signer_account_params: None,
+        }).await?;
+
+        let _payoff = client.get_account::<PayoffLogAccount>(DvlClientParam {
+            client_account: &*client_account,
+        }).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_read_payoff_log_account_by_public_key() -> Result<(), Box<dyn Error>> {
+        let client = setup_devol_client();
+        let client_wallet_public_key = Pubkey::from_str(ADMIN_PUBLIC_KEY).unwrap();
+        let client_account = client.get_account::<ClientAccount>(DvlClientParams {
+            client_address: &client_wallet_public_key,
+            signer_account_params: None,
+        }).await?;
+
+        let _payoff = client.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log).await?;
+        Ok(())
+    }
+}
