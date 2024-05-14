@@ -1,7 +1,10 @@
 [package]
 name = "devol-accounts-kit"
-version = "0.2.3"
+version = "0.2.4"
 edition = "2021"
+authors = ["Leonid Kabanov <leonid.kabanov@devol.ntwork>"]
+homepage = "https://sdk.devol.network"
+repository = "https://github.com/DeVol-Network/devol-accounts-kit"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
