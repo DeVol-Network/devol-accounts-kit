@@ -1,0 +1,18 @@
+name: Publish to crates.io
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Publish to crates.io
+      uses: katyo/publish-crates@v1
+      with:
+        token: ${{ secrets.CRATES_IO_TOKEN }}
