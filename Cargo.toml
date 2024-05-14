@@ -5,6 +5,8 @@ edition = "2021"
 authors = ["DeVol Network"]
 homepage = "https://sdk.devol.network"
 repository = "https://github.com/DeVol-Network/devol-accounts-kit"
+description = "SDK for interacting with the DeVol Network option trading platform on the Solana blockchain"
+license = "Apache-2.0"
 
 [dependencies]
 bs58 = '0.5.1'
