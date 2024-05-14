@@ -44,7 +44,7 @@ Accounts Kit:
 
 ```toml
 [dependencies]
-devol-accounts-kit = { git = "https://github.com/DeVol-Network/devol-accounts-kit.git", tag = "0.2.1" }
+devol-accounts-kit = '*'
 ```
 
 ### Sample Code to Interact with Devol Smart Contracts
@@ -58,7 +58,7 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_program::pubkey::Pubkey;
 use devol_accounts_kit::dvl_client::dvl_client::DvlClient;
 use devol_accounts_kit::accounts::root::root_account::RootAccount;
-use tokio; // Async runtime for handling non-blocking operations
+use tokio;
 
 #[tokio::main] // This attribute sets up the Tokio runtime for your async main
 async fn main() {
@@ -82,9 +82,8 @@ async fn main() {
         }
     };
 
-    let reader = DvlClient::new(rpc_client, 1, admin_pub_key, program_id);
+    let reader = DvlClient::new(rpc_client, INT_SEED, admin_pub_key, program_id);
 
-    // Handle asynchronous operations with await and proper error handling
     match reader.get_account::<RootAccount>(()).await {
         Ok(root_account) => println!("Root Account: {:?}", root_account),
         Err(e) => eprintln!("Failed to fetch the RootAccount: {}", e),
