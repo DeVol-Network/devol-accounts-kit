@@ -1,9 +1,9 @@
 # Devol Accounts Kit
 
-### Table of content
+### Table of Contents
 
 - [Introduction](#introduction)
-- [Quick Start Guide for Devol Accounts Kit](#quick-start-guide-for-devol-accounts-kit)
+- [Quick Start Guide](#quick-start-guide)
     - [Setting Up Your Development Environment](#setting-up-your-development-environment)
     - [Initialize Your Project](#initialize-your-project)
     - [Add Dependencies](#add-dependencies)
@@ -11,6 +11,7 @@
     - [Run Your Application](#run-your-application)
 - [Advanced](#advanced)
     - [Feature Configuration Options](#feature-configuration-options)
+- [Documentation](#documentation)
 
 ## Introduction
 
@@ -18,20 +19,14 @@ Welcome to the Devol Accounts Kit documentation. This comprehensive guide is des
 administrators with the knowledge and tools necessary to effectively implement and manage the Devol smart contract
 system.
 
-## Quick Start
+## Quick Start Guide
 
 ### Setting Up Your Development Environment
 
 To begin, ensure your development environment is set up with the necessary tools and libraries:
 
-1. **Install Rust:**
-   Rust is essential for Solana development. Follow the official guide to install Rust on your system:
-   [Install Rust](https://www.rust-lang.org/tools/install).
-
-2. **Install the Solana CLI:**
-   The Solana Command Line Tool is crucial for interacting with the Solana blockchain. Install it by following these
-   instructions:
-   [Install Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools).
+1. **Rust**
+2. **Solana CLI**
 
 ### Initialize Your Project
 
@@ -49,8 +44,7 @@ Accounts Kit:
 
 ```toml
 [dependencies]
-solana-client = "^1.18.3"
-solana-sdk = "^1.18.3"
+devol-accounts-kit = { git = "https://github.com/DeVol-Network/devol-accounts-kit.git", tag = "0.2.1" }
 ```
 
 ### Sample Code to Interact with Devol Smart Contracts
@@ -58,21 +52,43 @@ solana-sdk = "^1.18.3"
 Below is a basic example to set up your client and interact with the Devol smart contracts:
 
 ```rust
-use solana_client::rpc_client::RpcClient;
-use solana_sdk::pubkey::Pubkey;
+// Required imports
+use std::str::FromStr;
+use solana_client::nonblocking::rpc_client::RpcClient;
+use solana_program::pubkey::Pubkey;
+use devol_accounts_kit::dvl_client::dvl_client::DvlClient;
+use devol_accounts_kit::accounts::root::root_account::RootAccount;
+use tokio; // Async runtime for handling non-blocking operations
 
-fn main() {
+#[tokio::main] // This attribute sets up the Tokio runtime for your async main
+async fn main() {
     let rpc_url = String::from("https://api.mainnet-beta.solana.com/");
     let rpc_client = RpcClient::new(rpc_url);
 
-    let admin_pub_key = Pubkey::from_str("ADMIN_PUBLIC_KEY").unwrap();
-    let program_id = Pubkey::from_str("PROGRAM_ID").unwrap();
+    // Proper error handling with `match` for key parsing
+    let admin_pub_key = match Pubkey::from_str("ADMIN_PUBLIC_KEY") {
+        Ok(key) => key,
+        Err(e) => {
+            eprintln!("Failed to parse admin public key: {}", e);
+            return;
+        }
+    };
+
+    let program_id = match Pubkey::from_str("PROGRAM_ID") {
+        Ok(id) => id,
+        Err(e) => {
+            eprintln!("Failed to parse program ID: {}", e);
+            return;
+        }
+    };
 
     let reader = DvlClient::new(rpc_client, 1, admin_pub_key, program_id);
 
-    // Example: Fetching and printing the RootAccount
-    let root_account = reader.get_account::<RootAccount>(()).expect("Failed to fetch the RootAccount");
-    println!("Root Account: {:?}", root_account);
+    // Handle asynchronous operations with await and proper error handling
+    match reader.get_account::<RootAccount>(()).await {
+        Ok(root_account) => println!("Root Account: {:?}", root_account),
+        Err(e) => eprintln!("Failed to fetch the RootAccount: {}", e),
+    };
 }
 ```
 
@@ -101,3 +117,7 @@ environments:
   required. When this feature is enabled, it removes all network-related parts of the library, making it suitable for
   deployment within smart contracts themselves. This feature ensures that the library is optimized for on-chain
   operations, reducing the footprint and enhancing performance for smart contract execution.
+
+## Documentation
+
+For more detailed guidance [DeVol Network Documentation](sdk.devol.network)
