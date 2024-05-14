@@ -120,4 +120,4 @@ environments:
 
 ## Documentation
 
-For more detailed guidance [DeVol Network Documentation](sdk.devol.network)
+For more detailed guidance [DeVol Network Documentation](https://sdk.devol.network)
