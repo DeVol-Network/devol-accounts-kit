@@ -1,8 +1,8 @@
 use crate::accounts::worker::svm_params::SvmParams;
-use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
+use crate::constants::{BOUNDS_COUNT};
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
-pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 872;
+pub const INSTRUCTION_START_NEXT_POOL_SIZE: usize = 488;
 pub const INSTRUCTION_START_NEXT_POOL_VERSION: u8 = 2;
 
 #[repr(C)]
@@ -11,9 +11,7 @@ pub struct InstructionStartNextPool {
     pub version: u8,
     pub reserved: [u8; 6],
     pub svm_params: SvmParams,
-    pub prices: [f32; BUCKETS_COUNT],
     pub bounds: [i32; BOUNDS_COUNT],
-    pub reserved2: [u8; 4],
     pub margin_vega: i64,
     pub margin_vanna: i64,
     pub margin_volga: i64,
@@ -43,21 +41,19 @@ mod tests {
     pub const INSTR_START_NEXT_POOL_VERSION_OFFSET: usize = 1;
     pub const INSTR_START_NEXT_POOL_RESERVED_OFFSET: usize = 2;
     pub const INSTR_START_NEXT_POOL_SVM_PARAMS_OFFSET: usize = 8;
-    pub const INSTR_START_NEXT_POOL_PRICES_OFFSET: usize = 48;
-    pub const INSTR_START_NEXT_POOL_BOUNDS_OFFSET: usize = 428;
-    pub const INSTR_START_NEXT_POOL_MARGIN_VEGA_OFFSET: usize = 808;
-    pub const INSTR_START_NEXT_POOL_MARGIN_VANNA_OFFSET: usize = 816;
-    pub const INSTR_START_NEXT_POOL_MARGIN_VOLGA_OFFSET: usize = 824;
-    pub const INSTR_START_NEXT_POOL_RANGE_LR_OFFSET: usize = 832;
-    pub const INSTR_START_NEXT_POOL_W_LR_OFFSET: usize = 840;
-    pub const INSTR_START_NEXT_POOL_MAX_LR_OFFSET: usize = 848;
-    pub const INSTR_START_NEXT_POOL_MAX_PCT_POOL_OFFSET: usize = 856;
-    pub const INSTR_START_NEXT_POOL_PERM_IMPACT_OFFSET: usize = 864;
+    pub const INSTR_START_NEXT_POOL_BOUNDS_OFFSET: usize = 48;
+    pub const INSTR_START_NEXT_POOL_MARGIN_VEGA_OFFSET: usize = 424;
+    pub const INSTR_START_NEXT_POOL_MARGIN_VANNA_OFFSET: usize = 432;
+    pub const INSTR_START_NEXT_POOL_MARGIN_VOLGA_OFFSET: usize = 440;
+    pub const INSTR_START_NEXT_POOL_RANGE_LR_OFFSET: usize = 448;
+    pub const INSTR_START_NEXT_POOL_W_LR_OFFSET: usize = 456;
+    pub const INSTR_START_NEXT_POOL_MAX_LR_OFFSET: usize = 464;
+    pub const INSTR_START_NEXT_POOL_MAX_PCT_POOL_OFFSET: usize = 472;
+    pub const INSTR_START_NEXT_POOL_PERM_IMPACT_OFFSET: usize = 480;
 
     #[test]
     fn test_instruction_data_offsets() {
         let start_next_pool_params = StartNextPoolParams {
-            prices: [0.0; BUCKETS_COUNT],
             svm_params: SvmParams { c: 0., p: 0., v: 0., vt: 0., psi: 0. },
             margin_vega: 0.,
             margin_vanna: 0.,
@@ -86,10 +82,6 @@ mod tests {
         assert_eq!(
             &data.reserved as *const _ as usize - base_ptr,
             INSTR_START_NEXT_POOL_RESERVED_OFFSET
-        );
-        assert_eq!(
-            &data.prices as *const _ as usize - base_ptr,
-            INSTR_START_NEXT_POOL_PRICES_OFFSET
         );
         assert_eq!(
             &data.svm_params as *const _ as usize - base_ptr,

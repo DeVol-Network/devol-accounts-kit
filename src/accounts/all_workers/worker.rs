@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use solana_program::pubkey::Pubkey;
 
 pub const WORKER_ADDRESS_OFFSET: usize = 0;
@@ -7,7 +8,7 @@ pub const WORKER_POOLS_LOG_ADDRESS_OFFSET: usize = 96;
 pub const WORKER_TASKS_LOG_ADDRESS_OFFSET: usize = 128;
 pub const WORKER_SIZE: usize = 160;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 #[repr(C)]
 pub struct Worker {
     pub address: Pubkey,
