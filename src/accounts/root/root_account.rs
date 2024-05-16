@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
+use solana_program::account_info::AccountInfo;
 use solana_program::pubkey::Pubkey;
+use crate::account_readers::dvl_readable::DvlParametrable;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::dvl_error::DvlError;
 use crate::errors::AccountTag;
 
@@ -41,7 +42,8 @@ pub struct RootAccount {
     pub max_light_volume: u64,             //  8 bytes, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET
 }
 
-impl DevolRegularAccount for RootAccount {}
+impl DvlParametrable for RootAccount { type DvlReadParams<'a> = (); }
+
 impl DevolAccount for RootAccount {
     #[inline(always)]
     fn expected_size() -> usize { ROOT_ACCOUNT_SIZE }
@@ -51,6 +53,10 @@ impl DevolAccount for RootAccount {
 
     #[inline(always)]
     fn expected_version() -> u32 { ROOT_ACCOUNT_VERSION }
+
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Ok(())
+    }
 
     #[inline(always)]
     fn check_root(_: AccountTag, _: &AccountHeader, _: &Pubkey) -> Result<(), DvlError> {

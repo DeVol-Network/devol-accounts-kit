@@ -1,6 +1,6 @@
+use crate::account_readers::dvl_readable::DvlParametrable;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::accounts::oracles::oracles_data::{OracleData, ORACLES_DATA_COUNT};
 
 pub const ORACLES_ACCOUNT_HEADER_OFFSET: usize = 0;
@@ -20,7 +20,9 @@ pub struct OraclesAccount {
     pub data: [OracleData; ORACLES_DATA_COUNT],     // ORACLES_ACCOUNT_DATA_OFFSET
 }
 
-impl DevolRegularAccount for OraclesAccount {}
+
+impl DvlParametrable for OraclesAccount { type DvlReadParams<'a> = (); }
+
 impl DevolAccount for OraclesAccount {
     fn expected_size() -> usize { ORACLES_ACCOUNT_SIZE }
 

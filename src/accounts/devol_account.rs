@@ -3,16 +3,22 @@ use std::error::Error;
 use solana_program::account_info::{Account, IntoAccountInfo};
 use solana_program::account_info::AccountInfo;
 use solana_program::pubkey::Pubkey;
+use crate::account_readers::dvl_readable::{DvlParametrable};
 use crate::accounts::account_header::AccountHeader;
 use crate::dvl_error::DvlError;
 use crate::errors::*;
 
-pub trait DevolAccount {
+pub trait DevolAccount: DvlParametrable{
     fn expected_size() -> usize;
 
     fn expected_tag() -> u8;
 
     fn expected_version() -> u32;
+
+    #[inline(always)]
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError>{
+        Ok(())
+    }
 
     #[inline(always)]
     fn account_header<'a>(data: Ref<&mut [u8]>) -> &'a AccountHeader {
@@ -120,6 +126,63 @@ pub trait DevolAccount {
         let account_ref = Self::from_account_info_basic(&account_info, root_addr, program_id)?;
         Ok(Box::new(*account_ref))
     }
+
+    /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
+    #[inline(always)]
+    fn from_account_info<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        params: &Self::DvlReadParams<'a>,
+    ) -> Result<&'a Self, DvlError>
+        where
+            Self: Sized,
+    {
+        Self::check_basic(account_info, root_addr, program_id)?;
+        Self::check_additional(&account_info, params)?;
+        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
+        Ok(account)
+    }
+
+    /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
+    /// Ensures the account is marked as writable.
+    #[inline(always)]
+    fn from_account_info_mut<'a>(
+        account_info: &'a AccountInfo,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        params: &Self::DvlReadParams<'a>,
+    ) -> Result<&'a mut Self, DvlError>
+        where
+            Self: Sized,
+    {
+        Self::check_basic(account_info, root_addr, program_id)?;
+        Self::check_additional(&account_info, params)?;
+        if !account_info.is_writable {
+            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()), ContractError::AccountWritableAttribute));
+        }
+        let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
+        Ok(account)
+    }
+
+    /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
+    #[inline(always)]
+    fn from_account<'a>(
+        key: &Pubkey,
+        account: &mut impl Account,
+        root_addr: &Pubkey,
+        program_id: &Pubkey,
+        params: &Self::DvlReadParams<'a>,
+    ) -> Result<Box<Self>, Box<dyn Error>>
+        where
+            Self: Sized + Copy
+    {
+        let account_info = (key, account).into_account_info();
+        let account_ref = Self::from_account_info_basic(&account_info, root_addr, program_id)?;
+        println!("from_account basic");
+        Self::check_additional(&account_info, params)?;
+        Ok(Box::new(*account_ref))
+    }
 }
 
 #[cfg(not(feature = "on-chain"))]
@@ -129,7 +192,6 @@ mod tests {
     use super::*;
     use solana_sdk::pubkey::Pubkey;
     use solana_client::rpc_client::RpcClient;
-    use crate::accounts::devol_regular_account::DevolRegularAccount;
     use crate::accounts::root::root_account::{ROOT_ACCOUNT_TAG, RootAccount};
     use crate::constants::test_constants::{PROGRAM_ID, ROOT_ADDRESS, RPC_URL};
 
@@ -141,8 +203,7 @@ mod tests {
         let program_id = Pubkey::from_str(PROGRAM_ID).unwrap();
 
         assert_eq!(account_data.data.len(), RootAccount::expected_size());
-
-        match RootAccount::from_account(&root_addr, &mut account_data, &root_addr, &program_id) {
+        match RootAccount::from_account(&root_addr, &mut account_data, &root_addr, &program_id, &()) {
             Ok(root_account) => {
                 assert!(true, "RootAccount success");
                 assert_eq!(root_account.header.tag, ROOT_ACCOUNT_TAG as u32);

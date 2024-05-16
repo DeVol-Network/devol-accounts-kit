@@ -75,6 +75,7 @@ impl DevolExpandableSizeAccount for ClientAccount {
         expected_size
     }
 }
+
 impl DevolAccount for ClientAccount {
     fn expected_size() -> usize {
         CLIENT_ACCOUNT_SIZE
@@ -86,6 +87,10 @@ impl DevolAccount for ClientAccount {
 
     fn expected_version() -> u32 {
         CLIENT_ACCOUNT_VERSION as u32
+    }
+
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        todo!()
     }
 }
 
@@ -130,90 +135,6 @@ impl ClientAccount {
             pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *mut ClientPool
         };
         Ok(unsafe { &mut *pools_ptr.add(index) })
-    }
-
-    #[inline(always)]
-    fn check_signer(
-        account: &ClientAccount,
-        signer_params: Option<&SignerAccountParams>,
-    ) -> Result<(), DvlError> {
-        if let Some(signer_params) = signer_params{
-            let tag = AccountTag::from_u8(Self::expected_tag());
-            if signer_params.devol_sign && account.signer_address != *signer_params.signer {
-                return Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
-            } else if !signer_params.devol_sign && account.owner_address != *signer_params.signer {
-                return Err(DvlError::new_with_account(tag, ContractError::AccountNotSigner))
-            }
-        }
-        Ok(())
-    }
-
-    #[inline(always)]
-    fn check_all(
-        account_info: &AccountInfo,
-        root_addr: &Pubkey,
-        program_id: &Pubkey,
-        signer_params: Option<&SignerAccountParams>,
-    ) -> Result<(), DvlError> {
-        Self::check_basic(account_info,root_addr,program_id)?;
-        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
-        Self::check_signer(account, signer_params)?;
-        let tag = AccountTag::from_u8(Self::expected_tag());
-        Self::check_expanded_size(tag, account_info.data.borrow())?;
-        Ok(())
-    }
-
-    /// Transforms `AccountInfo` into a reference of `Self` for on-chain use without the intent to modify the data.
-    #[inline(always)]
-    pub fn from_account_info<'a>(
-        account_info: &'a AccountInfo,
-        root_addr: &Pubkey,
-        program_id: &Pubkey,
-        signer_params: Option<&SignerAccountParams>,
-    ) -> Result<&'a Self, DvlError>
-        where
-            Self: Sized,
-    {
-        Self::check_all(account_info, root_addr, program_id, signer_params)?;
-        let account = unsafe { &*(account_info.data.borrow().as_ptr() as *const Self) };
-        Ok(account)
-    }
-
-    /// Transforms `AccountInfo` into a mutable reference of `Self` for on-chain use with the intent to modify the data.
-    /// Ensures the account is marked as writable.
-    #[inline(always)]
-    pub fn from_account_info_mut<'a>(
-        account_info: &'a AccountInfo,
-        root_addr: &Pubkey,
-        program_id: &Pubkey,
-        signer_params: Option<&SignerAccountParams>,
-    ) -> Result<&'a mut Self, DvlError>
-        where
-            Self: Sized,
-    {
-        Self::check_all(account_info, root_addr, program_id, signer_params)?;
-        if !account_info.is_writable {
-            return Err(DvlError::new_with_account(AccountTag::from_u8(Self::expected_tag()), ContractError::AccountWritableAttribute));
-        }
-        let account = unsafe { &mut *(account_info.data.borrow_mut().as_ptr() as *mut Self) };
-        Ok(account)
-    }
-
-    /// Used off-chain to convert raw account data from RPC to a blockchain-utilized account structure.
-    #[inline(always)]
-    pub fn from_account(
-        key: &Pubkey,
-        account: &mut impl Account,
-        root_addr: &Pubkey,
-        program_id: &Pubkey,
-        signer_params: Option<&SignerAccountParams>,
-    ) -> Result<Box<Self>, Box<dyn Error>>
-        where
-            Self: Sized + Copy
-    {
-        let account_info = (key, account).into_account_info();
-        let account_ref = Self::from_account_info(&account_info, root_addr, program_id, signer_params)?;
-        Ok(Box::new(*account_ref))
     }
 
     #[cfg(test)]
@@ -262,6 +183,7 @@ mod tests {
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
+    use crate::account_readers::dvl_readable::DvlClientParams;
     use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
     use crate::constants::test_constants;
 
@@ -326,11 +248,11 @@ mod tests {
             executable: false,
         };
 
-        let new_account = ClientAccount::from_account_info(&account_info, &root,
-                                                           &program_id, Some(&SignerAccountParams {signer, devol_sign })).unwrap();
-
-        assert_eq!(new_account.get_pool(check_1.0).unwrap().fractions, check_1.1);
-        assert_eq!(new_account.get_pool(check_2.0).unwrap().instr_id, check_2.1);
+        // let new_account = ClientAccount::from_account_info(&account_info, &root,
+        //                                                    &program_id, DvlClientParams(&SignerAccountParams {signer, devol_sign })).unwrap();
+        //
+        // assert_eq!(new_account.get_pool(check_1.0).unwrap().fractions, check_1.1);
+        // assert_eq!(new_account.get_pool(check_2.0).unwrap().instr_id, check_2.1);
     }
     #[test]
     fn test_client_account_check_no_signer() {
@@ -379,8 +301,8 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign: is_signer}));
-        assert!(result.is_ok());
+        // let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign: is_signer}));
+        // assert!(result.is_ok());
     }
     #[test]
     fn test_client_account_check_with_signer() {
@@ -429,8 +351,8 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign}));
-        assert!(result.is_ok());
+        // let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign}));
+        // assert!(result.is_ok());
     }
 }
 

@@ -1,3 +1,5 @@
+use solana_program::account_info::AccountInfo;
+use crate::account_readers::dvl_readable::{DvlIndexParam, DvlParametrable};
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
@@ -5,6 +7,7 @@ use crate::accounts::worker::band::Band;
 use crate::accounts::worker::svm_params::SvmParams;
 use crate::accounts::worker::worker_state::WorkerState;
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT};
+use crate::dvl_error::DvlError;
 
 pub const WORKER_ACCOUNT_TAG_OFFSET: usize = 0;
 pub const WORKER_ACCOUNT_VERSION_OFFSET: usize = 4;
@@ -165,6 +168,9 @@ impl WorkerAccount {
 }
 
 impl DevolIndexedAccount for WorkerAccount {}
+
+impl DvlParametrable for WorkerAccount { type DvlReadParams<'a> = DvlIndexParam; }
+
 impl DevolAccount for WorkerAccount {
     fn expected_size() -> usize {
         WORKER_ACCOUNT_SIZE
@@ -176,6 +182,11 @@ impl DevolAccount for WorkerAccount {
 
     fn expected_version() -> u32 {
        WORKER_ACCOUNT_VERSION
+    }
+
+    #[inline(always)]
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Self::check_id(_account_info, Some(_params.id))
     }
 }
 

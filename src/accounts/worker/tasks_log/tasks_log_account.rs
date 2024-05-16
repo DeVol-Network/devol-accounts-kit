@@ -1,7 +1,10 @@
+use solana_program::account_info::AccountInfo;
+use crate::account_readers::dvl_readable::{DvlIndexParam, DvlParametrable};
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::tasks_log::task_log::TasksLog;
+use crate::dvl_error::DvlError;
 
 pub const TASKS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const TASKS_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -30,6 +33,8 @@ pub struct TasksLogAccount {
 }
 impl DevolIndexedAccount for TasksLogAccount{}
 
+impl DvlParametrable for TasksLogAccount { type DvlReadParams<'a> = DvlIndexParam; }
+
 impl DevolAccount for TasksLogAccount {
     fn expected_size() -> usize { TASKS_LOG_ACCOUNT_SIZE }
 
@@ -39,6 +44,10 @@ impl DevolAccount for TasksLogAccount {
 
     fn expected_version() -> u32 {
         TASKS_LOG_ACCOUNT_VERSION
+    }
+
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Self::check_id(_account_info, Some(_params.id))
     }
 }
 

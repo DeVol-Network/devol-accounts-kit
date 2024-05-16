@@ -1,7 +1,10 @@
+use solana_program::account_info::AccountInfo;
+use crate::account_readers::dvl_readable::{DvlIndexParam, DvlParametrable};
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
-use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::accounts::devol_indexed_account::{DevolIndexedAccount};
 use crate::accounts::worker::pools_log::pool_log::PoolsLog;
+use crate::dvl_error::DvlError;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const POOLS_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -29,6 +32,8 @@ pub struct PoolsLogAccount {
     pub data: [PoolsLog; POOLS_LOG_BUFFER_CAPACITY],
 }
 
+impl DvlParametrable for PoolsLogAccount { type DvlReadParams<'a> = DvlIndexParam; }
+
 impl DevolIndexedAccount for PoolsLogAccount {}
 
 impl DevolAccount for PoolsLogAccount {
@@ -40,6 +45,11 @@ impl DevolAccount for PoolsLogAccount {
 
     fn expected_version() -> u32 {
         POOLS_LOG_ACCOUNT_VERSION
+    }
+
+    #[inline(always)]
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Self::check_id(_account_info, Some(_params.id))
     }
 }
 

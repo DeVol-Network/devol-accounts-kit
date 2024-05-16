@@ -43,18 +43,21 @@ impl DvlClient {
         }
     }
 
-    pub async fn get_account<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
+    pub async fn get_account<'a, T: DvlReadable + DevolAccount + Copy + Send>(&self, params: T::DvlReadParams<'a>) -> Result<Box<T>, Box<dyn Error>> where
+        Self: Sized + Send  + Send{
         T::read(self, &params).await
     }
 
     pub async fn get_account_by_public_key<T: DvlReadable + DevolAccount + Copy + Send>(
         &self,
         public_key: &Pubkey,
-    ) -> Result<Box<T>, Box<dyn Error>> {
+    ) -> Result<Box<T>, Box<dyn Error>>where
+        Self: Sized + Send  + Send {
         T::read_by_public_key(self, public_key).await
     }
 
-    pub async fn account_public_key<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> {
+    pub async fn account_public_key<'a, T: DvlReadable + Send>(&self, params: T::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where
+        Self: Sized + Send  + Send{
         T::get_public_key(self, &params).await
     }
 

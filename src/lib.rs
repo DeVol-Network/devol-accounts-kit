@@ -5,7 +5,6 @@ pub mod constants;
 pub mod utils;
 pub mod tests;
 pub mod dvl_error;
-pub mod instructions_data;
 cfg_if::cfg_if! {
     if #[cfg(not(feature = "on-chain"))] {
         pub mod account_readers;

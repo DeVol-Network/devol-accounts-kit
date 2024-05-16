@@ -4,12 +4,11 @@ use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_regular_account::DevolRegularAccount;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::root::root_account::RootAccount;
 
 #[async_trait]
 impl DvlReadable for AllWorkersAccount {
-    type DvlReadParams<'a> = ();
 
     async fn get_public_key<'a>(client: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>>
         where Self: Sized {
@@ -25,6 +24,7 @@ impl DvlReadable for AllWorkersAccount {
             &mut rpc_data,
             &client.root_pda.key,
             &client.program_id,
+            &()
         )?;
         Ok(account)
     }

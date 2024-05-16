@@ -1,8 +1,11 @@
+use solana_program::account_info::AccountInfo;
 use solana_program::pubkey::Pubkey;
+use crate::account_readers::dvl_readable::DvlParametrable;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::client::trade_log::trade_log::TradeLog;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::dvl_error::DvlError;
 
 pub const TRADE_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const TRADE_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -31,6 +34,8 @@ pub struct TradeLogAccount {
 }
 impl DevolIndexedAccount for TradeLogAccount {}
 
+impl DvlParametrable for TradeLogAccount { type DvlReadParams<'a> = (); }
+
 impl DevolAccount for TradeLogAccount {
     fn expected_size() -> usize { TRADE_LOG_ACCOUNT_SIZE }
 
@@ -40,6 +45,10 @@ impl DevolAccount for TradeLogAccount {
 
     fn expected_version() -> u32 {
         TRADE_LOG_ACCOUNT_VERSION
+    }
+
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Self::check_id(_account_info, Some(_params.id))
     }
 }
 

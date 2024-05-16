@@ -3,13 +3,12 @@ use async_trait::async_trait;
 use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable};
-use crate::accounts::devol_regular_account::DevolRegularAccount;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::root::root_account::RootAccount;
 
 #[async_trait]
 impl DvlReadable for InstrumentsAccount {
-    type DvlReadParams<'a> = ();
 
     async fn get_public_key<'a>(client: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
         let root = client.get_account::<RootAccount>(()).await?;
@@ -24,6 +23,7 @@ impl DvlReadable for InstrumentsAccount {
             &mut rpc_data,
             &clinet.root_pda.key,
             &clinet.program_id,
+            params
         )?;
         Ok(account)
     }

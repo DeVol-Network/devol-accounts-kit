@@ -8,6 +8,7 @@ pub trait DevolExpandableSizeAccount {
     #[inline(always)]
     fn check_expanded_size(tag: AccountTag, account_data: Ref<&mut [u8]>) -> Result<(), DvlError> {
         let actual_size = account_data.len();
+        println!("inside. actual_size {}", actual_size);
         if actual_size < Self::expected_expanded_size(account_data) {
             Err(DvlError::new_with_account(tag, ContractError::AccountSize))
         } else {

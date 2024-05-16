@@ -1,7 +1,9 @@
+use solana_program::account_info::AccountInfo;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::payoff_log::payoff_log::PayoffLog;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::dvl_error::DvlError;
 
 pub const PAYOFF_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const PAYOFF_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -34,6 +36,10 @@ impl DevolAccount for PayoffLogAccount {
 
     #[inline(always)]
     fn expected_version() -> u32 { PAYOFF_LOG_ACCOUNT_VERSION }
+
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Self::check_id(_account_info, Some(_params.id))
+    }
 }
 
 #[cfg(test)]

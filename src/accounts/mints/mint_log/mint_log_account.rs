@@ -1,8 +1,11 @@
+use solana_program::account_info::AccountInfo;
 use solana_program::pubkey::Pubkey;
+use crate::account_readers::dvl_readable::{DvlIndexParam, DvlParametrable};
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::mints::mint_log::mint_log::MintLog;
+use crate::dvl_error::DvlError;
 
 pub const MINT_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const MINT_LOG_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -33,6 +36,9 @@ impl DevolIndexedAccount for MintLogAccount {
         MINT_LOG_ACCOUNT_MINT_ID_OFFSET
     }
 }
+
+impl DvlParametrable for MintLogAccount { type DvlReadParams<'a> = DvlIndexParam; }
+
 impl DevolAccount for MintLogAccount {
 
     #[inline(always)]
@@ -42,6 +48,11 @@ impl DevolAccount for MintLogAccount {
 
     #[inline(always)]
     fn expected_version() -> u32 { MINT_LOG_ACCOUNT_VERSION }
+
+    #[inline(always)]
+    fn check_additional<'a>(_account_info: &AccountInfo, _params: &Self::DvlReadParams<'a>) -> Result<(), DvlError> {
+        Self::check_id(_account_info, Some(_params.id))
+    }
 }
 
 #[cfg(test)]

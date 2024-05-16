@@ -4,12 +4,11 @@ use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable, DvlIndexParam};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
-use crate::accounts::devol_indexed_account::DevolIndexedAccount;
+use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
 
 #[async_trait]
 impl DvlReadable for WorkerAccount {
-    type DvlReadParams<'a> = DvlIndexParam;
 
     async fn get_public_key<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
         let workers_account = client.get_account::<AllWorkersAccount>(()).await?;
@@ -25,7 +24,7 @@ impl DvlReadable for WorkerAccount {
             &mut rpc_data,
             &client.root_pda.key,
             &client.program_id,
-            Some(params.id),
+            &DvlIndexParam{id: 0}
         )?;
         Ok(account)
     }
