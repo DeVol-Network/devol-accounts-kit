@@ -93,8 +93,8 @@ pub enum ContractError {
     MaxWorkersExceeded          = 0x002A,
     #[error("Specified fee payer for account opening does not match any valid options")]
     InvalidFeePayerOption       = 0x002B,
-    #[error("Cannot finalize pool as it is still active (worker is active)")]
-    PoolActiveCannotFinalize    = 0x002C,
+    #[error("Cannot finalize pool as it is not active")]
+    InactivePoolCannotFinalize  = 0x002C,
     #[error("Cannot finalize pool as the designated time for finalization has not yet been reached")]
     PoolFinalizeTimeNotReached  = 0x002D,
     #[error("Provided PDA does not match expected for account creation")]
