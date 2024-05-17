@@ -5,7 +5,7 @@ use solana_client::rpc_request::{RpcError, RpcResponseErrorData};
 use solana_program::hash::Hash;
 use solana_program::instruction::{Instruction, InstructionError};
 use solana_program::pubkey::Pubkey;
-use solana_sdk::commitment_config::CommitmentConfig;
+use solana_sdk::commitment_config::{CommitmentConfig, CommitmentLevel};
 use solana_sdk::compute_budget::ComputeBudgetInstruction;
 use solana_sdk::transaction::{Transaction, TransactionError};
 use crate::account_readers::dvl_readable::{DvlReadable};
@@ -84,7 +84,9 @@ impl DvlClient {
         let verbose = params.verbose.unwrap_or(false);
 
         for i in 0..retries {
-            let latest_blockhash = self.rpc_client.get_latest_blockhash().await.map_err(|e| Box::new(e) as Box<dyn Error>)?;
+            let latest_blockhash = self.rpc_client.get_latest_blockhash_with_commitment(
+                CommitmentConfig{commitment: CommitmentLevel::Finalized}
+            ).await.map_err(|e| Box::new(e) as Box<dyn Error>)?.0;
             let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer));
             (params.signer_fn)(&mut new_transaction, latest_blockhash)?;
 
