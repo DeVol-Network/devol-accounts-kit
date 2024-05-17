@@ -43,7 +43,10 @@ impl DvlClient {
         }
     }
 
-    pub async fn get_account<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<T>, Box<dyn Error>> {
+    pub async fn get_account<'a, T: DvlReadable>(
+        &self,
+        params: T::DvlReadParams<'a>,
+    ) -> Result<Box<T>, Box<dyn Error>> {
         T::read(self, &params).await
     }
 
@@ -54,7 +57,10 @@ impl DvlClient {
         T::read_by_public_key(self, public_key).await
     }
 
-    pub async fn account_public_key<'a, T: DvlReadable>(&self, params: T::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> {
+    pub async fn account_public_key<'a, T: DvlReadable>(
+        &self,
+        params: T::DvlReadParams<'a>,
+    ) -> Result<Box<Pubkey>, Box<dyn Error>> {
         T::get_public_key(self, &params).await
     }
 
@@ -78,7 +84,7 @@ impl DvlClient {
         let verbose = params.verbose.unwrap_or(false);
 
         for i in 0..retries {
-            let latest_blockhash = self.rpc_client.get_latest_blockhash().await?;
+            let latest_blockhash = self.rpc_client.get_latest_blockhash().await.map_err(|e| Box::new(e) as Box<dyn Error>)?;
             let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer));
             (params.signer_fn)(&mut new_transaction, latest_blockhash)?;
 
@@ -90,7 +96,7 @@ impl DvlClient {
                         println!("{}Transaction sent successfully with signature: {}", log_prefix, signature);
                     }
                     return Ok(signature.to_string());
-                },
+                }
                 Err(e) if i < retries - 1 => {
                     if verbose {
                         println!("{}Retrying transaction due to error: {:?}", log_prefix, e);
@@ -108,11 +114,11 @@ impl DvlClient {
                             } else {
                                 println!("{}RPC error: {}, code: {}, message: {}", log_prefix, code, message, data);
                             }
-                        },
+                        }
                         _ => println!("{}Unexpected error kind: {:?}", log_prefix, e.kind),
                     }
                     tokio::time::sleep(tokio::time::Duration::from_secs(delay)).await;
-                },
+                }
                 Err(e) => {
                     if verbose {
                         eprintln!("{}Failed to send transaction after {} attempts: {}", log_prefix, retries, e);
@@ -127,7 +133,6 @@ impl DvlClient {
         }
         Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "All retry attempts failed")))
     }
-
 }
 
 pub type SignerFunction = Box<dyn Fn(&mut Transaction, Hash) -> Result<(), Box<dyn Error>> + Send + Sync>;

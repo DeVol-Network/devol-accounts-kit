@@ -11,19 +11,25 @@ use crate::accounts::mints::mints_account::MintsAccount;
 impl DvlReadable for MintLogAccount {
     type DvlReadParams<'a> = DvlIndexParam;
 
-    async fn get_public_key<'a>(clinet: &DvlClient, params: &DvlIndexParam) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
-        let mints_account = clinet.get_account::<MintsAccount>(()).await?;
+    async fn get_public_key<'a>(
+        dvl_client: &DvlClient,
+        params: &DvlIndexParam
+    ) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        let mints_account = dvl_client.get_account::<MintsAccount>(()).await?;
         Ok(Box::from(mints_account.data[params.id as usize].log_address))
     }
 
-    async fn read<'a>(clinet: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(clinet, params).await?;
-        let mut rpc_data = clinet.rpc_client.get_account(public_key).await?;
+    async fn read<'a>(
+        dvl_client: &DvlClient,
+        params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(dvl_client, params).await?;
+        let mut rpc_data = dvl_client.rpc_client.get_account(public_key).await?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,
-            &clinet.root_pda.key,
-            &clinet.program_id,
+            &dvl_client.root_pda.key,
+            &dvl_client.program_id,
             Some(params.id),
         )?;
         Ok(account)

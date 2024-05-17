@@ -23,11 +23,17 @@ pub struct DvlClientParams<'a> {
 pub trait DvlReadable {
     type DvlReadParams<'a>;
 
-    async fn get_public_key<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>>
+    async fn get_public_key<'a>(
+        client: &DvlClient,
+        params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Pubkey>, Box<dyn Error>>
         where
             Self: Sized;
 
-    async fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>>
+    async fn read<'a>(
+        client: &DvlClient,
+        params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Self>, Box<dyn Error>>
         where
             Self: Sized;
 

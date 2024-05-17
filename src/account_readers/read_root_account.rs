@@ -10,18 +10,24 @@ use crate::accounts::root::root_account::RootAccount;
 impl DvlReadable for RootAccount {
     type DvlReadParams<'a> = ();
 
-    async fn get_public_key<'a>(client: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
-        Ok(Box::from(client.root_pda.key))
+    async fn get_public_key<'a>(
+        dvl_client: &DvlClient,
+        _params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        Ok(Box::from(dvl_client.root_pda.key))
     }
 
-    async fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(client, params).await?;
-        let mut rpc_data = client.rpc_client.get_account(public_key).await?;
+    async fn read<'a>(
+        dvl_client: &DvlClient,
+        params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(dvl_client, params).await?;
+        let mut rpc_data = dvl_client.rpc_client.get_account(public_key).await?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,
-            &client.root_pda.key,
-            &client.program_id,
+            &dvl_client.root_pda.key,
+            &dvl_client.program_id,
         )?;
         Ok(account)
     }
