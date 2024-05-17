@@ -37,7 +37,7 @@ mod tests {
     #[test]
     fn test_instruction_data_offsets() {
         let fin_pool_params = FinPoolParams {
-            price: 1,
+            price: 1.,
             terminate: true,
         };
 
