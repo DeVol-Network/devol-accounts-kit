@@ -10,11 +10,17 @@ use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 impl DvlReadable for PayoffLogAccount {
     type DvlReadParams<'a> = DvlClientParam<'a>;
 
-    async fn get_public_key<'a>(_: &DvlClient, params: &DvlClientParam) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+    async fn get_public_key<'a>(
+        _dvl_client: &DvlClient,
+        params: &DvlClientParam
+    ) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
         Ok(Box::from(params.client_account.payoff_log))
     }
 
-    async fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+    async fn read<'a>(
+        client: &DvlClient,
+        params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
         let public_key = &*Self::get_public_key(client, params).await?;
         let mut rpc_data = client.rpc_client.get_account(public_key).await?;
         let account = Self::from_account(

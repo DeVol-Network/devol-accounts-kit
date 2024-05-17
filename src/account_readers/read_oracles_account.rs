@@ -11,19 +11,28 @@ use crate::generate_pda::dvl_generate_pda;
 impl DvlReadable for OraclesAccount {
     type DvlReadParams<'a> = ();
 
-    async fn get_public_key<'a>(client: &DvlClient, _params: &Self::DvlReadParams<'a>) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
-        let oracle_pda = dvl_generate_pda(&client.admin_public_key, &client.oracle_seed, &client.program_id);
+    async fn get_public_key<'a>(
+        dvl_client: &DvlClient,
+        _params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
+        let oracle_pda = dvl_generate_pda(
+            &dvl_client.admin_public_key,
+            &dvl_client.oracle_seed,
+            &dvl_client.program_id);
         Ok(Box::from(oracle_pda.key))
     }
 
-    async fn read<'a>(client: &DvlClient, params: &Self::DvlReadParams<'a>) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
-        let public_key = &*Self::get_public_key(client, params).await?;
-        let mut rpc_data = client.rpc_client.get_account(public_key).await?;
+    async fn read<'a>(
+        dvl_client: &DvlClient,
+        params: &Self::DvlReadParams<'a>
+    ) -> Result<Box<Self>, Box<dyn Error>> where Self: Sized {
+        let public_key = &*Self::get_public_key(dvl_client, params).await?;
+        let mut rpc_data = dvl_client.rpc_client.get_account(public_key).await?;
         let account = Self::from_account(
             public_key,
             &mut rpc_data,
-            &client.root_pda.key,
-            &client.program_id,
+            &dvl_client.root_pda.key,
+            &dvl_client.program_id,
         )?;
         Ok(account)
     }
