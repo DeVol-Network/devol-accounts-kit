@@ -1,7 +1,8 @@
+use serde::{Deserialize, Serialize};
 use crate::constants::BUCKETS_COUNT;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
-#[derive(Copy, Clone, PartialOrd, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
 pub struct BasketData {
     pub strike: u32,
