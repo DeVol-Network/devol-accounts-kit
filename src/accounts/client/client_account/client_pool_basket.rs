@@ -9,6 +9,16 @@ pub struct BasketData {
     pub amount: [u8; 4],
 }
 
+impl Default for BasketData {
+    fn default() -> Self {
+        Self {
+            strike: [0; 4],
+            pc: [0; 4],
+            amount: [0; 4],
+        }
+    }
+}
+
 impl BasketData {
     #[inline(always)]
     pub fn get_strike(&self) -> u32 { u32::from_ne_bytes(self.strike) }

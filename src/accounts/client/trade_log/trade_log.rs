@@ -168,7 +168,6 @@ impl TradeLog {
     }
 }
 
-#[cfg(test)]
 impl Default for TradeLog {
     fn default() -> Self {
         Self {
