@@ -5,18 +5,16 @@ use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::client_account::client_lp::ClientLp;
 use crate::accounts::client::client_account::client_mint::ClientMint;
-use crate::accounts::client::client_account::client_pool::ClientPool;
+use crate::accounts::client::client_account::client_pool::{CLIENT_POOL_SIZE, ClientPool};
 use crate::accounts::client::client_account::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::kyc_status::KYCStatus;
 use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
-use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
 use crate::constants::HOURS;
 use crate::dvl_error::DvlError;
 use crate::errors::*;
-use crate::utils::type_size_helper::align_size;
 
 pub const CLIENT_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const CLIENT_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
@@ -71,7 +69,7 @@ impl DevolExpandableSizeAccount for ClientAccount {
     fn expected_expanded_size(account_data: Ref<&mut [u8]>) -> usize {
         let account = unsafe { &*(account_data.as_ptr() as *const Self) };
         let pools_count = account.get_pools_count();
-        let expected_size = align_size(CLIENT_ACCOUNT_SIZE + (pools_count as usize) * POOLS_LOG_SIZE, 8);
+        let expected_size = CLIENT_ACCOUNT_SIZE + (pools_count as usize) * CLIENT_POOL_SIZE;
         expected_size
     }
 }
@@ -262,7 +260,6 @@ mod tests {
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
-    use crate::accounts::worker::pools_log::pool_log::POOLS_LOG_SIZE;
     use crate::constants::test_constants;
 
     #[test]
@@ -300,7 +297,7 @@ mod tests {
         let mut lamports: u64 = 0;
 
         const TEST_POOLS_SIZE: usize = 10;
-        let total_size = align_size(CLIENT_ACCOUNT_SIZE + TEST_POOLS_SIZE * POOLS_LOG_SIZE, 4);
+        let total_size = align_size(CLIENT_ACCOUNT_SIZE + TEST_POOLS_SIZE * CLIENT_POOL_SIZE, 4);
 
         let mut buffer_for_account = vec![0u8; total_size];
         let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut ClientAccount) };

@@ -46,12 +46,23 @@ mod tests {
     use std::error::Error;
     use std::str::FromStr;
     use solana_program::pubkey::Pubkey;
-    use crate::constants::test_constants::ADMIN_PUBLIC_KEY;
+    use crate::constants::test_constants::{ADMIN_PUBLIC_KEY, TRADING_CLIENT_PUBLIC_KEY};
 
     #[tokio::test]
     async fn test_read_client_account() -> Result<(), Box<dyn Error>> {
         let client = setup_devol_client();
         let client_wallet_public_key = Pubkey::from_str(ADMIN_PUBLIC_KEY).unwrap();
+        let _client_account = client.get_account::<ClientAccount>(DvlClientParams {
+            client_address: &client_wallet_public_key,
+            signer_account_params: None,
+        }).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_read_custom_client_account() -> Result<(), Box<dyn Error>> {
+        let client = setup_devol_client();
+        let client_wallet_public_key = Pubkey::from_str(TRADING_CLIENT_PUBLIC_KEY).unwrap();
         let _client_account = client.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_wallet_public_key,
             signer_account_params: None,
