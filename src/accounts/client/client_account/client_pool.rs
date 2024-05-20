@@ -137,7 +137,6 @@ impl ClientPool {
 
 }
 
-#[cfg(test)]
 impl Default for ClientPool {
     fn default() -> Self {
         Self {
@@ -163,7 +162,7 @@ impl Default for ClientPool {
             last_fees: 0,
             last_trade: [0; BUCKETS_COUNT],
             basket_length_memo: 0,
-            basket_memo: [BasketData{amount:[0; 4],pc:[0; 4],strike:[0; 4]}; CLIENT_POOL_MAX_BASKET_LENGTH],
+            basket_memo: [BasketData::default(); CLIENT_POOL_MAX_BASKET_LENGTH],
             vanilla_cost: [0; 8 * VANILLA_COST_SIZE],
             last_px: [0; 8 * BUCKETS_COUNT],
             strikes: [0; 8 * BUCKETS_COUNT],
