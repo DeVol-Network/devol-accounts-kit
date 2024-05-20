@@ -1,20 +1,21 @@
+use serde::{Deserialize, Serialize};
 
 pub const CLIENT_POOL_MAX_BASKET_LENGTH: usize = 4;
 
-#[derive(Copy, Clone, PartialOrd, PartialEq, Debug)]
+#[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
 pub struct BasketData {
-    pub strike: [u8; 4],
-    pub pc: [u8; 4],
-    pub amount: [u8; 4],
+    pub strike: [u8; CLIENT_POOL_MAX_BASKET_LENGTH],
+    pub pc: [u8; CLIENT_POOL_MAX_BASKET_LENGTH],
+    pub amount: [u8; CLIENT_POOL_MAX_BASKET_LENGTH],
 }
 
 impl Default for BasketData {
     fn default() -> Self {
         Self {
-            strike: [0; 4],
-            pc: [0; 4],
-            amount: [0; 4],
+            strike: [0; CLIENT_POOL_MAX_BASKET_LENGTH],
+            pc: [0; CLIENT_POOL_MAX_BASKET_LENGTH],
+            amount: [0; CLIENT_POOL_MAX_BASKET_LENGTH],
         }
     }
 }
