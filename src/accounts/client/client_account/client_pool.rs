@@ -1,4 +1,5 @@
-use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT, VANILLA_COST_SIZE, VANILLA_MEMO_SIZE};
+use crate::accounts::client::client_account::client_pool_basket::{BasketData, CLIENT_POOL_MAX_BASKET_LENGTH};
+use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT, VANILLA_COST_SIZE};
 
 
 pub const CLIENT_POOL_ID_OFFSET: usize = 0;
@@ -53,7 +54,8 @@ pub struct ClientPool {
     pub last_cost: i64,                         // 8 bytes, CLIENT_POOL_LAST_COST_OFFSET
     pub last_fees: i64,                         // 8 bytes, CLIENT_POOL_LAST_FEES_OFFSET
     pub last_trade: [i32; BUCKETS_COUNT],       // 380 bytes, CLIENT_POOL_LAST_TRADE_OFFSET
-    vanilla_memo: [u8; VANILLA_MEMO_SIZE],      // 49 bytes, CLIENT_POOL_VANILLA_MEMO_OFFSET
+    pub basket_length_memo: u8,                 // 1 byte, CLIENT_POOL_VANILLA_MEMO_OFFSET
+    pub basket_memo: [BasketData; CLIENT_POOL_MAX_BASKET_LENGTH], // 48 bytes
     vanilla_cost: [u8; 8*VANILLA_COST_SIZE],    // 32 bytes, CLIENT_POOL_VANILLA_COST_OFFSET
     last_px: [u8; 8*BUCKETS_COUNT],             // 760 bytes, CLIENT_POOL_LAST_PX_OFFSET
     strikes: [u8; 8*BUCKETS_COUNT],             // 760 bytes, CLIENT_POOL_STRIKES_OFFSET
@@ -160,7 +162,8 @@ impl Default for ClientPool {
             last_cost: 0,
             last_fees: 0,
             last_trade: [0; BUCKETS_COUNT],
-            vanilla_memo: [0; VANILLA_MEMO_SIZE],
+            basket_length_memo: 0,
+            basket_memo: [BasketData{amount:[0; 4],pc:[0; 4],strike:[0; 4]}; CLIENT_POOL_MAX_BASKET_LENGTH],
             vanilla_cost: [0; 8 * VANILLA_COST_SIZE],
             last_px: [0; 8 * BUCKETS_COUNT],
             strikes: [0; 8 * BUCKETS_COUNT],
@@ -202,7 +205,8 @@ mod tests {
         assert_eq!(&account.last_cost as *const _ as usize - base_ptr, CLIENT_POOL_LAST_COST_OFFSET);
         assert_eq!(&account.last_fees as *const _ as usize - base_ptr, CLIENT_POOL_LAST_FEES_OFFSET);
         assert_eq!(&account.last_trade as *const _ as usize - base_ptr, CLIENT_POOL_LAST_TRADE_OFFSET);
-        assert_eq!(&account.vanilla_memo as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET);
+        assert_eq!(&account.basket_length_memo as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET);
+        assert_eq!(&account.basket_memo as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET + 1);
         assert_eq!(&account.vanilla_cost as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_COST_OFFSET);
         assert_eq!(&account.last_px as *const _ as usize - base_ptr, CLIENT_POOL_LAST_PX_OFFSET);
         assert_eq!(&account.strikes as *const _ as usize - base_ptr, CLIENT_POOL_STRIKES_OFFSET);
