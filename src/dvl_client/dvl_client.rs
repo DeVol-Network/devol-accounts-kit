@@ -95,35 +95,35 @@ impl DvlClient {
             match send_result {
                 Ok(signature) => {
                     if verbose {
-                        println!("{}Transaction sent successfully with signature: {}", log_prefix, signature);
+                        println!("[INFO] {}Transaction sent successfully with signature: {}", log_prefix, signature);
                     }
                     return Ok(signature.to_string());
                 }
                 Err(e) if i < retries - 1 => {
                     if verbose {
-                        println!("{}Retrying transaction due to error: {:?}", log_prefix, e);
+                        println!("[INFO] {}Retrying transaction due to error: {:?}", log_prefix, e);
                     }
                     match e.kind {
                         ClientErrorKind::RpcError(RpcError::RpcResponseError { code, message, data }) => {
                             if let RpcResponseErrorData::SendTransactionPreflightFailure(sim_result) = data {
                                 if let Some(TransactionError::InstructionError(index, InstructionError::Custom(error_code))) = sim_result.err {
                                     let dvl_error = DvlError::from_code(error_code);
-                                    println!("{}Custom error in instruction at index {}: {}", log_prefix, index, dvl_error);
+                                    println!("[ERROR] {}Custom error in instruction at index {}: {}", log_prefix, index, dvl_error);
                                     return Err(Box::new(dvl_error));
                                 } else {
-                                    println!("{}Transaction simulation failed with error: {:?}", log_prefix, sim_result.err);
+                                    println!("[ERROR] {}Transaction simulation failed with error: {:?}", log_prefix, sim_result.err);
                                 }
                             } else {
-                                println!("{}RPC error: {}, code: {}, message: {}", log_prefix, code, message, data);
+                                println!("[ERROR] {}RPC error: {}, code: {}, message: {}", log_prefix, code, message, data);
                             }
                         }
-                        _ => println!("{}Unexpected error kind: {:?}", log_prefix, e.kind),
+                        _ => println!("[ERROR] {}Unexpected error kind: {:?}", log_prefix, e.kind),
                     }
                     tokio::time::sleep(tokio::time::Duration::from_secs(delay)).await;
                 }
                 Err(e) => {
                     if verbose {
-                        eprintln!("{}Failed to send transaction after {} attempts: {}", log_prefix, retries, e);
+                        eprintln!("[ERROR] {}Failed to send transaction after {} attempts: {}", log_prefix, retries, e);
                     }
                     return Err(Box::new(e));
                 }
@@ -131,7 +131,7 @@ impl DvlClient {
         }
 
         if verbose {
-            eprintln!("{}All retry attempts failed", log_prefix);
+            eprintln!("[ERROR] {}All retry attempts failed", log_prefix);
         }
         Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, "All retry attempts failed")))
     }
