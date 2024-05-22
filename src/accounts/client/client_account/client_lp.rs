@@ -12,7 +12,7 @@ pub const CLIENT_LP_PS_TRADE_QTY_OFFSET: usize = 52;
 pub const CLIENT_LP_PS_TRADE_COST_OFFSET: usize = 56;
 pub const CLIENT_LP_SIZE: usize = 64;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(C)]
 pub struct ClientLp {
     pub worker_id: u32,

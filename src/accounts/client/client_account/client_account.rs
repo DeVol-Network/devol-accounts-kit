@@ -113,9 +113,9 @@ impl ClientAccount {
         }
         let pools_count_ptr = self.pools_count.as_ptr();
         let pools_ptr = unsafe {
-            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool
+            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET + CLIENT_POOL_SIZE * index) as *const ClientPool
         };
-        Ok(unsafe { &*pools_ptr.add(index) })
+        Ok(unsafe { &*pools_ptr })
     }
 
     #[inline(always)]
@@ -125,9 +125,9 @@ impl ClientAccount {
         }
         let pools_count_ptr = self.pools_count.as_mut_ptr();
         let pools_ptr = unsafe {
-            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *mut ClientPool
+            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET + CLIENT_POOL_SIZE * index) as *mut ClientPool
         };
-        Ok(unsafe { &mut *pools_ptr.add(index) })
+        Ok(unsafe { &mut *pools_ptr })
     }
 
     #[inline(always)]
@@ -255,11 +255,13 @@ impl Default for ClientAccount {
 mod tests {
     use std::cell::RefCell;
     use std::mem;
+    use std::ops::Add;
     use std::rc::Rc;
     use std::str::FromStr;
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
+    use crate::accounts::client::client_account::client_pool::{CLIENT_POOL_FRACTIONS_OFFSET, CLIENT_POOL_INSTR_ID_OFFSET};
     use crate::constants::test_constants;
 
     #[test]
@@ -301,12 +303,16 @@ mod tests {
 
         let mut buffer_for_account = vec![0u8; total_size];
         let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut ClientAccount) };
-        *account = ClientAccount::default();
+        let default_account = ClientAccount::default();
+        *account = default_account;
         account.set_pools_count(TEST_POOLS_SIZE as u32);
         let check_1 = (0, 228);
         let check_2 = (7, 69);
+        let check_3 = (9, -999);
         account.get_pool_mut(check_1.0).unwrap().fractions = check_1.1;
+        account.get_pool_mut(check_1.0).unwrap().instr_id = 1337;
         account.get_pool_mut(check_2.0).unwrap().instr_id = check_2.1;
+        account.get_pool_mut(check_3.0).unwrap().last_cost = check_3.1;
 
         let key = &account.owner_address;
         let signer = &account.signer_address;
@@ -326,8 +332,45 @@ mod tests {
         let new_account = ClientAccount::from_account_info(&account_info, &root,
                                                            &program_id, Some(&SignerAccountParams {signer, devol_sign })).unwrap();
 
+        assert_eq!(new_account.id, default_account.id);
+        assert_eq!(new_account.header, default_account.header);
+        assert_eq!(new_account.owner_address, default_account.owner_address);
+        assert_eq!(new_account.signer_address, default_account.signer_address);
+        assert_eq!(new_account.payoff_log, default_account.payoff_log);
+        assert_eq!(new_account.id, default_account.id);
+        assert_eq!(new_account.ops_counter, default_account.ops_counter);
+        assert_eq!(new_account.sign_method, default_account.sign_method);
+        assert_eq!(new_account.kyc_status, default_account.kyc_status);
+        assert_eq!(new_account.kyc_time, default_account.kyc_time);
+        assert_eq!(new_account.last_day, default_account.last_day);
+        assert_eq!(new_account.last_hour, default_account.last_hour);
+        assert_eq!(new_account.last_trades, default_account.last_trades);
+        assert_eq!(new_account.refs, default_account.refs);
+        assert_ne!(new_account.pools_count, default_account.pools_count);
+        assert_ne!(new_account.get_pool(check_1.0).unwrap(), &ClientPool::default());
+        assert_eq!(new_account.get_pool(1).unwrap(), &ClientPool::default());
+        assert_ne!(new_account.get_pool(check_2.0).unwrap(), &ClientPool::default());
+
+        let pools_count_ptr = new_account.pools_count.as_ptr();
+        let pools_ptr = unsafe {
+            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool
+        };
+        let base_ptr = new_account as *const _ as usize;
+        let check_ptr = (base_ptr + CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const u32;
+        assert_eq!(unsafe { *check_ptr }, TEST_POOLS_SIZE as u32);
+        assert_eq!(unsafe { check_ptr.read_unaligned() }, TEST_POOLS_SIZE as u32);
+        let base_ptr = new_account as *const _ as usize;
+        let check_ptr = (base_ptr + CLIENT_ACCOUNT_SIZE + check_1.0 * CLIENT_POOL_SIZE + CLIENT_POOL_FRACTIONS_OFFSET) as *const u32;
+        assert_eq!(unsafe { *check_ptr }, check_1.1);
+
+        let check_ptr = (base_ptr + CLIENT_ACCOUNT_SIZE + check_1.0 * CLIENT_POOL_SIZE + CLIENT_POOL_INSTR_ID_OFFSET) as *const u32;
+        assert_eq!(unsafe { *check_ptr }, 1337);
+        let base_ptr = new_account as *const _ as usize;
+        let check_ptr = (base_ptr + CLIENT_ACCOUNT_SIZE + check_2.0 * CLIENT_POOL_SIZE + CLIENT_POOL_INSTR_ID_OFFSET) as *mut u32;
+        assert_eq!(unsafe { check_ptr.read_unaligned() }, check_2.1);
         assert_eq!(new_account.get_pool(check_1.0).unwrap().fractions, check_1.1);
         assert_eq!(new_account.get_pool(check_2.0).unwrap().instr_id, check_2.1);
+        assert_eq!(new_account.get_pool(check_3.0).unwrap().last_cost, check_3.1);
     }
     #[test]
     fn test_client_account_check_no_signer() {
