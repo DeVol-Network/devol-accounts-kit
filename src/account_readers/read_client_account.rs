@@ -69,4 +69,21 @@ mod tests {
         }).await?;
         Ok(())
     }
+
+    #[tokio::test]
+    async fn test_read_custom_client_account_2() -> Result<(), Box<dyn Error>> {
+        let client = setup_devol_client();
+        let client_wallet_public_key = Pubkey::from_str("4sXsGKhbYwYqL2geUnLnGhF481AXns6VT6q42kaSTfkJ").unwrap();
+        let _client_account = client.get_account::<ClientAccount>(DvlClientParams {
+            client_address: &client_wallet_public_key,
+            signer_account_params: None,
+        }).await?;
+        println!("pools: {}", _client_account.get_pools_count());
+        for i in 0.._client_account.get_pools_count(){
+            println!("pool {} worker: {}, id: {}",i,
+                     _client_account.get_pool(i as usize)?.worker_id,
+                     _client_account.get_pool(i as usize)?.id);
+        }
+        Ok(())
+    }
 }

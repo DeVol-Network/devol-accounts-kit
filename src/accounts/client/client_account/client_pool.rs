@@ -30,7 +30,7 @@ pub const CLIENT_POOL_STRIKES_OFFSET: usize = 7373;
 pub const CLIENT_POOL_BOUNDS_OFFSET: usize = 8133;
 pub const CLIENT_POOL_SIZE: usize = 8885;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(C)]
 pub struct ClientPool {
     pub id: u32,                                // 4 bytes, CLIENT_POOL_ID_OFFSET
