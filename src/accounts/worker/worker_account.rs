@@ -162,6 +162,23 @@ impl WorkerAccount {
     #[inline(always)]
     pub fn set_new_inventories_ratio(&mut self, value: i64) { self.new_inventories_ratio = value.to_ne_bytes() }
 
+    #[inline(always)]
+    pub fn get_ps_px(&self) -> i64 { i64::from_ne_bytes(self.ps_px) }
+
+    #[inline(always)]
+    pub fn set_ps_px(&mut self, value: i64) { self.ps_px = value.to_ne_bytes() }
+
+    #[inline(always)]
+    pub fn get_task_fees(&self) -> i64 { i64::from_ne_bytes(self.task_fees) }
+
+    #[inline(always)]
+    pub fn set_task_fees(&mut self, value: i64) { self.task_fees = value.to_ne_bytes() }
+
+    #[inline(always)]
+    pub fn get_rest_of_fees(&self) -> i64 { i64::from_ne_bytes(self.rest_of_fees) }
+
+    #[inline(always)]
+    pub fn set_rest_of_fees(&mut self, value: i64) { self.rest_of_fees = value.to_ne_bytes() }
 }
 
 impl DevolIndexedAccount for WorkerAccount {}

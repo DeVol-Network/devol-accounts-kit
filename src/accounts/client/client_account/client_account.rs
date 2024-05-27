@@ -261,7 +261,7 @@ mod tests {
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
-    use crate::accounts::client::client_account::client_pool::{CLIENT_POOL_FRACTIONS_OFFSET, CLIENT_POOL_INSTR_ID_OFFSET};
+    use crate::accounts::client::client_account::client_pool::{CLIENT_POOL_CALLS_RESULT_OFFSET, CLIENT_POOL_FRACTIONS_OFFSET, CLIENT_POOL_INSTR_ID_OFFSET};
     use crate::constants::test_constants;
 
     #[test]
@@ -309,10 +309,14 @@ mod tests {
         let check_1 = (0, 228);
         let check_2 = (7, 69);
         let check_3 = (9, -999);
+        let check_4 = (3, 200);
+        let check_4_bucket = 50;
+
         account.get_pool_mut(check_1.0).unwrap().fractions = check_1.1;
         account.get_pool_mut(check_1.0).unwrap().instr_id = 1337;
         account.get_pool_mut(check_2.0).unwrap().instr_id = check_2.1;
         account.get_pool_mut(check_3.0).unwrap().last_cost = check_3.1;
+        account.get_pool_mut(check_4.0).unwrap().set_calls_result(check_4_bucket, check_4.1);
 
         let key = &account.owner_address;
         let signer = &account.signer_address;
@@ -356,6 +360,16 @@ mod tests {
             pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool
         };
         let base_ptr = new_account as *const _ as usize;
+
+        let pool_record_offset = CLIENT_ACCOUNT_SIZE + (check_4.0 as usize) * CLIENT_POOL_SIZE;
+
+        let result_offset = pool_record_offset
+            + CLIENT_POOL_CALLS_RESULT_OFFSET
+            + (check_4_bucket) * 8;
+        let result_ptr: *mut i64 =
+            account_info.data.borrow_mut()[result_offset..result_offset + 8].as_ptr() as *mut i64;
+        assert_eq!(unsafe { result_ptr.read_unaligned() }, new_account.get_pool(check_4.0).unwrap().get_calls_result(check_4_bucket));
+
         let check_ptr = (base_ptr + CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const u32;
         assert_eq!(unsafe { *check_ptr }, TEST_POOLS_SIZE as u32);
         assert_eq!(unsafe { check_ptr.read_unaligned() }, TEST_POOLS_SIZE as u32);
