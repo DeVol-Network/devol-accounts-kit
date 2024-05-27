@@ -1,4 +1,4 @@
-
+use crate::constants::FD;
 
 pub const CLIENT_LP_WORKER_ID_OFFSET: usize = 0;
 pub const CLIENT_LP_TASK_ID_OFFSET: usize = 4;
@@ -32,16 +32,25 @@ impl ClientLp {
     pub fn get_ps_cost(&self) -> i64 { i64::from_ne_bytes(self.ps_cost) }
 
     #[inline(always)]
+    pub fn get_ps_cost_f64(&self) -> f64 { i64::from_ne_bytes(self.ps_cost) as f64 / FD }
+
+    #[inline(always)]
     pub fn set_ps_cost(&mut self, value: i64) { self.ps_cost = value.to_ne_bytes() }
 
     #[inline(always)]
     pub fn get_ps_result(&self) -> i64 { i64::from_ne_bytes(self.ps_result) }
 
     #[inline(always)]
+    pub fn get_ps_result_f64(&self) -> f64 { i64::from_ne_bytes(self.ps_result) as f64 / FD }
+
+    #[inline(always)]
     pub fn set_ps_result(&mut self, value: i64) { self.ps_result = value.to_ne_bytes() }
 
     #[inline(always)]
     pub fn get_ps_trade_cost(&self) -> i64 { i64::from_ne_bytes(self.ps_trade_cost) }
+
+    #[inline(always)]
+    pub fn get_ps_trade_cost_f64(&self) -> f64 { i64::from_ne_bytes(self.ps_trade_cost) as f64 / FD }
 
     #[inline(always)]
     pub fn set_ps_trade_cost(&mut self, value: i64) { self.ps_trade_cost = value.to_ne_bytes() }
