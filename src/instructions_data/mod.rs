@@ -10,7 +10,6 @@ pub mod start_next_pool;
 pub mod payoff;
 pub mod as_transaction_instruction_on_chain;
 pub mod dvl_deserializable_instruction;
-pub mod basket_data;
 cfg_if::cfg_if! {
     if #[cfg(not(feature = "on-chain"))] {
         pub mod constructors;

@@ -22,14 +22,15 @@ pub struct PoolsLog {
     pub pubkey: Pubkey,
     // Total cost of the trade
     pub cost: i64,
+    // Quantity (fractions) by buckets
+    pub trade_quantity: [i32; BUCKETS_COUNT], // Unaligned - need a 32bit variable near
+    reserved: i32,
     // Price distribution for the trade
     pub price_distribution: [i64; BUCKETS_COUNT],
     // Prices for the basket
     pub vanilla_cost: [i64; VANILLA_COST_SIZE],
-    // pub event_type: i32, // Used nowhere?
-    // Quantity (fractions) by buckets
-    pub trade_quantity: [i32; BUCKETS_COUNT], // Unaligned - need a 32bit variable near
     pub traded_basket: Basket,
+    // pub event_type: i32, // Used nowhere?
 }
 
 impl PoolsLog {
@@ -52,17 +53,19 @@ impl Default for PoolsLog {
             trade_quantity: [0; BUCKETS_COUNT],
             vanilla_cost: [0; VANILLA_COST_SIZE],
             traded_basket: Basket::default(),
+            reserved: 0,
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::utils::type_size_helper::align_size;
     use super::*;
 
     #[test]
     fn test_pools_log_offsets() {
-        let log = PoolsLog::default();
-        let base_ptr = &log as *const _ as usize;
+        let real_size = std::mem::size_of::<PoolsLog>();
+        assert_eq!(real_size, align_size(real_size, 8));
     }
 }

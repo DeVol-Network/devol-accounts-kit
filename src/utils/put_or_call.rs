@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+#[repr(u32)]
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
-#[repr(C)]
-pub struct BasketData {
-    pub strike: u32,
-    pub pc: u32,
-    pub amount: i32,
+pub enum PutOrCall {
+    PUT = 0,
+    CALL = 1,
 }

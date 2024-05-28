@@ -1,6 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::constants::BUCKETS_COUNT;
-use crate::instructions_data::basket_data::BasketData;
+use crate::utils::basket_data::BasketData;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
 pub const INSTRUCTION_OPTION_TRADE_DATA_SIZE: usize = 440;

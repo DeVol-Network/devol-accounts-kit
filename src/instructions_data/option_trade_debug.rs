@@ -1,6 +1,7 @@
 use crate::constants::BUCKETS_COUNT;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
-use crate::instructions_data::option_trade::{BasketData, INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
+use crate::instructions_data::option_trade::{INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
+use crate::utils::basket_data::BasketData;
 
 pub const INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE: usize = 456;
 
