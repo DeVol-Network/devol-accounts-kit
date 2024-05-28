@@ -121,12 +121,12 @@ impl PoolsLog {
     }
 
     #[inline(always)]
-    pub fn get_counter(&self) -> i64 {
-        i64::from_ne_bytes(self.counter)
+    pub fn get_counter(&self) -> u64 {
+        u64::from_ne_bytes(self.counter)
     }
 
     #[inline(always)]
-    pub fn set_counter(&mut self, value: i64) {
+    pub fn set_counter(&mut self, value: u64) {
         self.counter = value.to_ne_bytes();
     }
 

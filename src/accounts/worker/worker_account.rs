@@ -106,7 +106,7 @@ pub struct WorkerAccount {
     pub pool_id: u32,                       //  4 bytes, WORKER_ACCOUNT_POOL_ID_OFFSET
     pub start: i64,                         //  8 bytes, WORKER_ACCOUNT_START_OFFSET
     pub expiration: i64,                    //  8 bytes, WORKER_ACCOUNT_EXPIRATION_OFFSET
-    pub pool_cashflow: u64,                 //  8 bytes, WORKER_ACCOUNT_POOL_CASHFLOW_OFFSET
+    pub pool_cashflow: i64,                 //  8 bytes, WORKER_ACCOUNT_POOL_CASHFLOW_OFFSET
     pub settlement_px: u64,                 //  8 bytes, WORKER_ACCOUNT_SETTLEMENT_PX_OFFSET
     pub pool_depo: i64,                     //  8 bytes, WORKER_ACCOUNT_POOL_DEPO_OFFSET
     pub pool_fees: u64,                     //  8 bytes, WORKER_ACCOUNT_POOL_FEES_OFFSET
