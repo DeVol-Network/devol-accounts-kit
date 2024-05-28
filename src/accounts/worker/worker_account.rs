@@ -91,14 +91,14 @@ pub struct WorkerAccount {
     new_inventories_ratio: [u8; 8],         //  8 bytes, WORKER_ACCOUNT_NEW_INVENTORIES_RATIO_OFFSET
     pub new_fractions: u32,                 //  4 bytes, WORKER_ACCOUNT_NEW_FRACTIONS_OFFSET
     pub new_max_order: i64,                 //  8 bytes, WORKER_ACCOUNT_NEW_MAX_ORDER_OFFSET
-    pub new_max_inventories: u64,           //  8 bytes, WORKER_ACCOUNT_NEW_MAX_INVENTORIES_OFFSET
+    pub new_max_inventories: i64,           //  8 bytes, WORKER_ACCOUNT_NEW_MAX_INVENTORIES_OFFSET
     pub pool_time: u64,                     //  8 bytes, WORKER_ACCOUNT_POOL_TIME_OFFSET
     pub lp_counter: u64,                    //  8 bytes, WORKER_ACCOUNT_LP_COUNTER_OFFSET
     pub last_lp_time: u64,                  //  8 bytes, WORKER_ACCOUNT_LAST_LP_TIME_OFFSET
     pub pool_size: i64,                     //  8 bytes, WORKER_ACCOUNT_POOL_SIZE_OFFSET
-    pub cps: u64,                           //  8 bytes, WORKER_ACCOUNT_CPS_OFFSET
-    pub cps_px: u64,                        //  8 bytes, WORKER_ACCOUNT_CPS_PX_OFFSET
-    pub cps_in_ps: u64,                     //  8 bytes, WORKER_ACCOUNT_CPS_IN_PS_OFFSET
+    pub cps: i64,                           //  8 bytes, WORKER_ACCOUNT_CPS_OFFSET
+    pub cps_px: i64,                        //  8 bytes, WORKER_ACCOUNT_CPS_PX_OFFSET
+    pub cps_in_ps: i64,                     //  8 bytes, WORKER_ACCOUNT_CPS_IN_PS_OFFSET
     pub ps: u32,                            //  4 bytes, WORKER_ACCOUNT_PS_OFFSET
     ps_px: [u8; 8],                         //  8 bytes, WORKER_ACCOUNT_PS_PX_OFFSET
     task_fees: [u8; 8],                     //  8 bytes, WORKER_ACCOUNT_TASK_FEES_OFFSET
