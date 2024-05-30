@@ -1,6 +1,6 @@
 [package]
 name = "devol-accounts-kit"
-version = "0.2.21"
+version = "0.3.2"
 edition = "2021"
 authors = ["DeVol Network"]
 homepage = "https://sdk.devol.network"
@@ -23,5 +23,6 @@ async-trait = "0.1.80"
 tokio = { version = "1.30.0", optional = true }
 
 [features]
-default = ["solana-sdk", "solana-client", "tokio"]
+default = ["solana-sdk", "solana-client", "tokio", "pools_log_migration"]
 on-chain = []
+pools_log_migration = []

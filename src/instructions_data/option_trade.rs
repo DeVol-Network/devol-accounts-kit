@@ -1,14 +1,6 @@
-use serde::{Deserialize, Serialize};
 use crate::constants::BUCKETS_COUNT;
+use crate::utils::basket_data::BasketData;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
-
-#[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
-#[repr(C)]
-pub struct BasketData {
-    pub strike: u32,
-    pub pc: u32,
-    pub amount: i32,
-}
 
 pub const INSTRUCTION_OPTION_TRADE_DATA_SIZE: usize = 440;
 pub const INSTRUCTION_OPTION_TRADE_VERSION: u8 = 2;

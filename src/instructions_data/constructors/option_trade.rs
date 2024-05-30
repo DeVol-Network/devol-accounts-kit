@@ -3,7 +3,9 @@ use crate::constants::BUCKETS_COUNT;
 use crate::dvl_off_chain_error::DvlOffChainError;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
-use crate::instructions_data::option_trade::{BasketData, DEFAULT_OPTION_TRADE_MAX_COST, INSTR_OPTION_TRADE_MAX_BASKET_LENGTH, INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
+use crate::instructions_data::option_trade::{DEFAULT_OPTION_TRADE_MAX_COST, INSTR_OPTION_TRADE_MAX_BASKET_LENGTH, INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
+use crate::utils::basket_data::BasketData;
+use crate::utils::put_or_call::PutOrCall;
 
 pub struct OptionTradeParams<'a> {
     pub trade_qty: [i32; BUCKETS_COUNT],
@@ -20,7 +22,8 @@ impl<'a> DvlInstructionData<'a> for InstructionOptionTrade {
             return Err(Box::new(DvlOffChainError::BasketTooLarge));
         }
 
-        let mut basket_array = [BasketData { strike: 0, pc: 0, amount: 0 }; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH];
+        let mut basket_array =
+            [BasketData { strike: 0, put_or_call: PutOrCall::PUT, amount: 0 }; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH];
 
         if let Some(basket) = params.basket {
             for (dest, src) in basket_array.iter_mut().zip(basket.iter()) {
@@ -50,7 +53,7 @@ impl Default for InstructionOptionTrade {
             reserved: 0,
             trade_qty: [0; BUCKETS_COUNT],
             max_cost: 0,
-            basket: [BasketData { strike: 0, pc: 0, amount: 0 }; 4],
+            basket: [BasketData::default(); 4],
         }
     }
 }
@@ -60,6 +63,7 @@ mod tests {
     use super::*;
     use crate::instructions_data::dvl_instruction_data::DvlInstruction;
     use crate::instructions_data::option_trade::INSTRUCTION_OPTION_TRADE_DATA_SIZE;
+    use crate::utils::put_or_call::PutOrCall;
 
     #[test]
     fn test_default_instruction_option_trade() {
@@ -77,9 +81,9 @@ mod tests {
     #[test]
     fn test_filled_basket_instruction_option_trade() {
         let custom_basket_data = [
-            BasketData { strike: 10, pc: 20, amount: -30 },
-            BasketData { strike: 40, pc: 50, amount: -60 },
-            BasketData { strike: 70, pc: 80, amount: -90 },
+            BasketData { strike: 10, put_or_call: PutOrCall::PUT, amount: -30 },
+            BasketData { strike: 40, put_or_call: PutOrCall::CALL, amount: -60 },
+            BasketData { strike: 70, put_or_call: PutOrCall::PUT, amount: -90 },
         ];
         let trade_params = OptionTradeParams {
             trade_qty: [0; BUCKETS_COUNT],
@@ -94,7 +98,7 @@ mod tests {
         assert_eq!(data.basket[0], custom_basket_data[0]);
         assert_eq!(data.basket[1], custom_basket_data[1]);
         assert_eq!(data.basket[2], custom_basket_data[2]);
-        assert_eq!(data.basket[3], BasketData { strike: 0, pc: 0, amount: 0 });
+        assert_eq!(data.basket[3], BasketData::default());
 
         assert_eq!(data.max_cost, 500);
     }

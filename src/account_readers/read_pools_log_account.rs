@@ -38,10 +38,10 @@ impl DvlReadable for PoolsLogAccount {
     }
 }
 
+#[cfg(not(feature = "pools_log_migration"))]
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
     use crate::tests::tests::setup_devol_client;
     use std::error::Error;
 

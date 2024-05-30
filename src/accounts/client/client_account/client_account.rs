@@ -255,7 +255,6 @@ impl Default for ClientAccount {
 mod tests {
     use std::cell::RefCell;
     use std::mem;
-    use std::ops::Add;
     use std::rc::Rc;
     use std::str::FromStr;
     use crate::utils::type_size_helper::align_size;
@@ -355,10 +354,6 @@ mod tests {
         assert_eq!(new_account.get_pool(1).unwrap(), &ClientPool::default());
         assert_ne!(new_account.get_pool(check_2.0).unwrap(), &ClientPool::default());
 
-        let pools_count_ptr = new_account.pools_count.as_ptr();
-        let pools_ptr = unsafe {
-            pools_count_ptr.add(CLIENT_ACCOUNT_POOLS_OFFSET - CLIENT_ACCOUNT_POOLS_COUNT_OFFSET) as *const ClientPool
-        };
         let base_ptr = new_account as *const _ as usize;
 
         let pool_record_offset = CLIENT_ACCOUNT_SIZE + (check_4.0 as usize) * CLIENT_POOL_SIZE;
