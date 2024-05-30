@@ -157,6 +157,8 @@ pub enum ContractError {
     InsufficientBalance         = 0x004A,
     #[error("Attempted to invoke a non-existent smart contract instruction; check the instruction number")]
     InvalidInstruction          = 0x004B,
+    #[error("Not implemented")]
+    NotImplemented              = 0x004C,
     // ↑ *** Add new errors above *** ↑
     #[error("Unknown error code, please update SDK version to get detailed message")]
     UnknownError          = 0xFFFF,

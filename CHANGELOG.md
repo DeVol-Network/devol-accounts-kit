@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.22] - 2024-05-30
+
+### Added
+- Buffer account for migration
+
+## [0.2.21] - 2024-05-28
+
+### Fixed
+- Worker Account fields types
+
+## [0.2.20] - 2024-05-28
+
+### Fixed
+- Account fields types (Worker and Pool log)
+
 ## [0.2.19] - 2024-05-27
 
 ### Added
