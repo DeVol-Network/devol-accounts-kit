@@ -32,12 +32,15 @@ pub struct PoolsLogAccountV8 {
 impl DevolIndexedAccount for PoolsLogAccountV8 {}
 
 impl DevolAccount for PoolsLogAccountV8 {
+    #[inline(always)]
     fn expected_size() -> usize { POOLS_LOG_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         POOLS_LOG_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         POOLS_LOG_ACCOUNT_VERSION
     }

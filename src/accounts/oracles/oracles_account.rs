@@ -22,12 +22,15 @@ pub struct OraclesAccount {
 
 impl DevolRegularAccount for OraclesAccount {}
 impl DevolAccount for OraclesAccount {
+    #[inline(always)]
     fn expected_size() -> usize { ORACLES_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         ORACLES_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         ORACLES_ACCOUNT_VERSION
     }

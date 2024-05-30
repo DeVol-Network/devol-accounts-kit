@@ -32,12 +32,15 @@ pub struct TradeLogAccount {
 impl DevolIndexedAccount for TradeLogAccount {}
 
 impl DevolAccount for TradeLogAccount {
+    #[inline(always)]
     fn expected_size() -> usize { TRADE_LOG_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         TRADE_LOG_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         TRADE_LOG_ACCOUNT_VERSION
     }

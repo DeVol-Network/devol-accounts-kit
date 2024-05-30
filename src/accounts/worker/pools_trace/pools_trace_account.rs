@@ -25,12 +25,15 @@ pub struct PoolsTraceAccount {
 impl DevolIndexedAccount for PoolsTraceAccount{}
 
 impl DevolAccount for PoolsTraceAccount {
+    #[inline(always)]
     fn expected_size() -> usize { POOLS_TRACE_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         POOLS_TRACE_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         POOLS_TRACE_ACCOUNT_VERSION
     }

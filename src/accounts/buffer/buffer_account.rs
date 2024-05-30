@@ -12,10 +12,13 @@ pub struct BufferAccount {
 }
 
 impl DevolAccount for BufferAccount {
+    #[inline(always)]
     fn expected_size() -> usize { BUFFER_ACCOUNT_MIN_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 { BUFFER_ACCOUNT_TAG }
 
+    #[inline(always)]
     fn expected_version() -> u32 { BUFFER_ACCOUNT_VERSION as u32 }
 }
 
