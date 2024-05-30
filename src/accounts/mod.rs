@@ -10,3 +10,4 @@ pub mod devol_account;
 pub mod devol_indexed_account;
 pub mod devol_regular_account;
 pub mod devol_expandable_size_account;
+pub mod migration;
