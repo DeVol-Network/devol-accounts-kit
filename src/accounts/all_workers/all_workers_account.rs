@@ -23,12 +23,15 @@ pub struct AllWorkersAccount {
 impl DevolRegularAccount for AllWorkersAccount {}
 
 impl DevolAccount for AllWorkersAccount {
+    #[inline(always)]
     fn expected_size() -> usize { ALL_WORKERS_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         ALL_WORKERS_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 { ALL_WORKERS_ACCOUNT_VERSION as u32 }
 }
 

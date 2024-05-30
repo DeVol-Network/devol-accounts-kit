@@ -31,12 +31,15 @@ pub struct TasksLogAccount {
 impl DevolIndexedAccount for TasksLogAccount{}
 
 impl DevolAccount for TasksLogAccount {
+    #[inline(always)]
     fn expected_size() -> usize { TASKS_LOG_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         TASKS_LOG_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         TASKS_LOG_ACCOUNT_VERSION
     }

@@ -23,12 +23,15 @@ pub struct InstrumentsAccount {
 
 impl DevolRegularAccount for InstrumentsAccount {}
 impl DevolAccount for InstrumentsAccount {
+    #[inline(always)]
     fn expected_size() -> usize { INSTR_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         INSTR_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         INSTR_ACCOUNT_VERSION
     }

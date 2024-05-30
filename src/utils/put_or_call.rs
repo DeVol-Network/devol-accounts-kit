@@ -3,6 +3,6 @@ use serde::{Deserialize, Serialize};
 #[repr(u32)]
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 pub enum PutOrCall {
-    PUT = 0,
-    CALL = 1,
+    CALL = 0,
+    PUT = 1,
 }

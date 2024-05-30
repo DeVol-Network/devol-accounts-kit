@@ -74,14 +74,17 @@ impl DevolExpandableSizeAccount for ClientAccount {
     }
 }
 impl DevolAccount for ClientAccount {
+    #[inline(always)]
     fn expected_size() -> usize {
         CLIENT_ACCOUNT_SIZE
     }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         CLIENT_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         CLIENT_ACCOUNT_VERSION as u32
     }

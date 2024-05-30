@@ -26,12 +26,15 @@ pub struct TasksTraceAccount {
 impl DevolIndexedAccount for TasksTraceAccount{}
 
 impl DevolAccount for TasksTraceAccount {
+    #[inline(always)]
     fn expected_size() -> usize { TASKS_TRACE_ACCOUNT_SIZE }
 
+    #[inline(always)]
     fn expected_tag() -> u8 {
         TASKS_TRACE_ACCOUNT_TAG
     }
 
+    #[inline(always)]
     fn expected_version() -> u32 {
         TASKS_TRACE_ACCOUNT_VERSION
     }

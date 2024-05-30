@@ -14,11 +14,11 @@ pub struct PoolsLog {
     pub trade_time: i64,            // 8 bytes
     pub counter: u64,               // 8 bytes
     // Pool ID - number of the pool since the task started
-    pub pool_id: i32,               // 4 bytes (1/2 align)
-    pub instrument_id: i32,         // 4 bytes (2/2 align)
-    pub task_id: i32,               // 4 bytes (1/2 align)
+    pub pool_id: u32,               // 4 bytes (1/2 align)
+    pub instrument_id: u32,         // 4 bytes (2/2 align)
+    pub task_id: u32,               // 4 bytes (1/2 align)
     // Fractions allow representing non-integer quantities with precision. Fractions 100 mean 0.01 minimum quantity.
-    pub fractions: i32,             // 4 bytes (2/2 align)
+    pub fractions: u32,             // 4 bytes (2/2 align)
     // -- Trade params --
     // Public key of the client who made the trade
     pub pubkey: Pubkey,             // 32 bytes
