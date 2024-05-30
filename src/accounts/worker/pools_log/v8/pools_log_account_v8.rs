@@ -1,7 +1,7 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::worker::pools_log::pool_log::PoolsLogV8;
+use crate::accounts::worker::pools_log::v8::pool_log_v8::PoolsLogV8;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const POOLS_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;

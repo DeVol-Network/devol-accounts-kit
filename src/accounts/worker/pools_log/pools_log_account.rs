@@ -4,20 +4,20 @@ use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pools_log::pool_log::PoolsLog;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
-pub const POOLS_LOG_ACCOUNT_SIZE: usize = 0;
+pub const POOLS_LOG_ACCOUNT_SIZE: usize = 335928;
 pub const POOLS_LOG_ACCOUNT_TAG: u8 = 6;
 pub const POOLS_LOG_ACCOUNT_VERSION: u32 = 9;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
+// Pools log account. Alignment - 64 bit.
 pub struct PoolsLogAccount {
-    // 40 bytes, AccountHeader
-    pub header: AccountHeader,
-    pub worker_id: u32,
-    pub last_pool_id: u32,
-    pub pools_count: u32,
-    reserved: u32, // Reserved to fit the alignment 64 bit
-    pub data: [PoolsLog; POOLS_LOG_BUFFER_CAPACITY],
+    pub header: AccountHeader,  // 40 bytes
+    pub worker_id: u32,         // 4 bytes (1/2 align)
+    pub last_pool_id: u32,      // 4 bytes (2/2 align)
+    pub pools_count: u32,       // 4 bytes (1/2 align)
+    reserved: u32,              // 4 bytes (2/2 align)
+    pub data: [PoolsLog; POOLS_LOG_BUFFER_CAPACITY], // 1312x256=335872 bytes
 }
 
 impl DevolIndexedAccount for PoolsLogAccount {}
@@ -50,6 +50,7 @@ impl Default for PoolsLogAccount {
 
 #[cfg(test)]
 mod tests {
+    use crate::utils::type_size_helper::align_size;
     use super::*;
 
     #[test]
@@ -64,6 +65,8 @@ mod tests {
         );
 
         // checking total size
-        assert_eq!(std::mem::size_of::<PoolsLogAccount>(), POOLS_LOG_ACCOUNT_SIZE);
+        let real_size = std::mem::size_of::<PoolsLogAccount>();
+        assert_eq!(real_size, POOLS_LOG_ACCOUNT_SIZE);
+        assert_eq!(real_size, align_size(real_size, 8));
     }
 }

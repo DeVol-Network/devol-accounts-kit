@@ -2,34 +2,36 @@ use solana_program::pubkey::Pubkey;
 use crate::accounts::worker::pools_log::basket::Basket;
 use crate::constants::{BUCKETS_COUNT, VANILLA_COST_SIZE};
 
+pub const POOLS_LOG_SIZE: usize = 1312;
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 // Structure to save pool data for a trade. Alignment - 64 bit.
 pub struct PoolsLog {
     // -- Worker params --
     // Log index in the pool logs array
-    pub log_id: i64,
-    pub trade_time: i64,
-    pub counter: u64,
+    pub log_id: i64,                // 8 bytes
+    pub trade_time: i64,            // 8 bytes
+    pub counter: u64,               // 8 bytes
     // Pool ID - number of the pool since the task started
-    pub pool_id: i32,
-    pub instrument_id: i32,
-    pub task_id: i32,
+    pub pool_id: i32,               // 4 bytes (1/2 align)
+    pub instrument_id: i32,         // 4 bytes (2/2 align)
+    pub task_id: i32,               // 4 bytes (1/2 align)
     // Fractions allow representing non-integer quantities with precision. Fractions 100 mean 0.01 minimum quantity.
-    pub fractions: i32,
+    pub fractions: i32,             // 4 bytes (2/2 align)
     // -- Trade params --
     // Public key of the client who made the trade
-    pub pubkey: Pubkey,
+    pub pubkey: Pubkey,             // 32 bytes
     // Total cost of the trade
-    pub cost: i64,
+    pub cost: i64,                  // 8 bytes
     // Quantity (fractions) by buckets
-    pub trade_quantity: [i32; BUCKETS_COUNT], // Unaligned - need a 32bit variable near
-    reserved: i32,
+    pub trade_quantity: [i32; BUCKETS_COUNT], // 380 bytes (1/2 align)
+    reserved: i32,                  // 4 bytes (2/2 align)
     // Price distribution for the trade
-    pub price_distribution: [i64; BUCKETS_COUNT],
+    pub price_distribution: [i64; BUCKETS_COUNT],   // 760 bytes
     // Prices for the basket
-    pub vanilla_cost: [i64; VANILLA_COST_SIZE],
-    pub traded_basket: Basket,
+    pub vanilla_cost: [i64; VANILLA_COST_SIZE],     // 32 bytes
+    pub traded_basket: Basket,      // 56 bytes
     // pub event_type: i32, // Used nowhere?
 }
 
@@ -66,6 +68,7 @@ mod tests {
     #[test]
     fn test_pools_log_offsets() {
         let real_size = std::mem::size_of::<PoolsLog>();
+        assert_eq!(real_size, POOLS_LOG_SIZE);
         assert_eq!(real_size, align_size(real_size, 8));
     }
 }
