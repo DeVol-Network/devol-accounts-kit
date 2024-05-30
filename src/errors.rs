@@ -157,8 +157,12 @@ pub enum ContractError {
     InsufficientBalance         = 0x004A,
     #[error("Attempted to invoke a non-existent smart contract instruction; check the instruction number")]
     InvalidInstruction          = 0x004B,
-    #[error("Not implemented")]
-    NotImplemented              = 0x004C,
+    #[error("Migration is not implemented for this account or version, please check SDK")]
+    MigrationNotImplemented     = 0x004C,
+    #[error("Current version of the migrating account doesn't match, please check SDK")]
+    InvalidOldMigrationVersion  = 0x004D,
+    #[error("New version of the migrating account doesn't match, please check SDK")]
+    InvalidNewMigrationVersion  = 0x004E,
     // ↑ *** Add new errors above *** ↑
     #[error("Unknown error code, please update SDK version to get detailed message")]
     UnknownError          = 0xFFFF,
@@ -192,6 +196,7 @@ pub enum AccountTag {
     KycAdmin            = 0x13,   // Connected KYC admin wallet
     ClientToken         = 0x14,
     ProgramToken        = 0x15,
+    Buffer              = 0x16,
     // ↑ *** Add new account tags above *** ↑
     AccountDecodeError  = 0xFF, // Unknown account code
 }
