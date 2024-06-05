@@ -1,5 +1,5 @@
 use solana_program::pubkey::Pubkey;
-use crate::accounts::worker::pools_log::basket::Basket;
+use crate::accounts::worker::pools_log::pool_basket::PoolBasket;
 use crate::constants::{BUCKETS_COUNT, VANILLA_COST_SIZE};
 
 pub const POOLS_LOG_SIZE: usize = 1312;
@@ -31,7 +31,7 @@ pub struct PoolsLog {
     pub price_distribution: [i64; BUCKETS_COUNT],   // 760 bytes
     // Prices for the basket
     pub vanilla_cost: [i64; VANILLA_COST_SIZE],     // 32 bytes
-    pub traded_basket: Basket,      // 56 bytes
+    pub traded_basket: PoolBasket,      // 56 bytes
     // pub event_type: i32, // Used nowhere?
 }
 
@@ -53,7 +53,7 @@ impl Default for PoolsLog {
             price_distribution: [0; BUCKETS_COUNT],
             trade_quantity: [0; BUCKETS_COUNT],
             vanilla_cost: [0; VANILLA_COST_SIZE],
-            traded_basket: Basket::default(),
+            traded_basket: PoolBasket::default(),
             reserved: 0,
         }
     }

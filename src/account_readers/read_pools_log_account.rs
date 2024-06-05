@@ -37,7 +37,7 @@ impl DvlReadable for PoolsLogAccount {
     }
 }
 
-// #[cfg(not(feature = "pools_log_migration"))]
+#[cfg(not(feature = "pools_log_migration"))]
 #[cfg(test)]
 mod tests {
     use std::{env, fs};

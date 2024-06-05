@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use crate::utils::put_or_call::PutOrCall;
 
+pub const POOL_BASKET_LENGTH: usize = 20;
 pub const BASKET_DATA_SIZE: usize = 12;
 
 // Traded basket element. 32bit alignment. Size - 12 bytes.
@@ -11,12 +11,10 @@ pub struct BasketData {
     pub amount: i32,            // 4 bytes
 }
 
-#[cfg(test)]
 impl Default for BasketData {
     fn default() -> Self {
         Self {
-            strike: 0,
-            put_or_call: PutOrCall::PUT,
+            strike: [0; 8],
             amount: 0,
         }
     }
