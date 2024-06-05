@@ -7,11 +7,11 @@ pub const BASKET_DATA_SIZE: usize = 12;
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
 pub struct BasketData {
-    pub strike: u32,            // 4 bytes
-    pub put_or_call: PutOrCall, // 4 bytes
+    pub strike: [u8; 8],        // 8 bytes
     pub amount: i32,            // 4 bytes
 }
 
+#[cfg(test)]
 impl Default for BasketData {
     fn default() -> Self {
         Self {

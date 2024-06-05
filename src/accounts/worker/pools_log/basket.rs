@@ -1,19 +1,18 @@
 use serde::{Deserialize, Serialize};
+use crate::accounts::worker::pools_log::basket_data::BasketData;
 use crate::instructions_data::option_trade::{INSTR_OPTION_TRADE_MAX_BASKET_LENGTH};
-use crate::utils::basket_data::BasketData;
 
 pub const BASKET_SIZE: usize = 56;
 
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
-// Traded basket. 32bit fields, 64bits alignment support
+// Traded basket. 32bit fields, 64bits alignment support. Size - 56 bytes.
 pub struct Basket {
     pub length: i32,    // 4 bytes
     reserved: i32,      // 4 bytes, reserved to fit 64bit alignment
     pub basket_elements: [BasketData; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH], // 12x4=48 bytes
 }
 
-#[cfg(test)]
 impl Default for Basket {
     fn default() -> Self {
         Self {

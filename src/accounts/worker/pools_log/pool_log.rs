@@ -6,7 +6,7 @@ pub const POOLS_LOG_SIZE: usize = 1312;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-// Structure to save pool data for a trade. Alignment - 64 bit.
+// Structure to save pool data for a trade. Alignment - 64 bit. Size - 1312 bytes.
 pub struct PoolsLog {
     // -- Worker params --
     // Log index in the pool logs array
@@ -38,7 +38,6 @@ pub struct PoolsLog {
 impl PoolsLog {
 }
 
-#[cfg(test)]
 impl Default for PoolsLog {
     fn default() -> Self {
         Self {

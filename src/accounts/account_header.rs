@@ -8,7 +8,6 @@ pub struct AccountHeader {
     pub root: Pubkey,
 } // 40 bytes
 
-#[cfg(test)]
 impl Default for AccountHeader {
     fn default() -> Self {
         Self {

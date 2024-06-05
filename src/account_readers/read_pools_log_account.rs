@@ -18,7 +18,6 @@ impl DvlReadable for PoolsLogAccount {
         let workers_account = dvl_client.get_account::<AllWorkersAccount>(()).await?;
         let worker = workers_account.workers[params.id as usize];
         Ok(Box::from(worker.pools_log_address))
-
     }
 
     async fn read<'a>(
@@ -38,12 +37,15 @@ impl DvlReadable for PoolsLogAccount {
     }
 }
 
-#[cfg(not(feature = "pools_log_migration"))]
+// #[cfg(not(feature = "pools_log_migration"))]
 #[cfg(test)]
 mod tests {
+    use std::{env, fs};
     use super::*;
     use crate::tests::tests::setup_devol_client;
     use std::error::Error;
+    use std::fs::File;
+    use std::io::prelude::*;
 
     #[tokio::test]
     async fn test_read_pools_log_account_by_index() -> Result<(), Box<dyn Error>> {
@@ -58,6 +60,23 @@ mod tests {
         let workers_account = client.get_account::<AllWorkersAccount>(()).await?;
         let pubkey = &workers_account.workers[0].pools_log_address;
         let _pool_log_0 = client.get_account_by_public_key::<PoolsLogAccount>(pubkey).await?;
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_read_account() -> Result<(), Box<dyn Error>> {
+        let dvl_client = setup_devol_client();
+        let workers_account = dvl_client.get_account::<AllWorkersAccount>(()).await?;
+        let current_dir = env::current_dir().unwrap();
+        let pools_backup_dir = format!("{}/backup/new_impact_smart_contract/pools_log", current_dir.display());
+        fs::create_dir_all(&pools_backup_dir)?;
+        for i in 0..=7 {
+            let pubkey = &workers_account.workers[0].pools_log_address;
+            let _pool_log = dvl_client.rpc_client.get_account(pubkey).await?;
+            let file_name = format!("{}/pool_log_{}.bin", pools_backup_dir, i);
+            let mut file = File::create(file_name).expect("Unable to create file");
+            file.write_all(&_pool_log.data).expect("Unable to write data");
+        }
         Ok(())
     }
 }
