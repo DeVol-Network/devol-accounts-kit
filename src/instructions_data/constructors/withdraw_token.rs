@@ -1,15 +1,15 @@
 use std::error::Error;
+use crate::constants::FD;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
 use crate::instructions_data::withdraw_token::{INSTRUCTION_WITHDRAW_TOKEN_VERSION, InstructionWithdrawToken};
 
 pub struct WithdrawTokenParams {
     pub mint_id: u32,
-    pub amount: u64,
+    pub amount: f64,
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionWithdrawToken {
-
     type DvlInstrParams = WithdrawTokenParams;
 
     fn new(params: Self::DvlInstrParams) -> Result<Box<InstructionWithdrawToken>, Box<dyn Error>> {
@@ -18,7 +18,7 @@ impl<'a> DvlInstructionData<'a> for InstructionWithdrawToken {
             version: INSTRUCTION_WITHDRAW_TOKEN_VERSION,
             reserved: [0; 2],
             mint_id: params.mint_id,
-            amount: params.amount,
+            amount: (params.amount * FD) as u64,
         }))
     }
 }
@@ -31,7 +31,7 @@ mod tests {
     #[test]
     fn test_instruction_withdraw_token_params() {
         const TEST_MINT_ID: u32 = 1;
-        const TEST_AMOUNT: u64 = 2;
+        const TEST_AMOUNT: f64 = 2.;
 
         let withdraw_token_params = WithdrawTokenParams {
             mint_id: TEST_MINT_ID,

@@ -1,11 +1,12 @@
 use std::error::Error;
+use crate::constants::FD;
 use crate::instructions_data::dvl_instruction_data::DvlInstructionData;
 use crate::instructions_data::instructions::Instructions;
 use crate::instructions_data::transfer_token::{INSTRUCTION_TRANSFER_TOKEN_VERSION, InstructionTransferToken};
 
 pub struct TransferTokenParams {
     pub mint_id: u32,
-    pub amount: u64,
+    pub amount: f64,
 }
 
 impl<'a> DvlInstructionData<'a> for InstructionTransferToken {
@@ -17,7 +18,7 @@ impl<'a> DvlInstructionData<'a> for InstructionTransferToken {
             version: INSTRUCTION_TRANSFER_TOKEN_VERSION,
             reserved: [0; 2],
             mint_id: params.mint_id,
-            amount: params.amount,
+            amount: (params.amount * FD) as u64,
         }))
     }
 }
@@ -30,7 +31,7 @@ mod tests {
     #[test]
     fn test_instruction_transfer_token_params() {
         const TEST_MINT_ID: u32 = 1;
-        const TEST_AMOUNT: u64 = 2;
+        const TEST_AMOUNT: f64 = 2.;
 
         let withdraw_token_params = TransferTokenParams {
             mint_id: TEST_MINT_ID,

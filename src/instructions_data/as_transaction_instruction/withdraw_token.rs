@@ -16,6 +16,7 @@ use crate::instructions_data::withdraw_token::InstructionWithdrawToken;
 pub struct WithdrawTokenTransactionParams {
     pub mint_id: u32,
     pub client_key: Pubkey,
+    pub client_key_pda: Pubkey,
 }
 
 #[async_trait]
@@ -33,15 +34,16 @@ impl AsTransactionInstruction for InstructionWithdrawToken {
         let root_acc_key = client.account_public_key::<RootAccount>(()).await?;
         let mint_acc_key = client.account_public_key::<MintsAccount>(()).await?;
         let mints_acc = client.get_account::<MintsAccount>(()).await?;
-        let mints_program_acc_key = mints_acc.data[transaction_params.mint_id as usize].program_address;
-        let mints_address_acc_key = mints_acc.data[transaction_params.mint_id as usize].address;
-        let client_acc_key = transaction_params.client_key;
+        let client_acc_key = transaction_params.client_key_pda;
+        let client_acc_key_for_token_temp = transaction_params.client_key;
+        let mint_program_acc_key = mints_acc.data[transaction_params.mint_id as usize].program_address;
+        let mint_address_acc_key = mints_acc.data[transaction_params.mint_id as usize].address;
         let log_acc_key = client.account_public_key::<MintLogAccount>(DvlIndexParam { id: transaction_params.mint_id }).await?;
-        let pda = Pubkey::create_program_address(
-            &["devol".as_bytes()],
-            &client.program_id,
-        )?;
         let token_program_id_key = Pubkey::from_str(TOKEN_PROGRAM_ID)?;
+        let associated_token_account = Pubkey::from_str("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")?;
+        let (mint_token_account, _) = Pubkey::find_program_address(&[&client_acc_key_for_token_temp.to_bytes(), &token_program_id_key.to_bytes(), &mint_address_acc_key.to_bytes()], &associated_token_account);
+        let pda = Pubkey::from_str("4FavFtbrPWvRj65xLtH9Nd9GWSVvyWgPXzCVRBtScA81")?;
+
 
         let account_metas = Vec::from([
             AccountMeta {
@@ -50,19 +52,24 @@ impl AsTransactionInstruction for InstructionWithdrawToken {
                 is_writable: false,
             },
             AccountMeta {
-                pubkey: *root_acc_key,
+                pubkey: mint_token_account,
                 is_signer: false,
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: mints_program_acc_key,
+                pubkey: mint_program_acc_key,
                 is_signer: false,
                 is_writable: true,
+            },
+            AccountMeta {
+                pubkey: *root_acc_key,
+                is_signer: false,
+                is_writable: false,
             },
             AccountMeta {
                 pubkey: *mint_acc_key,
                 is_signer: false,
-                is_writable: false,
+                is_writable: true,
             },
             AccountMeta {
                 pubkey: token_program_id_key,
@@ -85,11 +92,13 @@ impl AsTransactionInstruction for InstructionWithdrawToken {
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: mints_address_acc_key,
+                pubkey: mint_address_acc_key,
                 is_signer: false,
-                is_writable: true,
+                is_writable: false,
             },
         ]);
+
+
         Ok(Box::from(Instruction::new_with_bytes(
             client.program_id,
             &*data,

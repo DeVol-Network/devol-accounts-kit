@@ -85,7 +85,7 @@ impl DvlClient {
 
         for i in 0..retries {
             let latest_blockhash = self.rpc_client.get_latest_blockhash_with_commitment(
-                CommitmentConfig{commitment: CommitmentLevel::Finalized}
+                CommitmentConfig { commitment: CommitmentLevel::Finalized }
             ).await.map_err(|e| Box::new(e) as Box<dyn Error>)?.0;
             let mut new_transaction = Transaction::new_with_payer(&params.instructions, Some(&params.signer));
             (params.signer_fn)(&mut new_transaction, latest_blockhash)?;
