@@ -163,6 +163,8 @@ pub enum ContractError {
     InvalidOldMigrationVersion  = 0x004D,
     #[error("New version of the migrating account doesn't match, please check SDK")]
     InvalidNewMigrationVersion  = 0x004E,
+    #[error("Migration is not successful, please check SDK")]
+    MigrationFailed             = 0x004F,
     // ↑ *** Add new errors above *** ↑
     #[error("Unknown error code, please update SDK version to get detailed message")]
     UnknownError          = 0xFFFF,

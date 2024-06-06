@@ -7,8 +7,16 @@ pub const BASKET_DATA_SIZE: usize = 12;
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
 pub struct BasketData {
-    pub strike: [u8; 8],        // 8 bytes
+    strike: [u8; 8],        // 8 bytes
     pub amount: i32,            // 4 bytes
+}
+
+impl BasketData {
+    #[inline(always)]
+    pub fn get_strike(&self) -> i64 { i64::from_ne_bytes(self.strike) }
+
+    #[inline(always)]
+    pub fn set_strike(&mut self, value: i64) { self.strike = value.to_ne_bytes() }
 }
 
 impl Default for BasketData {
