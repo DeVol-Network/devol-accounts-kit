@@ -165,6 +165,9 @@ pub enum ContractError {
     InvalidNewMigrationVersion  = 0x004E,
     #[error("Migration is not successful, please check SDK")]
     MigrationFailed             = 0x004F,
+
+    #[error("Test abort")]
+    TestAbort                   = 0xFFFE,
     // ↑ *** Add new errors above *** ↑
     #[error("Unknown error code, please update SDK version to get detailed message")]
     UnknownError          = 0xFFFF,
