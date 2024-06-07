@@ -13,7 +13,6 @@ pub struct PoolsLog {
     pub worker_operations_count: u64,   // 8 bytes
     // Saves option trades count for the worker
     pub pool_trades_count: u64,         // 8 bytes
-    pub trade_time: i64,                // 8 bytes
     // Pool ID - number of the pool since the task started
     pub pool_id: u32,                   // 4 bytes (1/2 align)
     pub instrument_id: u32,             // 4 bytes (2/2 align)
@@ -21,6 +20,7 @@ pub struct PoolsLog {
     // Fractions allow representing non-integer quantities with precision. Fractions 100 mean 0.01 minimum quantity.
     pub fractions: u32,                 // 4 bytes (2/2 align)
     // -- Trade params --
+    pub trade_time: i64,                // 8 bytes
     // Public key of the client who made the trade
     pub client_pubkey: Pubkey,          // 32 bytes
     // Total cost of the trade
@@ -31,7 +31,6 @@ pub struct PoolsLog {
     // Price distribution for the trade
     pub price_distribution: [i64; BUCKETS_COUNT],   // 760 bytes
     // Prices for the basket
-    pub vanilla_cost: [i64; VANILLA_COST_SIZE],     // 32 bytes
     pub traded_basket: PoolBasket,      // 56 bytes
     // pub event_type: i32, // Used nowhere?
 }
