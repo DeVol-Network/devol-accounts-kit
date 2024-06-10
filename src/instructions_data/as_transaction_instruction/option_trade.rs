@@ -8,7 +8,7 @@ use crate::accounts::client::client_account::client_account::ClientAccount;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::oracles::oracles_account::OraclesAccount;
 use crate::accounts::root::root_account::RootAccount;
-use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
+use crate::accounts::worker::pool_logs::pool_logs_account::PoolLogsAccount;
 use crate::accounts::worker::pools_trace::pools_trace_account::PoolsTraceAccount;
 use crate::accounts::worker::tasks_trace::tasks_trace_account::TasksTraceAccount;
 use crate::accounts::worker::worker_account::WorkerAccount;
@@ -42,7 +42,7 @@ impl AsTransactionInstruction for InstructionOptionTrade {
         let worker_acc_key = client.account_public_key::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
         let pools_trace_key = client.account_public_key::<PoolsTraceAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
         let tasks_trace_key = client.account_public_key::<TasksTraceAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
-        let pools_log_key = client.account_public_key::<PoolsLogAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
+        let pools_log_key = client.account_public_key::<PoolLogsAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
         let worker_account = client.get_account::<WorkerAccount>(DvlIndexParam { id: transaction_params.worker_id }).await?;
         let instr_id = worker_account.instr_id;
         let instrument_account = client.get_account::<InstrumentsAccount>(()).await?;

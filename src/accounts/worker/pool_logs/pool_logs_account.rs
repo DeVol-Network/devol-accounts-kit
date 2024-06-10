@@ -1,7 +1,7 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::worker::pools_log::pool_log::PoolsLog;
+use crate::accounts::worker::pool_logs::pool_log_record::PoolLogRecord;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const POOLS_LOG_ACCOUNT_SIZE: usize = 335928;
@@ -11,18 +11,18 @@ pub const POOLS_LOG_ACCOUNT_VERSION: u32 = 9;
 #[repr(C)]
 #[derive(Clone, Copy)]
 // Pools log account. Alignment - 64 bit.
-pub struct PoolsLogAccount {
+pub struct PoolLogsAccount {
     pub header: AccountHeader,  // 40 bytes
-    pub worker_id: u32,         // 4 bytes (1/2 align)
-    pub last_pool_id: u32,      // 4 bytes (2/2 align)
-    pub pools_count: u32,       // 4 bytes (1/2 align)
-    reserved: u32,              // 4 bytes (2/2 align)
-    pub data: [PoolsLog; POOLS_LOG_BUFFER_CAPACITY], // 1312x256=335872 bytes
+    pub worker_id: u32,         // 4 bytes (4/8 align)
+    pub last_pool_id: u32,      // 4 bytes (8/8 align)
+    pub pools_count: u32,       // 4 bytes (4/8 align)
+    reserved: u32,              // 4 bytes (8/8 align)
+    pub data: [PoolLogRecord; POOLS_LOG_BUFFER_CAPACITY], // 1320x256=??? bytes
 }
 
-impl DevolIndexedAccount for PoolsLogAccount {}
+impl DevolIndexedAccount for PoolLogsAccount {}
 
-impl DevolAccount for PoolsLogAccount {
+impl DevolAccount for PoolLogsAccount {
     #[inline(always)]
     fn expected_size() -> usize { POOLS_LOG_ACCOUNT_SIZE }
 
@@ -37,7 +37,7 @@ impl DevolAccount for PoolsLogAccount {
     }
 }
 
-impl Default for PoolsLogAccount {
+impl Default for PoolLogsAccount {
     fn default() -> Self {
         Self {
             header: AccountHeader::default(),
@@ -45,7 +45,7 @@ impl Default for PoolsLogAccount {
             last_pool_id: 0,
             pools_count: 0,
             reserved: 0,
-            data: [PoolsLog::default(); POOLS_LOG_BUFFER_CAPACITY],
+            data: [PoolLogRecord::default(); POOLS_LOG_BUFFER_CAPACITY],
         }
     }
 }
@@ -57,7 +57,7 @@ mod tests {
 
     #[test]
     fn test_pools_log_account_offsets() {
-        let account = PoolsLogAccount::default();
+        let account = PoolLogsAccount::default();
         let base_ptr = &account as *const _ as usize;
 
         // checking fields size and offset
@@ -67,7 +67,7 @@ mod tests {
         );
 
         // checking total size
-        let real_size = std::mem::size_of::<PoolsLogAccount>();
+        let real_size = std::mem::size_of::<PoolLogsAccount>();
         assert_eq!(real_size, POOLS_LOG_ACCOUNT_SIZE);
         assert_eq!(real_size, align_size(real_size, 8));
     }

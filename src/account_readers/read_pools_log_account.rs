@@ -5,10 +5,10 @@ use crate::dvl_client::dvl_client::DvlClient;
 use crate::account_readers::dvl_readable::{DvlReadable, DvlIndexParam};
 use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::worker::pools_log::pools_log_account::PoolsLogAccount;
+use crate::accounts::worker::pool_logs::pool_logs_account::PoolLogsAccount;
 
 #[async_trait]
-impl DvlReadable for PoolsLogAccount {
+impl DvlReadable for PoolLogsAccount {
     type DvlReadParams<'a> = DvlIndexParam;
 
     async fn get_public_key<'a>(
@@ -50,7 +50,7 @@ mod tests {
     #[tokio::test]
     async fn test_read_pools_log_account_by_index() -> Result<(), Box<dyn Error>> {
         let client = setup_devol_client();
-        let _pool_log_0 = client.get_account::<PoolsLogAccount>(DvlIndexParam { id: 0 }).await?;
+        let _pool_log_0 = client.get_account::<PoolLogsAccount>(DvlIndexParam { id: 0 }).await?;
         Ok(())
     }
 
@@ -59,7 +59,7 @@ mod tests {
         let client = setup_devol_client();
         let workers_account = client.get_account::<AllWorkersAccount>(()).await?;
         let pubkey = &workers_account.workers[0].pools_log_address;
-        let _pool_log_0 = client.get_account_by_public_key::<PoolsLogAccount>(pubkey).await?;
+        let _pool_log_0 = client.get_account_by_public_key::<PoolLogsAccount>(pubkey).await?;
         Ok(())
     }
 

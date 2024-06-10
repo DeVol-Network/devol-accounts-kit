@@ -1,5 +1,5 @@
 use crate::constants::BUCKETS_COUNT;
-use crate::utils::basket_data::BasketData;
+use crate::utils::basket_data::OptionTradeBasketData;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
 pub const INSTRUCTION_OPTION_TRADE_DATA_SIZE: usize = 440;
@@ -14,7 +14,7 @@ pub struct InstructionOptionTrade {
     pub basket_length: u8,
     pub trade_qty: [i32; BUCKETS_COUNT],
     pub max_cost: i64,
-    pub basket: [BasketData; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH],
+    pub basket: [OptionTradeBasketData; INSTR_OPTION_TRADE_MAX_BASKET_LENGTH],
 }
 
 pub const INSTR_OPTION_TRADE_MAX_BASKET_LENGTH: usize = 4;
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn test_instruction_data_offsets() {
-        assert_eq!(mem::size_of::<BasketData>(), 12);
+        assert_eq!(mem::size_of::<OptionTradeBasketData>(), 12);
 
         let trade_params = OptionTradeParams {
             trade_qty: [0; BUCKETS_COUNT],

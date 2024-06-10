@@ -1,7 +1,7 @@
 use crate::constants::BUCKETS_COUNT;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 use crate::instructions_data::option_trade::{INSTRUCTION_OPTION_TRADE_VERSION, InstructionOptionTrade};
-use crate::utils::basket_data::BasketData;
+use crate::utils::basket_data::OptionTradeBasketData;
 
 pub const INSTRUCTION_OPTION_TRADE_DEBUG_DATA_SIZE: usize = 456;
 
@@ -15,7 +15,7 @@ pub struct InstructionOptionTradeDebug {
 pub struct OptionTradeDebugParams<'a> {
     pub trade_qty: [i32; BUCKETS_COUNT],
     pub max_cost: Option<i64>,
-    pub basket: Option<&'a [BasketData]>,
+    pub basket: Option<&'a [OptionTradeBasketData]>,
     pub time_to_expiration: i64,
     pub underlying_price: i64,
 }
