@@ -29,8 +29,8 @@ pub struct PoolLogRecord {
     pub price_distribution: [i64; BUCKETS_COUNT],   // 760 bytes
     /// Quantity (fractions) by buckets (valid only for the basket page 0)
     pub trade_quantity: [i32; BUCKETS_COUNT], // 380 bytes (4/8 align)
-    basket_page: u16,                   // 2 bytes (6/8 align)
-    basket_pages_count: u16,            // 2 bytes (8/8 align)
+    pub basket_page: u16,                   // 2 bytes (6/8 align)
+    pub basket_pages_count: u16,            // 2 bytes (8/8 align)
     pub traded_basket: PoolRecordBasket,      // 104 bytes
 }
 

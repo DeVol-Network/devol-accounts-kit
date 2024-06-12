@@ -7,8 +7,8 @@ pub const BASKET_DATA_SIZE: usize = 12;
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
 pub struct OptionTradeBasketData {
-    pub strike: u16,            // 2 bytes (2/4 align)
-    pub put_or_call: PutOrCall, // 2 bytes (2/4 align)
+    pub strike: u32,            // 4 bytes
+    pub put_or_call: PutOrCall, // 2 bytes -> 4 bytes align
     pub amount: i32,            // 4 bytes
 }
 
