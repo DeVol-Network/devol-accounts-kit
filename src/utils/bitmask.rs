@@ -21,7 +21,7 @@ impl<T> BitMask<T>
     pub fn get(&self, index: u8) -> bool {
         (self.0 & (T::from(1) << index)) != T::from(0)
     }
-
+    #[allow(dead_code)]
     #[inline(always)]
     fn value(&self) -> T {
         self.0

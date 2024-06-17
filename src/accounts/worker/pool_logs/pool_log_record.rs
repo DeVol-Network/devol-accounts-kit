@@ -2,7 +2,7 @@ use solana_program::pubkey::Pubkey;
 use crate::accounts::worker::pool_logs::pool_basket::PoolRecordBasket;
 use crate::constants::{BUCKETS_COUNT};
 
-pub const POOLS_LOG_SIZE: usize = 1320;
+pub const POOLS_LOG_SIZE: usize = 1328;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -10,28 +10,28 @@ pub const POOLS_LOG_SIZE: usize = 1320;
 pub struct PoolLogRecord {
     // -- Worker params --
     /// Saves count of operations with the worker (including LP and option trades, start task)
-    pub worker_operations_count: u64,   // 8 bytes
+    pub worker_operations_count: u64,    // 8 bytes
     /// Saves option trades count for the worker
-    pub pool_trades_count: u64,         // 8 bytes
+    pub pool_trades_count: u64,          // 8 bytes
     /// Pool ID - number of the pool since the task started
-    pub pool_id: u32,                   // 4 bytes (4/8 align)
-    pub instrument_id: u32,             // 4 bytes (8/8 align)
-    pub task_id: u32,                   // 4 bytes (4/8 align)
+    pub pool_id: u32,                    // 4 bytes (4/8 align)
+    pub instrument_id: u32,              // 4 bytes (8/8 align)
+    pub task_id: u32,                    // 4 bytes (4/8 align)
     /// Fractions allow representing non-integer quantities with precision. Fractions 100 mean 0.01 minimum quantity.
-    pub fractions: u32,                 // 4 bytes (8/8 align)
+    pub fractions: u32,                  // 4 bytes (8/8 align)
     // -- Trade params --
-    pub trade_time: i64,                // 8 bytes
+    pub trade_time: i64,                 // 8 bytes
     /// Public key of the client who made the trade
-    pub client_pubkey: Pubkey,          // 32 bytes
+    pub client_pubkey: Pubkey,           // 32 bytes
     /// Total cost of the trade
-    pub cost: i64,                      // 8 bytes
+    pub cost: i64,                       // 8 bytes
     /// Price distribution for the trade (valid only for the basket page 0)
     pub price_distribution: [i64; BUCKETS_COUNT],   // 760 bytes
     /// Quantity (fractions) by buckets (valid only for the basket page 0)
     pub trade_quantity: [i32; BUCKETS_COUNT], // 380 bytes (4/8 align)
-    pub basket_page: u16,                   // 2 bytes (6/8 align)
-    pub basket_pages_count: u16,            // 2 bytes (8/8 align)
-    pub traded_basket: PoolRecordBasket,      // 104 bytes
+    pub basket_page: u16,                // 2 bytes (6/8 align)
+    pub basket_pages_count: u16,         // 2 bytes (8/8 align)
+    pub traded_basket: PoolRecordBasket, // 104 bytes
 }
 
 impl PoolLogRecord {

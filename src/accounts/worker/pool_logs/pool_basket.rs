@@ -6,7 +6,7 @@ pub const POOL_RECORD_BASKET_LENGTH: usize = 4;
 
 #[derive(Copy, Clone, PartialOrd, PartialEq, Debug, Serialize, Deserialize)]
 #[repr(C)]
-// Traded basket. 32bit fields, 64bits alignment support. Size - 56 bytes.
+// Traded basket. 32bit fields, 64bits alignment support. Size - 104 bytes.
 pub struct PoolRecordBasket {
     pub length: i64,                    // 8 bytes
     pub basket_elements: [PoolRecordBasketData; POOL_RECORD_BASKET_LENGTH], // 24x4=96 bytes

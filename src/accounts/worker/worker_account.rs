@@ -196,24 +196,10 @@ impl DevolAccount for WorkerAccount {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::mem;
+impl Default for WorkerAccount {
+    fn default() -> Self {
+        Self {
 
-    impl Band {
-        pub fn new(depo: i64, px: i64, loan: i64, prop: i64) -> Self {
-            Band { depo, px, loan, prop }
-        }
-    }
-
-    #[test]
-    fn test_worker_account_offsets() {
-        let band_array: [Band; BUCKETS_COUNT] = [Band::new(0, 0, 0, 0); BUCKETS_COUNT];
-        let bounds_array: [i64; BOUNDS_COUNT] = [0; BOUNDS_COUNT];
-        let strikes_array: [i64; BUCKETS_COUNT] = [0; BUCKETS_COUNT];
-
-        let account = WorkerAccount {
             header: AccountHeader::default(),
             id: 0,
             state: WorkerState::Unassigned,
@@ -256,9 +242,9 @@ mod tests {
             pool_depo: 0,
             pool_fees: 0,
             pool_counter: 0,
-            pool_strikes: strikes_array,
-            pool_bounds: bounds_array,
-            pool_distrib: band_array,
+            pool_strikes: [0; BUCKETS_COUNT],
+            pool_bounds: [0; BOUNDS_COUNT],
+            pool_distrib: [Band{depo: 0, loan: 0, prop: 0, px: 0}; BUCKETS_COUNT],
             svm_params: SvmParams { psi: 0.0, p: 0.0, c: 0.0, vt: 0.0, v: 0.0 },
             margin_vega: 0,
             margin_vanna: 0,
@@ -268,7 +254,25 @@ mod tests {
             range_lr: 0,
             w_lr: 0,
             perm_impact: 0.0,
-        };
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::mem;
+
+    impl Band {
+        pub fn new(depo: i64, px: i64, loan: i64, prop: i64) -> Self {
+            Band { depo, px, loan, prop }
+        }
+    }
+
+    #[test]
+    fn test_worker_account_offsets() {
+
+        let account = WorkerAccount::default();
 
         let base_ptr = &account as *const _ as usize;
         // checking fields size

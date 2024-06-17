@@ -4,7 +4,7 @@ use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pool_logs::pool_log_record::PoolLogRecord;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
-pub const POOLS_LOG_ACCOUNT_SIZE: usize = 335928;
+pub const POOLS_LOG_ACCOUNT_SIZE: usize = 340024;
 pub const POOLS_LOG_ACCOUNT_TAG: u8 = 6;
 pub const POOLS_LOG_ACCOUNT_VERSION: u32 = 9;
 
@@ -17,7 +17,7 @@ pub struct PoolLogsAccount {
     pub last_pool_id: u32,      // 4 bytes (8/8 align)
     pub pools_count: u32,       // 4 bytes (4/8 align)
     reserved: u32,              // 4 bytes (8/8 align)
-    pub data: [PoolLogRecord; POOLS_LOG_BUFFER_CAPACITY], // 1320x256=??? bytes
+    pub pool_log_records: [PoolLogRecord; POOLS_LOG_BUFFER_CAPACITY], // 1328x256=339968 bytes
 }
 
 impl DevolIndexedAccount for PoolLogsAccount {}
@@ -45,7 +45,7 @@ impl Default for PoolLogsAccount {
             last_pool_id: 0,
             pools_count: 0,
             reserved: 0,
-            data: [PoolLogRecord::default(); POOLS_LOG_BUFFER_CAPACITY],
+            pool_log_records: [PoolLogRecord::default(); POOLS_LOG_BUFFER_CAPACITY],
         }
     }
 }

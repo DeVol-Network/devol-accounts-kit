@@ -7,7 +7,6 @@ use crate::accounts::all_workers::all_workers_account::AllWorkersAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
 use crate::accounts::worker::pool_logs::pool_logs_account::PoolLogsAccount;
 use crate::accounts::worker::pool_logs::v8::pools_log_account_v8::PoolLogsAccountV8;
-use crate::accounts::worker::pool_logs::v9::pools_log_account_v9::PoolLogsAccountV9;
 
 macro_rules! impl_dvl_readable {
     ($($struct_name:ty),+) => {
@@ -56,6 +55,7 @@ mod tests {
     use std::fs::File;
     use std::io::prelude::*;
     use crate::accounts::worker::pool_logs::v8::pools_log_account_v8::PoolLogsAccountV8;
+    use crate::accounts::worker::pool_logs::v9::pools_log_account_v9::PoolLogsAccountV9;
 
     #[cfg(not(feature = "pools_log_migration"))]
     #[tokio::test]
@@ -100,15 +100,15 @@ mod tests {
         println!("worker: {}", _pool_log_0.worker_id);
         println!("count: {}", _pool_log_0.pools_count);
         for i in 0..5 {
-            println!("#{} pool id: {}", i, _pool_log_0.data[i].pool_id);
-            println!("#{} client pubkey: {}", i, _pool_log_0.data[i].client_pubkey);
-            println!("#{} time: {:?}", i, _pool_log_0.data[i].trade_time);
+            println!("#{} pool id: {}", i, _pool_log_0.pool_log_records[i].pool_id);
+            println!("#{} client pubkey: {}", i, _pool_log_0.pool_log_records[i].client_pubkey);
+            println!("#{} time: {:?}", i, _pool_log_0.pool_log_records[i].trade_time);
         }
         {
             let i = (_pool_log_0.pools_count - 1) as usize;
-            println!("#{} pool id: {}", i, _pool_log_0.data[i].pool_id);
-            println!("#{} client pubkey: {}", i, _pool_log_0.data[i].client_pubkey);
-            println!("#{} time: {:?}", i, _pool_log_0.data[i].trade_time);
+            println!("#{} pool id: {}", i, _pool_log_0.pool_log_records[i].pool_id);
+            println!("#{} client pubkey: {}", i, _pool_log_0.pool_log_records[i].client_pubkey);
+            println!("#{} time: {:?}", i, _pool_log_0.pool_log_records[i].trade_time);
         }
         Ok(())
     }

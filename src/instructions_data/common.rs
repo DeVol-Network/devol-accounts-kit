@@ -1,0 +1,3 @@
+
+pub const INSTRUCTION_SIZE_LIMIT: usize = 1232;
+pub const INSTRUCTION_ACCOUNT_INFO_REF_SIZE: usize = 32;
