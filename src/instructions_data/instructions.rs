@@ -9,4 +9,5 @@ pub enum Instructions {
     FinPool = 130,
     StartNextPool = 132,
     OptionTradeDebug = 143,
+    MigrateAccount = 201,
 }

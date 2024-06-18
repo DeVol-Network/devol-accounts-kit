@@ -11,6 +11,7 @@ pub mod payoff;
 pub mod as_transaction_instruction_on_chain;
 pub mod dvl_deserializable_instruction;
 pub mod common;
+pub mod migrate_account_instruction_data;
 
 cfg_if::cfg_if! {
     if #[cfg(not(feature = "on-chain"))] {

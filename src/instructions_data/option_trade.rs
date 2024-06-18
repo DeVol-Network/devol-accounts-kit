@@ -1,5 +1,5 @@
 use crate::constants::BUCKETS_COUNT;
-use crate::instructions_data::common::INSTRUCTION_ACCOUNT_INFO_REF_SIZE;
+use crate::instructions_data::common::instruction_size_params::INSTRUCTION_ACCOUNT_INFO_REF_SIZE;
 use crate::utils::option_trade_basket_data::OptionTradeBasketData;
 use crate::instructions_data::dvl_deserializable_instruction::DvlDeserializableInstruction;
 
@@ -8,7 +8,7 @@ pub const INSTRUCTION_OPTION_TRADE_MAX_BASKET_LENGTH: usize = 30;
 pub const INSTRUCTION_OPTION_TRADE_ACCOUNTS_NUMBER: usize = 16;
 pub const INSTRUCTION_OPTION_TRADE_ACCOUNTS_SIZE: usize =
     INSTRUCTION_ACCOUNT_INFO_REF_SIZE * INSTRUCTION_OPTION_TRADE_ACCOUNTS_NUMBER;
-pub const INSTRUCTION_OPTION_TRADE_VERSION: u8 = 2;
+pub const INSTRUCTION_OPTION_TRADE_VERSION: u8 = 3;
 pub const DEFAULT_OPTION_TRADE_MAX_COST: i64 = -1_000_000_000;
 
 #[repr(C)]
@@ -36,7 +36,7 @@ impl<'a> DvlDeserializableInstruction<'a> for InstructionOptionTrade {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions_data::common::INSTRUCTION_SIZE_LIMIT;
+    use crate::instructions_data::common::instruction_size_params::INSTRUCTION_SIZE_LIMIT;
     use crate::instructions_data::constructors::option_trade::OptionTradeParams;
     use crate::instructions_data::dvl_instruction_data::DvlInstruction;
     use crate::utils::option_trade_basket_data::OPTION_TRADE_BASKET_DATA_SIZE;

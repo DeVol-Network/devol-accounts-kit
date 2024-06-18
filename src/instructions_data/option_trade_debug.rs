@@ -32,7 +32,7 @@ impl<'a> DvlDeserializableInstruction<'a> for InstructionOptionTradeDebug {
 mod tests {
     use super::*;
     use std::mem;
-    use crate::instructions_data::common::INSTRUCTION_SIZE_LIMIT;
+    use crate::instructions_data::common::instruction_size_params::INSTRUCTION_SIZE_LIMIT;
     use crate::instructions_data::option_trade::{INSTRUCTION_OPTION_TRADE_ACCOUNTS_SIZE};
 
     pub const INSTR_OPTION_TRADE_DEBUG_OPTION_TRADE_OFFSET: usize = 0;
