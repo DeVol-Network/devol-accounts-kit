@@ -53,7 +53,7 @@ pub struct ClientPool {
     pub puts_result: [i64; BUCKETS_COUNT],      // 760 bytes, CLIENT_POOL_PUTS_RESULT_OFFSET
     pub last_cost: i64,                         // 8 bytes, CLIENT_POOL_LAST_COST_OFFSET
     pub last_fees: i64,                         // 8 bytes, CLIENT_POOL_LAST_FEES_OFFSET
-    pub last_trade: [i32; BUCKETS_COUNT],       // 380 bytes, CLIENT_POOL_LAST_TRADE_OFFSET
+    pub last_trade_quantity: [i32; BUCKETS_COUNT],       // 380 bytes, CLIENT_POOL_LAST_TRADE_OFFSET
     pub basket_length_memo: u8,                 // 1 byte, CLIENT_POOL_VANILLA_MEMO_OFFSET
     pub basket_memo: [BasketData; CLIENT_POOL_MAX_BASKET_LENGTH], // 48 bytes
     vanilla_cost: [u8; 8*VANILLA_COST_SIZE],    // 32 bytes, CLIENT_POOL_VANILLA_COST_OFFSET
@@ -160,7 +160,7 @@ impl Default for ClientPool {
             puts_result: [0; BUCKETS_COUNT],
             last_cost: 0,
             last_fees: 0,
-            last_trade: [0; BUCKETS_COUNT],
+            last_trade_quantity: [0; BUCKETS_COUNT],
             basket_length_memo: 0,
             basket_memo: [BasketData::default(); CLIENT_POOL_MAX_BASKET_LENGTH],
             vanilla_cost: [0; 8 * VANILLA_COST_SIZE],
@@ -203,7 +203,7 @@ mod tests {
         assert_eq!(&account.puts_result as *const _ as usize - base_ptr, CLIENT_POOL_PUTS_RESULT_OFFSET);
         assert_eq!(&account.last_cost as *const _ as usize - base_ptr, CLIENT_POOL_LAST_COST_OFFSET);
         assert_eq!(&account.last_fees as *const _ as usize - base_ptr, CLIENT_POOL_LAST_FEES_OFFSET);
-        assert_eq!(&account.last_trade as *const _ as usize - base_ptr, CLIENT_POOL_LAST_TRADE_OFFSET);
+        assert_eq!(&account.last_trade_quantity as *const _ as usize - base_ptr, CLIENT_POOL_LAST_TRADE_OFFSET);
         assert_eq!(&account.basket_length_memo as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET);
         assert_eq!(&account.basket_memo as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_MEMO_OFFSET + 1);
         assert_eq!(&account.vanilla_cost as *const _ as usize - base_ptr, CLIENT_POOL_VANILLA_COST_OFFSET);

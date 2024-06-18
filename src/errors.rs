@@ -163,6 +163,15 @@ pub enum ContractError {
     InvalidOldMigrationVersion  = 0x004D,
     #[error("New version of the migrating account doesn't match, please check SDK")]
     InvalidNewMigrationVersion  = 0x004E,
+    #[error("Migration is not successful, please check SDK")]
+    MigrationFailed             = 0x004F,
+    #[error("Invalid strike id in the basket, must be less than BUCKETS_COUNT")]
+    InvalidBasketStrikeId       = 0x0050,
+    #[error("Trading basket length is greater than Pool Log can save")]
+    BasketLengthIsTooBig        = 0x0051,
+
+    #[error("Test abort")]
+    TestAbort                   = 0xFFFE,
     // ↑ *** Add new errors above *** ↑
     #[error("Unknown error code, please update SDK version to get detailed message")]
     UnknownError          = 0xFFFF,

@@ -19,34 +19,29 @@ pub const POOLS_LOG_SIZE: usize = 1305;
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct PoolsLogV8 {
-    // 8 bytes, POOLS_LOG_ID_OFFSET
-    pub id: [u8; 8],
-    // 8 bytes, POOLS_LOG_TIME_OFFSET
-    pub time: [u8; 8],
-    // 4 bytes, POOLS_LOG_EVENT_TYPE_OFFSET
-    pub event_type: [u8; 4],
-    // 4 bytes, POOLS_LOG_FRACTIONS_OFFSET
-    pub fractions: [u8; 4],
-    // 4 bytes, POOLS_LOG_TASK_ID_OFFSET
-    pub task_id: [u8; 4],
-    // 4 bytes, POOLS_LOG_POOL_ID_OFFSET
-    pub pool_id: [u8; 4],
-    // 4 bytes, POOLS_LOG_INSTR_ID_OFFSET
-    pub instr_id: [u8; 4],
-    // 8 bytes, POOLS_LOG_COUNTER_OFFSET
-    pub counter: [u8; 8],
-    // 32 bytes, POOLS_LOG_PUBKEY_OFFSET
-    pub pubkey: Pubkey,
-    // 8 bytes, POOLS_LOG_COST_OFFSET
-    pub cost: [u8; 8],
-    // 760 bytes, POOLS_LOG_PX_OFFSET
-    pub px: [[u8; 8]; BUCKETS_COUNT],
-    // 380 bytes, POOLS_LOG_QTY_OFFSET
-    pub qty: [[u8; 4]; BUCKETS_COUNT],
-    // 49 bytes, POOLS_LOG_VANILLA_MEMO_OFFSET
-    pub vanilla_memo: [u8; VANILLA_MEMO_SIZE],
-    // 32 bytes, POOLS_LOG_VANILLA_COST_OFFSET
-    pub vanilla_cost: [[u8; 8]; VANILLA_COST_SIZE],
+    pub id: [u8; 8],            // 8 bytes, POOLS_LOG_ID_OFFSET
+    pub time: [u8; 8],          // 8 bytes, POOLS_LOG_TIME_OFFSET
+    pub event_type: [u8; 4],    // 4 bytes, POOLS_LOG_EVENT_TYPE_OFFSET
+
+    pub fractions: [u8; 4],     // 4 bytes, POOLS_LOG_FRACTIONS_OFFSET
+    pub task_id: [u8; 4],       // 4 bytes, POOLS_LOG_TASK_ID_OFFSET
+    pub pool_id: [u8; 4],       // 4 bytes, POOLS_LOG_POOL_ID_OFFSET
+
+    pub instr_id: [u8; 4],      // 4 bytes, POOLS_LOG_INSTR_ID_OFFSET
+
+
+    pub counter: [u8; 8],       // 8 bytes, POOLS_LOG_COUNTER_OFFSET
+
+    pub pubkey: Pubkey,         // 32 bytes, POOLS_LOG_PUBKEY_OFFSET
+
+    pub cost: [u8; 8],          // 8 bytes, POOLS_LOG_COST_OFFSET
+
+    pub px: [[u8; 8]; BUCKETS_COUNT],           // 760 bytes, POOLS_LOG_PX_OFFSET
+    pub qty: [[u8; 4]; BUCKETS_COUNT],          // 380 bytes, POOLS_LOG_QTY_OFFSET
+    pub vanilla_memo: [u8; VANILLA_MEMO_SIZE],  // 49 bytes, POOLS_LOG_VANILLA_MEMO_OFFSET
+
+    pub vanilla_cost: [[u8; 8]; VANILLA_COST_SIZE], // 32 bytes, POOLS_LOG_VANILLA_COST_OFFSET
+    // 49 + 32 = 83
 }
 
 impl PoolsLogV8 {

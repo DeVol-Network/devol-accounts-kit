@@ -1,7 +1,7 @@
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_indexed_account::DevolIndexedAccount;
-use crate::accounts::worker::pools_log::v8::pool_log_v8::PoolsLogV8;
+use crate::accounts::worker::pool_logs::v8::pool_log_v8::PoolsLogV8;
 
 pub const POOLS_LOG_BUFFER_CAPACITY: usize = 256;
 pub const POOLS_LOG_ACCOUNT_VERSION_OFFSET: usize = 0;
@@ -16,7 +16,7 @@ pub const POOLS_LOG_ACCOUNT_VERSION: u32 = 8;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct PoolsLogAccountV8 {
+pub struct PoolLogsAccountV8 {
     // 40 bytes, AccountHeader
     pub header: AccountHeader,
     // 4 bytes, POOLS_LOG_ACCOUNT_WORKER_ID_OFFSET
@@ -29,9 +29,9 @@ pub struct PoolsLogAccountV8 {
     pub data: [PoolsLogV8; POOLS_LOG_BUFFER_CAPACITY],
 }
 
-impl DevolIndexedAccount for PoolsLogAccountV8 {}
+impl DevolIndexedAccount for PoolLogsAccountV8 {}
 
-impl DevolAccount for PoolsLogAccountV8 {
+impl DevolAccount for PoolLogsAccountV8 {
     #[inline(always)]
     fn expected_size() -> usize { POOLS_LOG_ACCOUNT_SIZE }
 
@@ -47,7 +47,7 @@ impl DevolAccount for PoolsLogAccountV8 {
 }
 
 #[cfg(test)]
-impl Default for PoolsLogAccountV8 {
+impl Default for PoolLogsAccountV8 {
     fn default() -> Self {
         Self {
             header: AccountHeader::default(),
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn test_pools_log_account_offsets() {
-        let account = PoolsLogAccountV8::default();
+        let account = PoolLogsAccountV8::default();
         let base_ptr = &account as *const _ as usize;
 
         // checking fields size and offset
@@ -91,6 +91,6 @@ mod tests {
         );
 
         // checking total size
-        assert_eq!(std::mem::size_of::<PoolsLogAccountV8>(), POOLS_LOG_ACCOUNT_SIZE);
+        assert_eq!(std::mem::size_of::<PoolLogsAccountV8>(), POOLS_LOG_ACCOUNT_SIZE);
     }
 }

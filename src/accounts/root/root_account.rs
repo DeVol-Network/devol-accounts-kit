@@ -38,7 +38,7 @@ pub struct RootAccount {
     pub workers_address: Pubkey,           // 32 bytes, ROOT_ACCOUNT_WORKERS_ADDRESS_OFFSET
     pub clients_count: u32,                //  4 bytes, ROOT_ACCOUNT_CLIENTS_COUNT_OFFSET
     pub fee_payer: OpenAccountFeePayer,    //  4 bytes, ROOT_ACCOUNT_KYC_METHOD_OFFSET
-    pub max_light_volume: u64,             //  8 bytes, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET
+    pub light_trader_daily_trade_limit: u64,             //  8 bytes, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET
 }
 
 impl DevolRegularAccount for RootAccount {}
@@ -70,7 +70,7 @@ impl Default for RootAccount {
             workers_address: Pubkey::default(),
             clients_count: 0,
             fee_payer: OpenAccountFeePayer::Devol,
-            max_light_volume: 0,
+            light_trader_daily_trade_limit: 0,
         }
     }
 }
@@ -95,7 +95,7 @@ mod tests {
         assert_eq!(&account.workers_address as *const _ as usize  - base_ptr, ROOT_ACCOUNT_WORKERS_ADDRESS_OFFSET);
         assert_eq!(&account.clients_count as *const _ as usize  - base_ptr, ROOT_ACCOUNT_CLIENTS_COUNT_OFFSET);
         assert_eq!(&account.fee_payer as *const _ as usize  - base_ptr, ROOT_ACCOUNT_KYC_METHOD_OFFSET);
-        assert_eq!(&account.max_light_volume as *const _ as usize  - base_ptr, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET);
+        assert_eq!(&account.light_trader_daily_trade_limit as *const _ as usize  - base_ptr, ROOT_ACCOUNT_MAX_LIGHT_VOLUME_OFFSET);
 
         // checking total size
         assert_eq!(mem::size_of::<RootAccount>(), ROOT_ACCOUNT_SIZE);

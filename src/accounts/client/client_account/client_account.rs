@@ -53,9 +53,9 @@ pub struct ClientAccount {
     pub sign_method: ClientSignMethod,  // 4 bytes, CLIENT_ACCOUNT_SIGN_METHOD_OFFSET
     pub kyc_status: KYCStatus,          // 8 bytes, CLIENT_ACCOUNT_KYC_OFFSET
     pub kyc_time: u32,                  // 4 bytes, CLIENT_ACCOUNT_KYC_TIME_OFFSET
-    pub last_day: u32,                  // 4 bytes, CLIENT_ACCOUNT_LAST_DAY_OFFSET
-    pub last_hour: u32,                 // 4 bytes, CLIENT_ACCOUNT_LAST_HOUR_OFFSET
-    pub last_trades: [u8; 8 * HOURS],   // 192 bytes, CLIENT_ACCOUNT_LAST_TRADES_OFFSET
+    pub last_trade_day: u32,            // 4 bytes, CLIENT_ACCOUNT_LAST_DAY_OFFSET
+    pub last_trade_hour_since_epoch: u32, // 4 bytes, CLIENT_ACCOUNT_LAST_HOUR_OFFSET
+    hours_trade_volume: [[u8; 8]; HOURS],   // 192 bytes, CLIENT_ACCOUNT_LAST_TRADES_OFFSET
     refs: [u8; 8],                      // 8 bytes, CLIENT_ACCOUNT_REFS_OFFSET
     pub mints: [ClientMint; MAX_MINTS_COUNT],   // 512 bytes, CLIENT_ACCOUNT_MINTS_OFFSET
     pub lp_count: u32,                  // 4 bytes, CLIENT_ACCOUNT_LP_COUNT_OFFSET
@@ -108,6 +108,16 @@ impl ClientAccount {
 
     #[inline(always)]
     pub fn set_pools_count(&mut self, value: u32) { self.pools_count = value.to_ne_bytes() }
+
+    #[inline(always)]
+    pub fn get_hours_trade_volume(&self, index: usize) -> i64 {
+        i64::from_ne_bytes(unsafe { *(self.hours_trade_volume[index].as_ptr() as *const [u8; 8]) })
+    }
+
+    #[inline(always)]
+    pub fn set_hours_trade_volume(&mut self, index: usize, value: i64) {
+        unsafe { *(self.hours_trade_volume.as_mut_ptr().add(index) as *mut [u8; 8]) = value.to_ne_bytes(); }
+    }
 
     #[inline(always)]
     pub fn get_pool(&self, index: usize) -> Result<&ClientPool, DvlError> {
@@ -224,7 +234,6 @@ impl ClientAccount {
     }
 }
 
-#[cfg(test)]
 impl Default for ClientAccount {
     fn default() -> Self {
         Self {
@@ -241,9 +250,9 @@ impl Default for ClientAccount {
             sign_method: ClientSignMethod::Wallet,
             kyc_status: KYCStatus::Light,
             kyc_time: 0,
-            last_day: 0,
-            last_hour: 0,
-            last_trades: [0; 8 * HOURS],
+            last_trade_day: 0,
+            last_trade_hour_since_epoch: 0,
+            hours_trade_volume: [[0; 8];  HOURS],
             refs: [0; 8],
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
             lp_count: 0,
@@ -281,9 +290,9 @@ mod tests {
         assert_eq!(&account.sign_method as *const _ as usize - base_ptr, CLIENT_ACCOUNT_SIGN_METHOD_OFFSET);
         assert_eq!(&account.kyc_status as *const _ as usize - base_ptr, CLIENT_ACCOUNT_KYC_OFFSET);
         assert_eq!(&account.kyc_time as *const _ as usize - base_ptr, CLIENT_ACCOUNT_KYC_TIME_OFFSET);
-        assert_eq!(&account.last_day as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_DAY_OFFSET);
-        assert_eq!(&account.last_hour as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_HOUR_OFFSET);
-        assert_eq!(&account.last_trades as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_TRADES_OFFSET);
+        assert_eq!(&account.last_trade_day as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_DAY_OFFSET);
+        assert_eq!(&account.last_trade_hour_since_epoch as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_HOUR_OFFSET);
+        assert_eq!(&account.hours_trade_volume as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LAST_TRADES_OFFSET);
         assert_eq!(&account.refs as *const _ as usize - base_ptr, CLIENT_ACCOUNT_REFS_OFFSET);
         assert_eq!(&account.mints as *const _ as usize - base_ptr, CLIENT_ACCOUNT_MINTS_OFFSET);
         assert_eq!(&account.lp as *const _ as usize - base_ptr, CLIENT_ACCOUNT_LP_OFFSET);
@@ -348,9 +357,9 @@ mod tests {
         assert_eq!(new_account.sign_method, default_account.sign_method);
         assert_eq!(new_account.kyc_status, default_account.kyc_status);
         assert_eq!(new_account.kyc_time, default_account.kyc_time);
-        assert_eq!(new_account.last_day, default_account.last_day);
-        assert_eq!(new_account.last_hour, default_account.last_hour);
-        assert_eq!(new_account.last_trades, default_account.last_trades);
+        assert_eq!(new_account.last_trade_day, default_account.last_trade_day);
+        assert_eq!(new_account.last_trade_hour_since_epoch, default_account.last_trade_hour_since_epoch);
+        assert_eq!(new_account.hours_trade_volume, default_account.hours_trade_volume);
         assert_eq!(new_account.refs, default_account.refs);
         assert_ne!(new_account.pools_count, default_account.pools_count);
         assert_ne!(new_account.get_pool(check_1.0).unwrap(), &ClientPool::default());
@@ -408,9 +417,9 @@ mod tests {
             sign_method: ClientSignMethod::Wallet,
             kyc_status: KYCStatus::Light,
             kyc_time: 0,
-            last_day: 0,
-            last_hour: 0,
-            last_trades: [0; 8 * HOURS],
+            last_trade_day: 0,
+            last_trade_hour_since_epoch: 0,
+            hours_trade_volume: [[0; 8]; HOURS],
             refs: [0; 8],
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
             lp_count: 0,
@@ -458,9 +467,9 @@ mod tests {
             sign_method: ClientSignMethod::Wallet,
             kyc_status: KYCStatus::Light,
             kyc_time: 0,
-            last_day: 0,
-            last_hour: 0,
-            last_trades: [0; 8 * HOURS],
+            last_trade_day: 0,
+            last_trade_hour_since_epoch: 0,
+            hours_trade_volume: [[0; 8]; HOURS],
             refs: [0; 8],
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
             lp_count: 0,

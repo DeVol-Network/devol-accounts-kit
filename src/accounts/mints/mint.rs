@@ -36,7 +36,8 @@ impl Mint {
     #[inline(always)]
     pub fn get_ticker(&self) -> i64 { i64::from_ne_bytes(self.ticker) }
     #[inline(always)]
-    pub fn set_ticker(&mut self, value: i64) { self.ticker = value.to_ne_bytes() }
+    pub fn set_ticker(&mut self, value: i64) {
+        self.ticker = value.to_ne_bytes() }
     #[inline(always)]
     pub fn get_own(&self) -> i64 { i64::from_ne_bytes(self.own) }
     #[inline(always)]

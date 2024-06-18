@@ -24,7 +24,6 @@ impl ClientMint {
     pub fn set_blocked(&mut self, value: i64) { self.blocked = value.to_ne_bytes() }
 }
 
-#[cfg(test)]
 impl Default for ClientMint {
     fn default() -> Self {
         Self {
