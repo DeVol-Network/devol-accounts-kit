@@ -48,12 +48,9 @@ impl_dvl_readable!(PoolLogsAccount, PoolLogsAccountV8);
 
 #[cfg(test)]
 mod tests {
-    use std::{env, fs};
     use super::*;
     use crate::tests::tests::setup_devol_client;
     use std::error::Error;
-    use std::fs::File;
-    use std::io::prelude::*;
     use crate::accounts::worker::pool_logs::v8::pools_log_account_v8::PoolLogsAccountV8;
     use crate::accounts::worker::pool_logs::v9::pools_log_account_v9::PoolLogsAccountV9;
 
@@ -93,7 +90,6 @@ mod tests {
 
     /// Test read pool logs account for version 9
     #[tokio::test]
-    #[ignore]
     async fn test_read_pools_log_account_by_index_v9() -> Result<(), Box<dyn Error>> {
         let client = setup_devol_client();
         let _pool_log_0 = client.get_account::<PoolLogsAccountV9>(DvlIndexParam { id: 7 }).await?;
