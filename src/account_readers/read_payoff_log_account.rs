@@ -14,7 +14,7 @@ impl DvlReadable for PayoffLogAccount {
         _dvl_client: &DvlClient,
         params: &DvlClientParam
     ) -> Result<Box<Pubkey>, Box<dyn Error>> where Self: Sized {
-        Ok(Box::from(params.client_account.payoff_log))
+        Ok(Box::from(params.client_account.payoff_log_address))
     }
 
     async fn read<'a>(
@@ -69,7 +69,7 @@ mod tests {
             signer_account_params: None,
         }).await?;
 
-        let _payoff = client.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log).await?;
+        let _payoff = client.get_account_by_public_key::<PayoffLogAccount>(&client_account.payoff_log_address).await?;
         Ok(())
     }
 }

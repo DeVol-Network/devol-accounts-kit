@@ -12,3 +12,5 @@ pub mod read_pools_trace_account;
 pub mod read_pools_log_account;
 pub mod read_client_account;
 pub mod read_payoff_log_account;
+pub mod read_portfolio_account;
+pub mod read_lp_portfolio_account;

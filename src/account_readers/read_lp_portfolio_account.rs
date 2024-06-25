@@ -2,14 +2,15 @@ use std::error::Error;
 use async_trait::async_trait;
 use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
-use crate::account_readers::dvl_readable::{DvlReadable, DvlClientParams};
-use crate::accounts::client::client_account::client_account::ClientAccount;
+use crate::account_readers::dvl_readable::{DvlReadable, DvlClientParam};
+use crate::accounts::client::lp_portfolio_account::lp_portfolio_account::LpPortfolioAccount;
+use crate::accounts::devol_regular_account::DevolRegularAccount;
 use crate::generate_pda::dvl_generate_pda;
 
 #[async_trait]
-impl DvlReadable for ClientAccount
+impl DvlReadable for LpPortfolioAccount
 {
-    type DvlReadParams<'a> = DvlClientParams<'a>;
+    type DvlReadParams<'a> = DvlClientParam<'a>;
 
     async fn get_public_key<'a>(
         dvl_client: &DvlClient,
@@ -17,7 +18,11 @@ impl DvlReadable for ClientAccount
     ) -> Result<Box<Pubkey>, Box<dyn Error>>
         where Self: Sized
         {
-            let client_pda = dvl_generate_pda(params.client_address, &dvl_client.main_seed, &dvl_client.program_id);
+            let client_pda = dvl_generate_pda(
+                &params.client_account.portfolio_address,
+                &dvl_client.main_seed,
+                &dvl_client.program_id
+            );
             Ok(Box::from(client_pda.key))
         }
 
@@ -32,7 +37,6 @@ impl DvlReadable for ClientAccount
             &mut rpc_data,
             &dvl_client.root_pda.key,
             &dvl_client.program_id,
-            params.signer_account_params,
         )?;
         Ok(account)
     }
@@ -40,34 +44,29 @@ impl DvlReadable for ClientAccount
 
 #[cfg(test)]
 mod tests {
-    use crate::account_readers::dvl_readable::{DvlClientParams};
+    use crate::account_readers::dvl_readable::{DvlClientParam, DvlClientParams};
     use crate::accounts::client::client_account::client_account::ClientAccount;
     use crate::tests::tests::setup_devol_client;
     use std::error::Error;
     use std::str::FromStr;
     use solana_program::pubkey::Pubkey;
-    use crate::constants::test_constants::{ADMIN_PUBLIC_KEY, TRADING_CLIENT_PUBLIC_KEY};
+    use crate::accounts::client::lp_portfolio_account::lp_portfolio_account::LpPortfolioAccount;
+    use crate::constants::test_constants::{ADMIN_PUBLIC_KEY};
 
     #[tokio::test]
     async fn test_read_client_account() -> Result<(), Box<dyn Error>> {
         let client = setup_devol_client();
         let client_wallet_public_key = Pubkey::from_str(ADMIN_PUBLIC_KEY).unwrap();
-        let _client_account = client.get_account::<ClientAccount>(DvlClientParams {
+        let client_account = client.get_account::<ClientAccount>(DvlClientParams {
             client_address: &client_wallet_public_key,
             signer_account_params: None,
         }).await?;
-        Ok(())
-    }
-
-    #[tokio::test]
-    async fn test_read_custom_client_account() -> Result<(), Box<dyn Error>> {
-        let client = setup_devol_client();
-        let client_wallet_public_key = Pubkey::from_str(TRADING_CLIENT_PUBLIC_KEY).unwrap();
-        let _client_account = client.get_account::<ClientAccount>(DvlClientParams {
-            client_address: &client_wallet_public_key,
-            signer_account_params: None,
+        let portfolio_account = client.get_account::<LpPortfolioAccount>(DvlClientParam {
+            client_account: &client_account,
         }).await?;
+
+        assert_eq!(portfolio_account.owner_address, client_wallet_public_key);
+
         Ok(())
     }
-
 }

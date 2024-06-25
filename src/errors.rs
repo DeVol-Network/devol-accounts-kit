@@ -206,6 +206,8 @@ pub enum AccountTag {
     ClientToken         = 0x14,
     ProgramToken        = 0x15,
     Buffer              = 0x16,
+    ClientPortfolio     = 0x17,
+    ClientLpPortfolio   = 0x18,
     // ↑ *** Add new account tags above *** ↑
     AccountDecodeError  = 0xFF, // Unknown account code
 }

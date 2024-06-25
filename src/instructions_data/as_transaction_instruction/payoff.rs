@@ -4,7 +4,7 @@ use solana_program::instruction::{AccountMeta, Instruction};
 use solana_program::pubkey::Pubkey;
 use crate::account_readers::dvl_readable::{DvlClientParams, DvlIndexParam};
 use crate::accounts::client::client_account::client_account::ClientAccount;
-use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
+use crate::accounts::client::client_account::common::signer_account_params::SignerAccountParams;
 use crate::accounts::instruments::instruments_account::InstrumentsAccount;
 use crate::accounts::root::root_account::RootAccount;
 use crate::accounts::worker::pools_trace::pools_trace_account::PoolsTraceAccount;
@@ -60,7 +60,7 @@ impl AsTransactionInstruction for InstructionPayoff {
                 is_writable: true,
             },
             AccountMeta {
-                pubkey: client_acc.payoff_log,
+                pubkey: client_acc.payoff_log_address,
                 is_signer: false,
                 is_writable: true,
             },

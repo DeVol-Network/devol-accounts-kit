@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use solana_program::pubkey::Pubkey;
 use crate::dvl_client::dvl_client::DvlClient;
 use crate::accounts::client::client_account::client_account::ClientAccount;
-use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
+use crate::accounts::client::client_account::common::signer_account_params::SignerAccountParams;
 use crate::accounts::devol_account::DevolAccount;
 
 pub struct DvlIndexParam {
