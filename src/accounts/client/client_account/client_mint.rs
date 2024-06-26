@@ -5,8 +5,8 @@ pub const CLIENT_MINT_SIZE: usize = 16;
 #[repr(C)]
 /// 8 bytes alignment
 pub struct ClientMint {
-    pub available: u64,
-    pub blocked: u64,
+    pub available: i64,
+    pub blocked: i64,
 } // size: 16 bytes
 
 impl Default for ClientMint {

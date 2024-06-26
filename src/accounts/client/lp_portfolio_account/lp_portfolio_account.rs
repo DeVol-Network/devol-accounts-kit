@@ -2,6 +2,7 @@ use std::cell::Ref;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
 use crate::accounts::client::lp_portfolio_account::lp_portfolio_pool_record::{LP_PORTFOLIO_RECORD_SIZE, LpPortfolioPoolRecord};
+use crate::accounts::client::portfolio_account::portfolio_account::{PORTFOLIO_ACCOUNT_TAG, PORTFOLIO_ACCOUNT_VERSION};
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
 use crate::accounts::devol_regular_account::DevolRegularAccount;
@@ -76,7 +77,11 @@ impl DevolExpandableSizeAccount for LpPortfolioAccount {
 impl Default for LpPortfolioAccount {
     fn default() -> Self {
         Self {
-            header: AccountHeader::default(),
+            header: AccountHeader{
+                tag: LP_PORTFOLIO_ACCOUNT_TAG as u32,
+                version: LP_PORTFOLIO_ACCOUNT_VERSION as u32,
+                root: Pubkey::new_unique(),
+            },
             owner_address: Pubkey::default(),
             reserved: 0,
             portfolio_records_count: 0,

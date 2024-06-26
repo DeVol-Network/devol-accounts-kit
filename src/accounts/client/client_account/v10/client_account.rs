@@ -3,21 +3,19 @@ use std::error::Error;
 use solana_program::account_info::{Account, AccountInfo, IntoAccountInfo};
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
-use crate::accounts::client::client_account::client_lp::ClientLp;
 use crate::accounts::client::client_account::client_mint::ClientMint;
-use crate::accounts::client::client_account::client_pool::{CLIENT_POOL_SIZE, ClientPool};
-use crate::accounts::client::client_account::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::common::client_sign_method::ClientSignMethod;
 use crate::accounts::client::client_account::common::kyc_status::KYCStatus;
-use crate::accounts::client::client_account::kyc_status::KYCStatus;
-use crate::accounts::client::client_account::signer_account_params::SignerAccountParams;
+use crate::accounts::client::client_account::common::signer_account_params::SignerAccountParams;
+use crate::accounts::client::client_account::v10::client_lp::ClientLp;
+use crate::accounts::client::client_account::v10::client_pool::{CLIENT_POOL_SIZE, ClientPool};
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
 use crate::accounts::mints::mints_account::MAX_MINTS_COUNT;
-use crate::constants::HOURS;
 use crate::dvl_error::DvlError;
 use crate::errors::*;
 
+pub const HOURS: usize = 24;
 pub const CLIENT_ACCOUNT_VERSION_OFFSET: usize = 0;
 pub const CLIENT_ACCOUNT_ROOT_ADDRESS_OFFSET: usize = 8;
 pub const CLIENT_ACCOUNT_OWNER_ADDRESS_OFFSET: usize = 40;
@@ -45,7 +43,7 @@ pub const MAX_CLIENT_POOLS_COUNT: usize = 256;
 
 #[derive(Clone, Copy)]
 #[repr(C)]
-pub struct ClientAccount {
+pub struct ClientAccountV10 {
     pub header: AccountHeader,          // 40 bytes, CLIENT_ACCOUNT_VERSION_OFFSET
     pub owner_address: Pubkey,          // 32 bytes, CLIENT_ACCOUNT_OWNER_ADDRESS_OFFSET
     pub signer_address: Pubkey,         // 32 bytes, CLIENT_ACCOUNT_SIGNER_ADDRESS_OFFSET
@@ -56,7 +54,7 @@ pub struct ClientAccount {
     pub kyc_status: KYCStatus,          // 8 bytes, CLIENT_ACCOUNT_KYC_OFFSET
     pub kyc_time: u32,                  // 4 bytes, CLIENT_ACCOUNT_KYC_TIME_OFFSET
     pub last_trade_day: u32,            // 4 bytes, CLIENT_ACCOUNT_LAST_DAY_OFFSET
-    pub last_trade_hour_since_epoch: u32, // 4 bytes, CLIENT_ACCOUNT_LAST_HOUR_OFFSET
+    pub last_trade_hour_since_epoch: u32,   // 4 bytes, CLIENT_ACCOUNT_LAST_HOUR_OFFSET
     hours_trade_volume: [[u8; 8]; HOURS],   // 192 bytes, CLIENT_ACCOUNT_LAST_TRADES_OFFSET
     refs: [u8; 8],                      // 8 bytes, CLIENT_ACCOUNT_REFS_OFFSET
     pub mints: [ClientMint; MAX_MINTS_COUNT],   // 512 bytes, CLIENT_ACCOUNT_MINTS_OFFSET
@@ -67,7 +65,7 @@ pub struct ClientAccount {
     pools: [ClientPool; 0],             // extendable size, CLIENT_ACCOUNT_POOLS_OFFSET
 }
 
-impl DevolExpandableSizeAccount for ClientAccount {
+impl DevolExpandableSizeAccount for ClientAccountV10 {
     fn expected_expanded_size(account_data: Ref<&mut [u8]>) -> usize {
         let account = unsafe { &*(account_data.as_ptr() as *const Self) };
         let pools_count = account.get_pools_count();
@@ -75,7 +73,7 @@ impl DevolExpandableSizeAccount for ClientAccount {
         expected_size
     }
 }
-impl DevolAccount for ClientAccount {
+impl DevolAccount for ClientAccountV10 {
     #[inline(always)]
     fn expected_size() -> usize {
         CLIENT_ACCOUNT_SIZE
@@ -92,7 +90,7 @@ impl DevolAccount for ClientAccount {
     }
 }
 
-impl ClientAccount {
+impl ClientAccountV10 {
     #[inline(always)]
     pub fn get_ops_counter(&self) -> i64 { i64::from_ne_bytes(self.ops_counter) }
 
@@ -147,7 +145,7 @@ impl ClientAccount {
 
     #[inline(always)]
     fn check_signer(
-        account: &ClientAccount,
+        account: &ClientAccountV10,
         signer_params: Option<&SignerAccountParams>,
     ) -> Result<(), DvlError> {
         if let Some(signer_params) = signer_params{
@@ -231,12 +229,12 @@ impl ClientAccount {
 
     #[cfg(test)]
     fn serialize_mut(&mut self) -> &mut [u8] {
-        let size = std::mem::size_of::<ClientAccount>();
+        let size = std::mem::size_of::<ClientAccountV10>();
         unsafe { std::slice::from_raw_parts_mut(self as *mut _ as *mut u8, size) }
     }
 }
 
-impl Default for ClientAccount {
+impl Default for ClientAccountV10 {
     fn default() -> Self {
         Self {
             header: AccountHeader{
@@ -274,12 +272,12 @@ mod tests {
     use crate::utils::type_size_helper::align_size;
     use super::*;
     use solana_program::account_info::{AccountInfo};
-    use crate::accounts::client::client_account::client_pool::{CLIENT_POOL_CALLS_RESULT_OFFSET, CLIENT_POOL_FRACTIONS_OFFSET, CLIENT_POOL_INSTR_ID_OFFSET};
+    use crate::accounts::client::client_account::v10::client_pool::{CLIENT_POOL_CALLS_RESULT_OFFSET, CLIENT_POOL_FRACTIONS_OFFSET, CLIENT_POOL_INSTR_ID_OFFSET, CLIENT_POOL_SIZE};
     use crate::constants::test_constants;
 
     #[test]
     fn test_client_account_offsets() {
-        let account = ClientAccount::default();
+        let account = ClientAccountV10::default();
 
         let base_ptr = &account as *const _ as usize;
 
@@ -302,7 +300,7 @@ mod tests {
         // WARNING: This test will not pass because of the alignment. Getter and setter use correct address.
         // assert_eq!(&account.pools as *const _ as usize - base_ptr, CLIENT_ACCOUNT_POOLS_OFFSET);
 
-        assert_eq!(mem::size_of::<ClientAccount>(), align_size(CLIENT_ACCOUNT_SIZE, 8));
+        assert_eq!(mem::size_of::<ClientAccountV10>(), align_size(CLIENT_ACCOUNT_SIZE, 8));
     }
     #[test]
     fn test_client_account_pools() {
@@ -315,8 +313,8 @@ mod tests {
         let total_size = align_size(CLIENT_ACCOUNT_SIZE + TEST_POOLS_SIZE * CLIENT_POOL_SIZE, 4);
 
         let mut buffer_for_account = vec![0u8; total_size];
-        let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut ClientAccount) };
-        let default_account = ClientAccount::default();
+        let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut ClientAccountV10) };
+        let default_account = ClientAccountV10::default();
         *account = default_account;
         account.set_pools_count(TEST_POOLS_SIZE as u32);
         let check_1 = (0, 228);
@@ -346,8 +344,8 @@ mod tests {
             executable: false,
         };
 
-        let new_account = ClientAccount::from_account_info(&account_info, &root,
-                                                           &program_id, Some(&SignerAccountParams {signer, devol_sign })).unwrap();
+        let new_account = ClientAccountV10::from_account_info(&account_info, &root,
+                                                              &program_id, Some(&SignerAccountParams {signer, devol_sign })).unwrap();
 
         assert_eq!(new_account.id, default_account.id);
         assert_eq!(new_account.header, default_account.header);
@@ -370,8 +368,7 @@ mod tests {
 
         let base_ptr = new_account as *const _ as usize;
 
-        let pool_record_offset = CLIENT_ACCOUNT_SIZE + (check_4.0 as usize) * CLIENT_POOL_SIZE;
-
+        let pool_record_offset = CLIENT_ACCOUNT_SIZE + check_4.0 * CLIENT_POOL_SIZE;
         let result_offset = pool_record_offset
             + CLIENT_POOL_CALLS_RESULT_OFFSET
             + (check_4_bucket) * 8;
@@ -405,7 +402,7 @@ mod tests {
         let is_signer = false;
         let mut lamports: u64 = 0;
 
-        let mut account = ClientAccount {
+        let mut account = ClientAccountV10 {
             header: AccountHeader{
                 tag: CLIENT_ACCOUNT_TAG as u32,
                 version: CLIENT_ACCOUNT_VERSION as u32,
@@ -442,7 +439,7 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign: is_signer}));
+        let result = ClientAccountV10::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign: is_signer}));
         assert!(result.is_ok());
     }
     #[test]
@@ -455,7 +452,7 @@ mod tests {
         let devol_sign = true;
         let mut lamports: u64 = 0;
 
-        let mut account = ClientAccount {
+        let mut account = ClientAccountV10 {
             header: AccountHeader{
                 tag: CLIENT_ACCOUNT_TAG as u32,
                 version: CLIENT_ACCOUNT_VERSION as u32,
@@ -492,7 +489,7 @@ mod tests {
             is_writable: false,
             executable: false,
         };
-        let result = ClientAccount::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign}));
+        let result = ClientAccountV10::check_all(&account_info, &root, &program_id, Some(&SignerAccountParams{signer, devol_sign}));
         assert!(result.is_ok());
     }
 }

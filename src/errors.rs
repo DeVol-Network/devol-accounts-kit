@@ -169,6 +169,8 @@ pub enum ContractError {
     InvalidBasketStrikeId       = 0x0050,
     #[error("Trading basket length is greater than Pool Log can save")]
     BasketLengthIsTooBig        = 0x0051,
+    #[error("KYC status is invalid")]
+    InvalidKycStatus              = 0x0052,
 
     #[error("Test abort")]
     TestAbort                   = 0xFFFE,

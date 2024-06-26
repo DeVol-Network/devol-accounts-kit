@@ -1,6 +1,7 @@
 use std::cell::Ref;
 use solana_program::pubkey::Pubkey;
 use crate::accounts::account_header::AccountHeader;
+use crate::accounts::client::client_account::client_account::{CLIENT_ACCOUNT_TAG, CLIENT_ACCOUNT_VERSION};
 use crate::accounts::client::portfolio_account::portfolio_pool_record::{PORTFOLIO_POOL_RECORD_SIZE, PortfolioPoolRecord};
 use crate::accounts::devol_account::DevolAccount;
 use crate::accounts::devol_expandable_size_account::DevolExpandableSizeAccount;
@@ -76,7 +77,11 @@ impl DevolExpandableSizeAccount for PortfolioAccount {
 impl Default for PortfolioAccount {
     fn default() -> Self {
         Self {
-            header: AccountHeader::default(),
+            header: AccountHeader{
+                tag: PORTFOLIO_ACCOUNT_TAG as u32,
+                version: PORTFOLIO_ACCOUNT_VERSION as u32,
+                root: Pubkey::new_unique(),
+            },
             owner_address: Pubkey::default(),
             reserved: 0,
             portfolio_records_count: 0,
@@ -109,9 +114,9 @@ mod tests {
 
         let mut buffer_for_account = vec![0u8; total_size];
         let account = unsafe { &mut *(buffer_for_account.as_mut_ptr() as *mut PortfolioAccount) };
-        let default_account = PortfolioAccount::default();
+        let mut default_account = PortfolioAccount::default();
+        default_account.portfolio_records_count = TEST_RECORDS_SIZE as u32;
         *account = default_account;
-        account.portfolio_records_count = TEST_RECORDS_SIZE as u32;
         let check_1 = (0, 228);
         let check_2 = (7, 69);
         let check_3 = (0, 1337);
@@ -126,7 +131,7 @@ mod tests {
         let key = &account.owner_address;
         let root = &account.header.root;
 
-        let account_info = AccountInfo{
+        let account_info = AccountInfo {
             key: &key,
             lamports: Rc::new(RefCell::new(&mut lamports)),
             data: Rc::new(RefCell::new(buffer_for_account.as_mut_slice())),

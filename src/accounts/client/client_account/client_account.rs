@@ -12,9 +12,9 @@ use crate::constants::HOURS_IN_DAY;
 use crate::dvl_error::DvlError;
 use crate::errors::*;
 
-pub const CLIENT_ACCOUNT_SIZE: usize = 9084;
+pub const CLIENT_ACCOUNT_SIZE: usize = 968;
 pub const CLIENT_ACCOUNT_TAG: u8 = 8;
-pub const CLIENT_ACCOUNT_VERSION: usize = 10;
+pub const CLIENT_ACCOUNT_VERSION: usize = 11;
 
 #[derive(Clone, Copy)]
 #[repr(C)]
@@ -28,7 +28,8 @@ pub struct ClientAccount {
     pub id: u32,                                 // 4 bytes (4/8 bytes align)
     pub sign_method: ClientSignMethod,           // 4 bytes (8/8 bytes align)
     pub kyc_status: KYCStatus,                   // 8 bytes
-    pub kyc_time: u32,                           // 4 bytes (4/8 bytes align)
+    pub reserved: [i64; 5],                      // 8*5=40 bytes
+    pub kyc_status_set_time: u32,                // 4 bytes (4/8 bytes align)
     pub last_trade_hour_since_epoch: u32,        // 4 bytes (8/8 bytes align)
     pub hours_trade_volume: [u64; HOURS_IN_DAY], // 192 bytes
     pub mints: [ClientMint; MAX_MINTS_COUNT],    // 512 bytes
@@ -158,7 +159,8 @@ impl Default for ClientAccount {
             id: 0,
             sign_method: ClientSignMethod::Wallet,
             kyc_status: KYCStatus::Light,
-            kyc_time: 0,
+            reserved: [0; 5],
+            kyc_status_set_time: 0,
             last_trade_hour_since_epoch: 0,
             hours_trade_volume: [0; HOURS_IN_DAY],
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
@@ -204,10 +206,11 @@ mod tests {
             id: 0,
             sign_method: ClientSignMethod::Wallet,
             kyc_status: KYCStatus::Light,
-            kyc_time: 0,
+            kyc_status_set_time: 0,
             last_trade_hour_since_epoch: 0,
             hours_trade_volume: [0; HOURS_IN_DAY],
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
+            reserved: [0; 5],
         };
 
         let serialized_data = account.serialize_mut();
@@ -249,10 +252,11 @@ mod tests {
             id: 0,
             sign_method: ClientSignMethod::Wallet,
             kyc_status: KYCStatus::Light,
-            kyc_time: 0,
+            kyc_status_set_time: 0,
             last_trade_hour_since_epoch: 0,
             hours_trade_volume: [0; HOURS_IN_DAY],
             mints: [ClientMint::default(); MAX_MINTS_COUNT],
+            reserved: [0; 5],
         };
 
         let serialized_data = account.serialize_mut();

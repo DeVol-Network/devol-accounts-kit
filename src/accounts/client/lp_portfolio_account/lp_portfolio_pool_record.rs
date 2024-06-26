@@ -8,9 +8,9 @@ pub const LP_PORTFOLIO_RECORD_SIZE: usize = 64;
 pub struct LpPortfolioPoolRecord {
     pub worker_id: u32,     // 4 bytes (4/8 bytes align)
     pub task_id: u32,       // 4 bytes (8/8 bytes align)
-    pub counter: i64,       // 8 bytes
-    pub orig_counter: i64,  // 8 bytes
-    pub time: i64,          // 8 bytes
+    pub client_lp_trades_counter: i64,        // 8 bytes
+    pub pool_lp_trades_counter: i64, // 8 bytes
+    pub last_trade_time: i64,          // 8 bytes
     pub ps: u32,            // 4 bytes (4/8 bytes align)
     pub ps_trade_qty: i32,  // 4 bytes (8/8 bytes align)
     pub ps_trade_cost: i64, // 8 bytes
@@ -32,9 +32,9 @@ impl Default for LpPortfolioPoolRecord {
         Self {
             worker_id: 0,
             task_id: 0,
-            counter: 0,
-            orig_counter: 0,
-            time: 0,
+            client_lp_trades_counter: 0,
+            pool_lp_trades_counter: 0,
+            last_trade_time: 0,
             ps: 0,
             ps_trade_qty: 0,
             ps_trade_cost: 0,

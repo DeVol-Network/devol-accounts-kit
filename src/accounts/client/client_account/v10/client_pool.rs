@@ -1,4 +1,4 @@
-use crate::accounts::client::client_account::client_pool_basket::{BasketData, CLIENT_POOL_MAX_BASKET_LENGTH};
+use crate::accounts::client::client_account::v10::client_pool_basket::{BasketData, CLIENT_POOL_MAX_BASKET_LENGTH};
 use crate::constants::{BOUNDS_COUNT, BUCKETS_COUNT, VANILLA_COST_SIZE};
 
 

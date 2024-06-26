@@ -1,3 +1,5 @@
+use crate::constants::FD;
+
 pub const CLIENT_LP_WORKER_ID_OFFSET: usize = 0;
 pub const CLIENT_LP_TASK_ID_OFFSET: usize = 4;
 pub const CLIENT_LP_COUNTER_OFFSET: usize = 8;
@@ -73,7 +75,7 @@ impl Default for ClientLp {
 
 #[cfg(test)]
 mod tests {
-    use crate::accounts::client::client_account::client_lp::*;
+    use crate::accounts::client::client_account::v10::client_lp::*;
 
     #[test]
     fn test_client_lp_offsets() {
